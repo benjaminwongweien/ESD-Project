@@ -16,6 +16,7 @@ public class OrderController {
     public Order retrieveAll() {
         OrderDAO orderDAO = new OrderDAO();
         return orderDAO.retrieveOrderbyUserID(123).get(0);
+        // Figuring out how to output as JSON value here
 //        for (int i = 0; i<OrderList.size(); i++) {
 //            Order order = OrderList.get(i);
 //

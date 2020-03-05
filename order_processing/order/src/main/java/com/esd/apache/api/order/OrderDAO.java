@@ -22,7 +22,7 @@ public class OrderDAO implements ConnectionManager {
         ArrayList<Order> OrderList = new ArrayList<>();
 
         try {
-
+            // Need to check how to connect to the Database as a Gradle Project
             // step 2: Gets a connection to the database
             Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
 
