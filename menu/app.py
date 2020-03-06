@@ -6,7 +6,8 @@ Menu Microservice
 @Team   - G3T4
 """
 import os
-from flask import Flask, jsonify
+import json
+from flask import Flask, jsonify, request
 from model.base import db
 from model.data_models import Vendor, Food
 from sqlalchemy_utils import database_exists, create_database
@@ -39,7 +40,7 @@ def all_vendors():
   try:
     vendors = Vendor.query.all()
     output['status'] = "success"
-    output['vendors'] = [vendor.json() for vendor in vendors]
+    output['vendors'] = [vendor.json_full() for vendor in vendors]
     return jsonify(output), 200
   except:
     output['status'] = "error"
@@ -55,7 +56,7 @@ def all_food():
   try:
     foods = Food.query.all()
     output['status'] = "success"
-    output['vendors'] = [food.full_json() for food in foods]
+    output['food'] = [food.json_full() for food in foods]
     return jsonify(output), 200
   except:
     output['status'] = "error"
@@ -92,8 +93,8 @@ def menu():
     vendors = Vendor.query.all()
     for vendor in vendors:
       foods = Food.query.filter_by(vendor_id=vendor.vendor_id, availability=True, listed=True)
-      vendor_json = vendor.json()
-      vendor_json['foods'] = [food.json() for food in foods]
+      vendor_json = vendor.json_full()
+      vendor_json['foods'] = [food.json_default() for food in foods]
       vendor_list.append(vendor_json)
     output['status'] = "success"
     output['vendors'] = vendor_list
@@ -139,3 +140,87 @@ def menu_basic():
   except:
     output['status'] = "error"
     return jsonify(output), 400
+
+@app.route("/vendor/add", methods=["POST"])
+def add():
+  """
+  Allows a Vendor to add an item to the menu
+  """
+  output = {"status": ""}
+  if request.is_json:
+    information = request.json
+    try:
+      vendor_id        = information['vendor_id']
+      food_name        = information['food_name']
+      food_description = information['food_description']
+      food_price       = information['food_price']
+      db.session.add(Food(vendor_id,food_name,food_description,food_price))
+      db.session.commit()
+      output['status'] = "success"
+      code = 200    
+    except:
+      output['status'] = "error"
+      output['message'] = "Error with information processing"
+      code = 400
+  else:
+    output['status'] = "error"
+    output['message'] = "Posted Information is not JSON"
+    code = 400
+    
+  return jsonify(output), code
+
+@app.route("/vendor/update", methods=["PUT"])
+def update():
+  """
+  Allows a Vendor to add an item to the menu
+  """
+  output = {"status": ""}
+  if request.is_json:
+    information = request.json
+    try:
+      food_id        = information['food_id']
+      food_name        = information['food_name']
+      food_description = information['food_description']
+      food_price       = information['food_price']
+      food = Food.query.filter_by(food_id=food_id).update({"food_name": food_name,
+                                                           "food_description": food_description,
+                                                           "food_price": food_price})
+      db.session.commit()
+      output['status'] = "success"
+      code = 200    
+    except:
+      output['status'] = "error"
+      output['message'] = "Error with information processing"
+      code = 400
+  else:
+    output['status'] = "error"
+    output['message'] = "Posted Information is not JSON"
+    code = 400
+    
+  return jsonify(output), code
+
+@app.route("/vendor/delete", methods=["DELETE"])
+def delete():
+  """
+  Allows a Vendor to add an item to the menu
+  """
+  output = {"status": ""}
+  if request.is_json:
+    information = request.json
+    try:
+      food_id = information['food_id']
+      food = Food.query.filter_by(food_id=food_id).update({"availability": False,
+                                                           "listed": False})
+      db.session.commit()
+      output['status'] = "success"
+      code = 200    
+    except:
+      output['status'] = "error"
+      output['message'] = "Error with information processing"
+      code = 400
+  else:
+    output['status'] = "error"
+    output['message'] = "Posted Information is not JSON"
+    code = 400
+    
+  return jsonify(output), code

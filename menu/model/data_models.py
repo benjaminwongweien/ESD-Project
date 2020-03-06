@@ -22,7 +22,7 @@ class Vendor(db.Model):
         return {"vendor_id":   self.vendor_id,
                 "vendor_name": self.vendor_name}        
     
-    def json(self):
+    def json_full(self):
         return {"vendor_id":   self.vendor_id,
                 "vendor_name": self.vendor_name,
                 "halal":       self.halal}
@@ -44,7 +44,7 @@ class Food(db.Model):
         self.food_description = food_description
         self.food_price       = food_price
     
-    def json(self):
+    def json_default(self):
         return {"food_id":          self.food_id,
                 "food_name":        self.food_name,
                 "food_description": self.food_description,
@@ -54,9 +54,8 @@ class Food(db.Model):
         return {"food_id":          self.food_id,
                 "food_name":        self.food_name}     
     
-    def full_json(self):
+    def json_full(self):
         return {"vendor_id":        self.vendor_id,
-                "vendor_name":      self.vendor_name,
                 "food_id":          self.food_id,
                 "food_name":        self.food_name,
                 "food_description": self.food_description,
