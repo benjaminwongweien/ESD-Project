@@ -30,6 +30,38 @@ app = create_app(os.environ['URI'])
 app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
 db.create_all() # Creates All Tables 
 
+@app.route("/bootstrap", methods=["GET"])
+def bootstrap():
+  """
+  Reset the Server
+  """
+  db.engine.execute("DROP DATABASE menu")
+  db.engine.execute("CREATE DATABASE menu")
+  db.engine.execute("use menu")
+  db.create_all()
+  # Food.query.delete()
+  # Vendor.query.delete()
+  db.session.commit()
+  import csv
+  with open("menu.csv","r") as file:
+    csvfile = csv.reader(file,delimiter=",",quotechar='"')
+    csvfile = list(csvfile)
+    print(csvfile)
+  
+  for x in range(1,csvfile.count(["","",""]) + 2):
+    db.session.add(Vendor(f"Vendor{x}",True))
+  db.session.commit()
+
+  count=1
+  for line in csvfile:
+    if line == ["","",""]:
+      count += 1
+    else:
+      db.session.add(Food(count,line[0],line[1],float(line[2])))
+  db.session.commit()
+  
+  return "ok"
+  
 # Please disable by commenting off app.route -- For Testing Purposes Only
 @app.route("/all_vendors", methods=["GET"])
 def all_vendors():
