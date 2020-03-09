@@ -1,32 +1,28 @@
 package com.deliveryapp.order;
 
-import com.deliveryapp.order.repository.*;
-import com.deliveryapp.order.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-/**
- * The type User controller.
- *
- * @author Givantha Kalansuriya
- */
+import java.util.*;
 
 @RestController
-@RequestMapping("/order")
 public class OrderController {
 
-  /**
-   * Get all Orders list.
-   *
-   * @return the list
-   */
+    @Autowired
+    OrderRepository OrderRepo;
 
-  @GetMapping("/retrieveAll")
-  public List<Order> getAllOrders() {
+    @GetMapping("/")
+    public List<Order> index() {
+        return OrderRepo.findAll();
+    }
+
+    @PostMapping("/retrieve")
+        public List<Order> findOrdersbyUserID(@RequestBody Map<String, String> body) {
+            String custID = body.get("userid");
+            int CustID = Integer.parseInt(custID);
+            return OrderRepo.findByCustomerID(CustID);
+    }
+
 
 }

@@ -1,40 +1,59 @@
 package com.deliveryapp.order;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "order")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "Orders")
 public class Order {
+    
     @Id
-    @Column (name = "CustomerID", nullable = false)
+    @Column(name="CustomerID")
     private int customerID;
-    @Id
-    @Column(name = "orderID", nullable = false)
+    
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="orderID")
     private int orderID;
-    @Column(name = "vendorID", nullable = false)
+
     private int vendorID;
-    @Column(name = "delivererID", nullable = false)
     private int delivererID;
-    @Column(name = "foodID", nullable = false)
     private int foodID;
-    @Column(name = "quantity", nullable = false)
     private int quantity;
-    @Column(name = "checkoutID", nullable = false)
     private String checkoutID;
+    private String order_status;
+
+    public Order() {
+        
+    }
 
     public Order(int customerID, int orderID, int vendorID, int delivererID, 
-        int foodID, int quantity, String checkoutID) {
+        int foodID, int quantity, String checkoutID, String order_status) {
         
         this.customerID = customerID;
+        this.vendorID = vendorID;
         this.orderID = orderID;
+        this.delivererID = delivererID;
+        this.foodID = foodID;
+        this.quantity = quantity;
+        this.checkoutID = checkoutID;
+        this.order_status = order_status;
+
+    }
+
+    public Order(int customerID, int vendorID, int delivererID, 
+        int foodID, int quantity, String checkoutID, String order_status) {
+        
+        this.customerID = customerID;
         this.vendorID = vendorID;
         this.delivererID = delivererID;
         this.foodID = foodID;
         this.quantity = quantity;
         this.checkoutID = checkoutID;
+        this.order_status = order_status;
 
     }
 
@@ -66,5 +85,9 @@ public class Order {
 
     public String getCheckoutID() {
         return checkoutID;
+    }
+
+    public String getStatus() {
+        return order_status;
     }
 }
