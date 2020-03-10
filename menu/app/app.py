@@ -1,5 +1,3 @@
-##!/usr/bin/python
-
 """
 Menu Microservice
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
@@ -10,7 +8,6 @@ import json
 from flask import Flask, jsonify, request
 from model.base import db
 from model.data_models import Vendor, Food
-from sqlalchemy_utils import database_exists, create_database
 
 def create_app(uri):
   """
@@ -20,33 +17,32 @@ def create_app(uri):
   app = Flask(__name__)
   app.config['SQLALCHEMY_DATABASE_URI'] = uri
   app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-  # create the database menu if it does not exist
-  if not database_exists(uri):
-    create_database(uri)
   db.init_app(app)
   return app
 
-app = create_app(os.environ['URI'])
-app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
-db.create_all() # Creates All Tables 
+app = create_app(os.environ["URI"])
+# https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
+app.app_context().push() 
+
+@app.errorhandler(404)
+@app.errorhandler(500)
+@app.errorhandler(502)
+@app.errorhandler(503)
+@app.errorhandler(504)
+def error(e):
+  return jsonify({"error": "error"})
 
 @app.route("/bootstrap", methods=["GET"])
 def bootstrap():
   """
   Reset the Server
   """
-  db.engine.execute("DROP DATABASE menu")
-  db.engine.execute("CREATE DATABASE menu")
-  db.engine.execute("use menu")
   db.create_all()
-  # Food.query.delete()
-  # Vendor.query.delete()
   db.session.commit()
   import csv
   with open("menu.csv","r") as file:
     csvfile = csv.reader(file,delimiter=",",quotechar='"')
-    csvfile = list(csvfile)
-    print(csvfile)
+    csvfile = list( csvfile)
   
   for x in range(1,csvfile.count(["","",""]) + 2):
     db.session.add(Vendor(f"Vendor{x}",True))

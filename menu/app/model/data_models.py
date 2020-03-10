@@ -5,7 +5,7 @@ Menu Microservice Data Models
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
-from model.base import db
+from .base import db
 
 class Vendor(db.Model):
     vendor_id       = db.Column(db.Integer, primary_key=True, autoincrement=True)
