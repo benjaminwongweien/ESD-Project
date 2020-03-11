@@ -47,6 +47,13 @@
 						Sign In With
 					</span>
 
+						<!-- default FB button -->
+						<a href="#" class="btn-face m-b-20">
+							<i class="fa fa-facebook-official"></i>
+							Facebook
+						</a>
+						
+						<!-- working FB button -->
 						<div class="facebook btn-face">
 							<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 							</fb:login-button>
@@ -59,6 +66,13 @@
 							</div>
 						</div>
 					
+					<!-- default google button -->
+					<a href="#" class="btn-google m-b-20">
+						<img src="login_util/images/icons/icon-google.png" alt="GOOGLE">
+						Google
+					</a>
+					
+					<!-- working google button -->
 					<div href="#" class="g-signin2" data-onsuccess="onSignIn">
 					</div>  
 				
