@@ -21,6 +21,7 @@ def create_app(uri):
   db.init_app(app)
   return app
 
+# app=create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
 app = create_app(os.environ["URI"])
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
 app.app_context().push() 
@@ -42,7 +43,7 @@ def bootstrap():
   db.create_all()
   db.session.commit()
   import csv
-  with open("menu.csv","r") as file:
+  with open("menu.csv","r", encoding="cp1252") as file:
     csvfile = csv.reader(file,delimiter=",",quotechar='"')
     csvfile = list(csvfile)
   
@@ -206,7 +207,7 @@ def shopfront():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400  
+                  "description": "an unknown error occured"}), 500  
 
 @app.route("/search/food", methods=["POST"])
 def purchase():
@@ -227,7 +228,7 @@ def purchase():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400  
+                  "description": "an unknown error occured"}), 500  
   
 ### --- VENDOR APIs --- ###  
 @app.route("/vendor/add", methods=["POST"])
@@ -253,7 +254,7 @@ def add():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400
+                  "description": "an unknown error occured"}), 500
    
 @app.route("/vendor/update", methods=["PUT"])
 def update():
@@ -279,7 +280,7 @@ def update():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400
+                  "description": "an unknown error occured"}), 500
 
 @app.route("/vendor/delete", methods=["DELETE"])
 def delete():
@@ -302,7 +303,7 @@ def delete():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400
+                  "description": "an unknown error occured"}), 500
 
 @app.route("/vendor/take_off", methods=["PUT"])
 def take_off():
@@ -313,6 +314,9 @@ def take_off():
       vendor_id = information['vendor_id']
       food_id   = information['food_id']
       food = Food.query.filter_by(vendor_id=vendor_id,food_id=food_id,listed=True).update({"availability": False})
+      if not food:
+        return jsonify({"status"     : "error", 
+                        "description": "food item not found or removed from the menu"}), 400
       db.session.commit()
       return jsonify({"status"     : "success",
                       "description": "item has been taken off the menu"}), 200 
@@ -324,7 +328,7 @@ def take_off():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400
+                  "description": "an unknown error occured"}), 500
 
 @app.route("/vendor/put_up", methods=["PUT"])
 def put_up():
@@ -335,6 +339,9 @@ def put_up():
       vendor_id = information['vendor_id']
       food_id   = information['food_id']
       food = Food.query.filter_by(vendor_id=vendor_id,food_id=food_id,listed=True).update({"availability": True})
+      if not food:
+        return jsonify({"status"     : "error", 
+                        "description": "food item not found or removed from the menu"}), 400
       db.session.commit()
       return jsonify({"status"     : "success",
                       "description": "item has been put onto the menu"}), 200 
@@ -346,4 +353,4 @@ def put_up():
                     "description": "posted information is not json"}), 400
     
   return jsonify({"status"     : "error", 
-                  "description": "an unknown error occured"}), 400
+                  "description": "an unknown error occured"}), 500
