@@ -30,12 +30,12 @@ public class Order {
         
     }
 
-    public Order(int customerID, int orderID, int vendorID, int delivererID, 
+
+    public Order(int customerID, int vendorID, int delivererID, 
         int foodID, int quantity, String checkoutID, String order_status) {
         
         this.customerID = customerID;
         this.vendorID = vendorID;
-        this.orderID = orderID;
         this.delivererID = delivererID;
         this.foodID = foodID;
         this.quantity = quantity;
@@ -44,11 +44,22 @@ public class Order {
 
     }
 
-    public Order(int customerID, int vendorID, int delivererID, 
+    // Used to create Pending Order after user confirms order cart and makes payment
+    public Order(int customerID, int foodID, int quantity, String checkoutID, String order_status) {
+        this.customerID = customerID;
+        this.foodID = foodID;
+        this.quantity = quantity;
+        this.checkoutID = checkoutID;
+        this.order_status = order_status;
+    }
+
+    // General Constructor for Order
+    public Order(int customerID, int orderID, int vendorID, int delivererID, 
         int foodID, int quantity, String checkoutID, String order_status) {
         
         this.customerID = customerID;
         this.vendorID = vendorID;
+        this.orderID = orderID;
         this.delivererID = delivererID;
         this.foodID = foodID;
         this.quantity = quantity;
