@@ -80,7 +80,7 @@
 							foreach ($vendors['vendors'] as $vendor) {
 								echo "<div class='col single-team'>";
 									echo "<div class='thumb'>";
-										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://192.168.99.100/static/{$vendor['vendor_image']}'></a>";
+										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://localhost/static/{$vendor['vendor_image']}'></a>";
 									echo "</div>";
 									echo "<div class='meta-text mt-30 text-justify'>";
 										echo "<h4>{$vendor['vendor_name']}</h4>";	

@@ -26,9 +26,6 @@ require_once("./stripe-php-7.27.1/init.php");
   // This is the Private Key
   // If deployed, these should be stored as an evironment variable
   Stripe\Stripe::setApiKey('sk_test_IGEllSO26K2ZNmsjykkK0yom00Wh5CGkdw');
-  $amt = str_replace('.','',$_POST['amount']);
-  $total = $_POST['quantity'] * $amt;
-  // var_dump($_POST['foodpic']);
 
   $customer = \Stripe\Checkout\Session::create([
     'success_url'          => "http://localhost/run/success.php?customerid={$_POST['customerid']}&session_id={CHECKOUT_SESSION_ID}",
@@ -37,12 +34,9 @@ require_once("./stripe-php-7.27.1/init.php");
     'line_items'           => [
       [
         'name'        => $_POST['foodname'],
-        // 'description' => 'A very unique description',
-        'description' => $_POST['food_description'],
-        'images' => ['https://images.unsplash.com/photo-1526047932273-341f2a7631f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80'],
-        'images' => [$_POST['foodpic']],
-        // 'amount'      => 1000,
-        'amount'      => $total,
+        'description' => 'A very unique description',
+        'images' => ['https://drive.google.com/file/d/1LK7nsufQ-zed17KYJQDx7KHAJ1przBMM/view?usp=sharing'],
+        'amount'      => 1000,
         'currency'    => 'sgd',
         'quantity'    => $_POST['quantity'],
       ],

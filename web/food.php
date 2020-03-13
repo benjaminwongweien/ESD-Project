@@ -82,8 +82,8 @@
 						<?php
 									foreach ($all_food['food'] as $food) {
 										if( $_GET["vendor_id"] == $food['vendor_id']){
-											// var_dump($food);
 											echo "<div class='col-md-3 single-team'>";
+												echo "<form action='../payment facilitation/payment.php' method='POST'>";
 												echo "<div class='thumb'>";
 													echo "<img class='img-fluid' src='http://localhost/static/{$food['food_image']}'>";
 												echo "</div>";
@@ -96,7 +96,18 @@
 														echo "<p>Availability: <b>No</b></p>";
 													}
 													echo "<p>Price: \$ {$food['food_price']}</p>";
-													echo "<button href='#' class='genric-btn info-border circle'>Buy</button>";
+													echo "<div class='meta-text mt-30 text-center'>";
+														echo "<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+														//Need to change
+														echo "<input type='hidden' value='haojunisfantastic' name='customerid'>";
+														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='customerid'>";
+														echo "<input type='hidden' value='{$food['food_name']}' name='foodname'>";
+														echo "<input type='hidden' value='https://g3t8-esd-bucket.s3-ap-southeast-1.amazonaws.com/{$food['food_image']}' name='foodpic'>";
+														echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
+														echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
+														echo "<input class='genric-btn info-border circle' type='submit' value='Buy'>";
+													echo "</div>";	
+												echo "</form>";
 												echo "</div>";
 											echo "</div>";
 										}
@@ -214,8 +225,8 @@
 			<script src="homepage_util/js/jquery.sticky.js"></script>
 			<script src="homepage_util/js/jquery.nice-select.min.js"></script>			
 			<script src="homepage_util/js/parallax.min.js"></script>	
-			<script src="homepage_util/js/waypoints.min.js"></script>
-			<script src="homepage_util/js/jquery.counterup.min.js"></script>
+			<!-- <script src="homepage_util/js/waypoints.min.js"></script> -->
+			<!-- <script src="homepage_util/js/jquery.counterup.min.js"></script> -->
 			<script src="homepage_util/js/mail-script.js"></script>				
 			<script src="homepage_util/js/main.js"></script>	
 		</body>
