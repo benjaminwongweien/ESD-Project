@@ -34,7 +34,7 @@ services:
             dockerfile: DOCKERFILE_NGINX
         container_name: nginx_server
         ports:
-            - "80:80"
+            - "85:80"
         networks:
             - menu_microservice_network
         depends_on: 

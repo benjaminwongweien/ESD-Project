@@ -5,8 +5,8 @@ services:
         image: rabbitmq:3.8.3-management
         container_name: rabbitmq_broker
         ports:
-            - "5672:5672"
-            - "8080:15672"
+            - "5673:5672"
+            - "15673:15672"
         networks:
             - rabbitmq_broker_network
         environment:
