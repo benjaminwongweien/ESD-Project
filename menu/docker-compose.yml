@@ -6,10 +6,10 @@ services:
             context: ./app
             dockerfile: DOCKERFILE_MENU
         container_name: menu_microservice
-        expose:
+        ports:
             - "8000"
-        #ports:
-        #    - "80:8000"
+        networks:
+            - menu_microservice_network
         command: gunicorn -b 0.0.0.0:8000 app:app
         environment: 
             - "URI=postgresql://easydeliverymenudb:easydeliverymenudbpassword@db:5432/menu" 
@@ -21,18 +21,25 @@ services:
         container_name: postgres_menu_database
         ports:
             - "5432"
+        networks:
+            - menu_microservice_network
         environment:
             POSTGRES_DB: menu
             POSTGRES_USER: easydeliverymenudb
             POSTGRES_PASSWORD: easydeliverymenudbpassword
     
     nginx:
-        image: nginx
         build:
             context: ./nginx
             dockerfile: DOCKERFILE_NGINX
         container_name: nginx_server
         ports:
             - "80:80"
+        networks:
+            - menu_microservice_network
         depends_on: 
             - web
+    
+networks:
+    menu_microservice_network: 
+        driver: "bridge"
