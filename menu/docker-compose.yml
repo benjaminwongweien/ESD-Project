@@ -1,13 +1,13 @@
 version: '3.7'
 services:
 
-    web:
+    menu:
         build:
             context: ./app
             dockerfile: DOCKERFILE_MENU
         container_name: menu_microservice
-        ports:
-            - "8000"
+        # ports: (This exposes the port and we don't want that we want to expose the nginx port)
+        #     - "8000"
         networks:
             - menu_microservice_network
         command: gunicorn -b 0.0.0.0:8000 app:app
@@ -17,10 +17,10 @@ services:
             - db
     
     db:
-        image: postgres
+        image: postgres:12.2-alpine
         container_name: postgres_menu_database
-        ports:
-            - "5432"
+        # ports:
+        #     - "5432"
         networks:
             - menu_microservice_network
         environment:
@@ -38,7 +38,7 @@ services:
         networks:
             - menu_microservice_network
         depends_on: 
-            - web
+            - menu
     
 networks:
     menu_microservice_network: 
