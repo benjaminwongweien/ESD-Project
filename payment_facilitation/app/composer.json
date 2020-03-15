@@ -1,0 +1,6 @@
+{
+  "require": {
+      "stripe/stripe-php": ">=0",
+      "php-amqplib/php-amqplib": ">=0"
+  }
+}

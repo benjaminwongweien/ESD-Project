@@ -9,7 +9,7 @@
   // Code Here
 
 /* The STRIPE Library Dependencies: curl, json, mbstring */
-require_once("./stripe-php-7.27.1/init.php");
+require_once(__DIR__ . "/vendor/autoload.php");
 ?>
 
 <!doctype html>
@@ -26,8 +26,6 @@ require_once("./stripe-php-7.27.1/init.php");
   // This is the Private Key
   // If deployed, these should be stored as an evironment variable
   Stripe\Stripe::setApiKey('sk_test_IGEllSO26K2ZNmsjykkK0yom00Wh5CGkdw');
-  $amt = str_replace('.','',$_POST['amount']);
-  $total = $_POST['quantity'] * $amt;
   // var_dump($_POST['foodpic']);
 
   $customer = \Stripe\Checkout\Session::create([
@@ -42,7 +40,7 @@ require_once("./stripe-php-7.27.1/init.php");
         'images' => ['https://images.unsplash.com/photo-1526047932273-341f2a7631f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80'],
         'images' => [$_POST['foodpic']],
         // 'amount'      => 1000,
-        'amount'      => $total,
+        'amount_decimal'      => $_POST['amount'],
         'currency'    => 'sgd',
         'quantity'    => $_POST['quantity'],
       ],
