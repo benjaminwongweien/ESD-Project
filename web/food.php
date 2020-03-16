@@ -83,7 +83,7 @@
 									foreach ($all_food['food'] as $food) {
 										if( $_GET["vendor_id"] == $food['vendor_id']){
 											echo "<div class='col-md-3 single-team'>";
-												echo "<form action='http://localhost/payment.php' method='POST'>";
+												echo "<form action='http://localhost:86/payment.php' method='POST'>";
 												echo "<div class='thumb'>";
 													echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
 												echo "</div>";

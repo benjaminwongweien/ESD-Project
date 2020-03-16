@@ -69,7 +69,7 @@
 							<p class="text-white">
 								Food delivery near you from a curated choice of local restaurants across Singapore.
 							</p>
-							<a href="#dish" class="primary-btn header-btn text-uppercase">Check Our Vendors</a>
+							<a href="vendors.php#main" class="primary-btn header-btn text-uppercase">Check Our Vendors</a>
 						</div>												
 					</div>
 				</div>
@@ -192,7 +192,7 @@
 								$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
 								foreach ($all_food['food'] as $food) {
 									if( $food['vendor_id'] == 1){
-										echo "<form action='http://localhost/payment.php' method='POST'>";
+										echo "<form action='http://localhost:86/payment.php' method='POST'>";
 										echo "<div class='row align-items-center'>";
 											echo "<div class='col-lg-6 rel-left'>";
 												echo "<h3>{$food['food_name']}</h3>";
