@@ -28,6 +28,8 @@ services:
         volumes:
             - "./app:/app"
         privileged: True
+        networks:
+            - payment_facilitation_network
         command: ["composer", "install"]
 
 networks:
