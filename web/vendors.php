@@ -54,7 +54,7 @@
 				<div class="container">
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
-						<h4 class="text-white text-uppercase">Wide Network of Choice</h4>
+						<h4 class="text-white text-uppercase">Wide Network of Choices</h4>
 						<h1>
 							Vendors
 						</h1>
@@ -71,16 +71,16 @@
 			<div class="main-wrapper">
 
 				<!-- Start team Area -->
-				<section class="team-area pt-100">
+				<section class="team-area pt-100" id="main">
 					<div class="container">					
 						<div class="row justify-content-center d-flex align-items-left">
 						<?php
-							$vendors = json_decode(file_get_contents("http://localhost/all_vendor"), TRUE);
+							$vendors = json_decode(file_get_contents("http://localhost:85/all_vendor"), TRUE);
 							
 							foreach ($vendors['vendors'] as $vendor) {
 								echo "<div class='col single-team'>";
 									echo "<div class='thumb'>";
-										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://localhost/static/{$vendor['vendor_image']}'></a>";
+										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://192.168.99.100:85/static/{$vendor['vendor_image']}'></a>";
 									echo "</div>";
 									echo "<div class='meta-text mt-30 text-justify'>";
 										echo "<h4>{$vendor['vendor_name']}</h4>";	
