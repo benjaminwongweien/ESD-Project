@@ -81,7 +81,7 @@
 								foreach ($all_food['food'] as $food) {
 									if( $food['vendor_id'] == 1 and $food['food_id'] == 3){
 										echo "<div class='col-md-3 single-team'>";
-											echo "<form action='../payment_facilitation/app/payment.php' method='POST'>";
+											echo "<form action='http://localhost:86/payment.php' method='POST'>";
 											echo "<div class='thumb'>";
 												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
 											echo "</div>";
@@ -100,7 +100,7 @@
 
 									if( $food['vendor_id'] == 1 and $food['food_id'] == 4){
 										echo "<div class='col-md-3 single-team'>";
-											echo "<form action='htpp://localhost:86/payment.php' method='POST'>";
+											echo "<form action='http://localhost:86/payment.php' method='POST'>";
 											echo "<div class='thumb'>";
 												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
 											echo "</div>";
