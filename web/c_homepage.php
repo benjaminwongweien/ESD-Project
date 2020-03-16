@@ -114,16 +114,7 @@
 							<p>
 								Broth Asia soup makes you feel warm inside. Happy, safe, comforted, and at home. Each one is unique, an expression of the culture that inspired it and the home cooking that created it.
 							</p>
-						</div>
-						<div class="single-dish col-lg-4">
-							<div class="thumb">
-								<img class="img-fluid"  src="homepage_util/img/vendor-broth.jpg" alt="">
-							</div>
-							<h4 class="text-uppercase pt-20 pb-20">Broth Asia</h4>
-							<p>
-								Broth Asia soup makes you feel warm inside. Happy, safe, comforted, and at home. Each one is unique, an expression of the culture that inspired it and the home cooking that created it.
-							</p>
-						</div>												
+						</div>										
 					</div>
 				</div>	
 			</section>
@@ -197,48 +188,33 @@
 					</div>						
 					<div class="row justify-content-center">
 						<div class="active-realated-carusel">
-							<div class="item row align-items-center">
-								<div class="col-lg-6 rel-left">
-								   <h3>
-								   		Fresh & Crispy All the time
-								   </h3>
-								   <p class="pt-30 pb-30">
-								 	  	Who are in extremely love with eco friendly system. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-								   </p>
-									<a href="#" class="primary-btn header-btn text-uppercase">view full menu</a>								   
-								</div>
-								<div class="col-lg-6">
-									<img class="img-fluid" src="homepage_util/img/slider1.jpg" alt="">
-								</div>
-							</div>
-							<div class="item row align-items-center">
-								<div class="col-lg-6 rel-left">
-								   <h3>
-								   		Testing Carousel 
-								   </h3>
-								   <p class="pt-30 pb-30">
-								 	  	Who are in extremely love with eco friendly system. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-								   </p>
-									<a href="#" class="primary-btn header-btn text-uppercase">view full menu</a>								   
-								</div>
-								<div class="col-lg-6">
-									<img class="img-fluid" src="homepage_util/img/slider1.jpg" alt="">
-								</div>
-							</div>	
-							<div class="item row align-items-center">
-								<div class="col-lg-6 rel-left">
-								   <h3>
-								   		Testing Carousel 2, added one item
-								   </h3>
-								   <p class="pt-30 pb-30">
-								 	  	Who are in extremely love with eco friendly system. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-								   </p>
-									<a href="#" class="primary-btn header-btn text-uppercase">view full menu</a>								   
-								</div>
-								<div class="col-lg-6">
-									<img class="img-fluid" src="homepage_util/img/slider1.jpg" alt="">
-								</div>
-							</div>							
+							<?php
+								$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
+								foreach ($all_food['food'] as $food) {
+									if( $food['vendor_id'] == 1){
+										echo "<form action='http://localhost/payment.php' method='POST'>";
+										echo "<div class='row align-items-center'>";
+											echo "<div class='col-lg-6 rel-left'>";
+												echo "<h3>{$food['food_name']}</h3>";
+												echo "<p class='pt-30 pb-30'>{$food['food_description']}</p>";
+												echo "<p>Price: \$ {$food['food_price']}</p>";
+												echo "<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+												echo "<input class='genric-btn info-border circle' type='submit' value='Buy Now'>";
+
+												echo "<input type='hidden' value='{$food['vendor_id']}' name='customerid'>";
+												echo "<input type='hidden' value='{$food['food_name']}' name='foodname'>";
+												echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
+												echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
+											echo "</div>";
+											echo "<div class='thumb'>";
+												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}' alt=''>";
+											echo "</div>";
+										echo "</div>";
+										echo "</form>";
+									}
+								}
+							?>					
+												
 						</div>
 					</div>
 				</div>	

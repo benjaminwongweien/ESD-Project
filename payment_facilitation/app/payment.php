@@ -26,7 +26,6 @@ require_once(__DIR__ . "/vendor/autoload.php");
   // This is the Private Key
   // If deployed, these should be stored as an evironment variable
   Stripe\Stripe::setApiKey('sk_test_IGEllSO26K2ZNmsjykkK0yom00Wh5CGkdw');
-  // var_dump($_POST['foodpic']);
 
   $customer = \Stripe\Checkout\Session::create([
     'success_url'          => "http://localhost/run/success.php?customerid={$_POST['customerid']}&session_id={CHECKOUT_SESSION_ID}",
@@ -35,12 +34,9 @@ require_once(__DIR__ . "/vendor/autoload.php");
     'line_items'           => [
       [
         'name'        => $_POST['foodname'],
-        // 'description' => 'A very unique description',
         'description' => $_POST['food_description'],
-        'images' => ['https://images.unsplash.com/photo-1526047932273-341f2a7631f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80'],
-        'images' => [$_POST['foodpic']],
-        // 'amount'      => 1000,
-        'amount_decimal'      => $_POST['amount'],
+        'images' => ['https://media.giphy.com/media/QUSUYLUUAIZ7EQpepf/giphy.gif'],
+        'amount'      => $_POST['amount'] * 100,
         'currency'    => 'sgd',
         'quantity'    => $_POST['quantity'],
       ],

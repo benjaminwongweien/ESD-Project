@@ -55,8 +55,8 @@
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
 						<?php
-							$vendors= json_decode(file_get_contents("http://192.168.99.100/all_vendor"), TRUE);
-							$all_food = json_decode(file_get_contents("http://192.168.99.100/all_food"), TRUE);
+							$vendors= json_decode(file_get_contents("http://localhost:85/all_vendor"), TRUE);
+							$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
 
 							foreach ($vendors['vendors'] as $vendor) {
 								if( $_GET["vendor_id"] == $vendor['vendor_id']) {
@@ -83,9 +83,9 @@
 									foreach ($all_food['food'] as $food) {
 										if( $_GET["vendor_id"] == $food['vendor_id']){
 											echo "<div class='col-md-3 single-team'>";
-												echo "<form action='../payment facilitation/payment.php' method='POST'>";
+												echo "<form action='http://localhost/payment.php' method='POST'>";
 												echo "<div class='thumb'>";
-													echo "<img class='img-fluid' src='http://localhost/static/{$food['food_image']}'>";
+													echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
 												echo "</div>";
 												echo "<div class='meta-text mt-30 text-justify'>";
 													echo "<h4>{$food['food_name']}</h4>";	
@@ -102,7 +102,6 @@
 														echo "<input type='hidden' value='haojunisfantastic' name='customerid'>";
 														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='customerid'>";
 														echo "<input type='hidden' value='{$food['food_name']}' name='foodname'>";
-														echo "<input type='hidden' value='https://g3t8-esd-bucket.s3-ap-southeast-1.amazonaws.com/{$food['food_image']}' name='foodpic'>";
 														echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
 														echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
 														echo "<input class='genric-btn info-border circle' type='submit' value='Buy'>";
