@@ -28,6 +28,11 @@
 			<link rel="stylesheet" href="homepage_util/css/animate.min.css">
 			<link rel="stylesheet" href="homepage_util/css/owl.carousel.css">
 			<link rel="stylesheet" href="homepage_util/css/main.css">
+
+			<script>
+				var username = sessionStorage.getItem("name");
+				console.log(username);
+			</script>
 		</head>
 		<body>
 
@@ -41,14 +46,11 @@
 				        <ul class="nav-menu">
 				          <li class="menu-active"><a href="#home">Home</a></li>
 				          <li><a href="vendors.php">Vendors</a></li>
-				          <!-- <li><a href="#chefs">Vendors</a></li> -->
-				          <!-- <li><a href="#blog">Blog</a></li> -->
-				          <li><a href="orders.php">Orders</a></li>
-						  <!-- <li class="menu-has-children"><a href="">Pages</a> -->
-							<li><a href="#">Login</a></li>
+				          <!-- <li><a href="orders.php">Orders</a></li> -->
+						  <li class="menu-has-children"><a href=""><p id="user"></p></a>
 				            <ul>
-				              <li><a href="#">Logout</a></li>
-				              <!-- <li><a href="elements.html">Elements</a></li> -->
+				              <li><a href="orders.php">Orders</a></li>
+				              <li><a href="logout.php">Logout</a></li>
 				            </ul>
 				          </li>
 				        </ul>
@@ -470,6 +472,12 @@
 			<script src="homepage_util/js/parallax.min.js"></script>	
 			<script src="homepage_util/js/mail-script.js"></script>	
 			<script src="homepage_util/js/main.js"></script>	
+
+
+			<!-- Display user name upon logging in -->
+			<script>
+				document.getElementById("user").innerHTML = username;
+			</script>
 		</body>
 	</html>
 

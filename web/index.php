@@ -30,11 +30,6 @@
 	<link rel="stylesheet" type="text/css" href="login_util/css/util.css">
 	<link rel="stylesheet" type="text/css" href="login_util/css/main.css">
 <!--===============================================================================================-->
-<!-- <style>
-        .data{
-            display: none;
-        }
-</style> -->
 
 </head>
 <body>
@@ -46,44 +41,57 @@
 					<span class="login100-form-title p-b-53">
 						Sign In With
 					</span>
-
+						
 						<!-- default FB button -->
-						<a href="#" class="btn-face m-b-20">
-							<i class="fa fa-facebook-official"></i>
+						<a href="c_homepage.php" class="btn-face m-b-20" id="facebook_button">
+							<div>
+								<i class="fa fa-facebook-official" style="position:relative;"></i>
+							</div>	
 							Facebook
+							<div style="opacity:0;position:absolute;">
+								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
+								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
+								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
+							</div>
 						</a>
 						
 						<!-- working FB button -->
-						<div class="facebook btn-face">
-							<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-							</fb:login-button>
+						<!-- <div style="opacity:0.5">
+							<div class="facebook">
+								<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+								</fb:login-button>
 
-							<div id="status">
-							</div>
+								<div id="status">
+								</div>
 
-							<div id="logout">
-							<button onclick="facebook_logOut()">Logout</button> 
+								<div id="logout">
+								<button onclick="facebook_logOut()">Logout</button> 
+								</div>
 							</div>
-						</div>
+						</div> -->
 					
 					<!-- default google button -->
-					<a href="#" class="btn-google m-b-20">
-						<img src="login_util/images/icons/icon-google.png" alt="GOOGLE">
-						Google
+					<a href="c_homepage.php" class="btn-google m-b-20" id="google_button">
+						<div>
+							<img src="login_util/images/icons/icon-google.png" alt="GOOGLE" style="position:relative;">
+						</div>	
+							Google
+						<div style="opacity:0;position:absolute;">
+							<div href="#" class="g-signin2" data-onsuccess="onSignIn" data-width="205" data-height="75"></div>  
+						</div>
 					</a>
 					
 					<!-- working google button -->
-					<div href="#" class="g-signin2" data-onsuccess="onSignIn">
-					</div>  
-				
-				
+					<!-- <div style="opacity:0.5">
+						<div href="#" class="g-signin2" data-onsuccess="onSignIn"></div>  
+					</div> -->
 				
 				</form>
 			</div>
 		</div>
 	</div>
 
-	<div class="data">
+	<!-- <div class="data">
         <p>Profile Details</p>
         <img id="pic" class="img-circle" width="100" height="100"/>
         <p>Email Address</p>
@@ -91,7 +99,7 @@
         <p>Name</p>
         <p id="name" class="alert alert-danger"></p>
         <button onclick="signOut()" class="btn btn-danger">Sign Out</button>
-    </div>
+    </div> -->
 	
 	
 <!--===============================================================================================-->
@@ -170,8 +178,23 @@
 			document.getElementById('g-signin2').style.display = "none";
 			document.getElementById('data').style.display = "none";
 		});
-		$.session.set("")
+		sessionStorage.setItem("name", response.name);
+		window.location.replace("https://localhost/elysion2/web/c_homepage.php");
 		}
+
+// /// ///  Google JS /// /// //
+		function onSignIn(googleUser) {
+			var profile = googleUser.getBasicProfile();
+			$(".g-signin2").css("display", "none");
+			$(".data").css("display", "block");
+			var pic = $("#pic").attr('src',  profile.getImageUrl());
+			var email = $("#email").text(profile.getEmail());
+			var name = $("#name").text(profile.getName());
+			
+			sessionStorage.setItem("name", profile.getName());
+			window.location.replace("https://localhost/elysion2/web/c_homepage.php");
+		}
+		
 
 	</script>
 
