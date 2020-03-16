@@ -43,7 +43,7 @@
 				          <li><a href="vendors.php">Vendors</a></li>
 				          <!-- <li><a href="#chefs">Vendors</a></li> -->
 				          <!-- <li><a href="#blog">Blog</a></li> -->
-				          <li><a href="#contact">Orders</a></li>
+				          <li><a href="orders.php">Orders</a></li>
 						  <!-- <li class="menu-has-children"><a href="">Pages</a> -->
 							<li><a href="#">Login</a></li>
 				            <ul>

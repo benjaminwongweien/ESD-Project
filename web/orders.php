@@ -52,15 +52,15 @@
 		  </header><!-- #header -->			
 			<section class="banner-area relative relative">	
 				<div class="container">
-					<div class="row fullscreen d-flex align-items-center justify-content-start">
+				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
-						<h4 class="text-white text-uppercase">Wide Network of Choices</h4>
-						<h1>
-							Vendors
-						</h1>
-						<p class="text-white">
-							Food delivery near you from a curated choice of local restaurants across Singapore.
-						</p>
+							<h4 class="text-white text-uppercase">Wide Network of Choices</h4>
+							<h1>
+								Orders
+							</h1>
+							<p class="text-white">
+								View your orders that you bought with us.
+							</p>
 						</div>
 					</div>
 				</div>
@@ -71,25 +71,51 @@
 			<div class="main-wrapper">
 
 				<!-- Start team Area -->
-				<section class="team-area pt-100" id="main">
+				<section class="team-area pt-100">
 					<div class="container">					
 						<div class="row justify-content-center d-flex align-items-left">
 						<?php
-							$vendors = json_decode(file_get_contents("http://localhost:85/all_vendor"), TRUE);
-							
-							foreach ($vendors['vendors'] as $vendor) {
-								echo "<div class='col single-team'>";
-									echo "<div class='thumb'>";
-										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://localhost:85/static/{$vendor['vendor_image']}'></a>";
-									echo "</div>";
-									echo "<div class='meta-text mt-30 text-justify'>";
-										echo "<h4>{$vendor['vendor_name']}</h4>";	
-										echo "<p>{$vendor['vendor_description']}</p>";
-										echo "<h5>Location</h5>";
-										echo "<p>{$vendor['vendor_location']}</p>";
-									echo "</div>";
-								echo "</div>";
-							}
+								// $vendors= json_decode(file_get_contents("http://192.168.99.100:85/all_vendor"), TRUE);
+								$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
+	
+								foreach ($all_food['food'] as $food) {
+									if( $food['vendor_id'] == 1 and $food['food_id'] == 3){
+										echo "<div class='col-md-3 single-team'>";
+											echo "<form action='../payment_facilitation/app/payment.php' method='POST'>";
+											echo "<div class='thumb'>";
+												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
+											echo "</div>";
+											echo "<div class='meta-text mt-30 text-justify'>";
+												echo "<h4>Order No.: #123-123</h4>";
+												echo "<p><b>Item:</b> {$food['food_name']}</p>";
+												echo "<p><b>Qty:</b> 2x</p>";
+												$price = $food['food_price'] * 2;
+												echo "<p><b>Amount:</b> \$ {$price}</p>";
+												echo "<p><b>Delivery Status:</b> Delivering....</p>";
+												echo "<br/><br/><br/><br/><br/>";
+											echo "</form>";
+											echo "</div>";
+										echo "</div>";
+									}
+
+									if( $food['vendor_id'] == 1 and $food['food_id'] == 4){
+										echo "<div class='col-md-3 single-team'>";
+											echo "<form action='htpp://localhost:86/payment.php' method='POST'>";
+											echo "<div class='thumb'>";
+												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
+											echo "</div>";
+											echo "<div class='meta-text mt-30 text-justify'>";
+												echo "<h4>Order No.: #123-124</h4>";
+												echo "<p><b>Item:</b> {$food['food_name']}</p>";
+												echo "<p><b>Qty:</b> 1x</p>";
+												echo "<p><b>Amount:</b> \$ {$food['food_price']}</p>";
+												echo "<p><b>Delivery Status:</b> Delivering....</p>";
+												echo "<br/><br/><br/><br/><br/>";
+											echo "</form>";
+											echo "</div>";
+										echo "</div>";
+									}
+								}
 						?>
 					
 						</div>
@@ -201,8 +227,8 @@
 			<script src="homepage_util/js/jquery.sticky.js"></script>
 			<script src="homepage_util/js/jquery.nice-select.min.js"></script>			
 			<script src="homepage_util/js/parallax.min.js"></script>	
-			<script src="homepage_util/js/waypoints.min.js"></script>
-			<script src="homepage_util/js/jquery.counterup.min.js"></script>
+			<!-- <script src="homepage_util/js/waypoints.min.js"></script> -->
+			<!-- <script src="homepage_util/js/jquery.counterup.min.js"></script> -->
 			<script src="homepage_util/js/mail-script.js"></script>				
 			<script src="homepage_util/js/main.js"></script>	
 		</body>

@@ -39,7 +39,7 @@
 			        <ul class="nav-menu">
 			          <li class="menu-active"><a href="#home">Home</a></li>
 					  	<li><a href="vendors.php">Vendors</a></li>
-				        <li><a href="#contact">Orders</a></li>
+				        <li><a href="orders.php">Orders</a></li>
 						<li><a href="#">Login</a>
 							<ul>
 							<li><a href="#">Logout</a></li>
@@ -63,8 +63,6 @@
 									echo "<h4 class='text-white text-uppercase'>Wide Network of Choice</h4>";
 									echo "<h1>{$vendor['vendor_name']}</h1>";
 									echo "<p class='text-white'>Food delivery near you from a curated choice of local restaurants across Singapore.</p>";
-								// }
-							//  }
 						?>
 						</div>
 					</div>
@@ -111,6 +109,7 @@
 											echo "</div>";
 										}
 									}
+									echo "<br/><br/><br/><br/><br/>";
 								}
 							}
 						?>
