@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+
+    crm:
+        build:
+            context: ./app
+            dockerfile: DOCKERFILE_CRM
+        container_name: crm_microservice
+        # ports: (This exposes the port and we don't want that we want to expose the nginx port)
+        #     - "8000"
+        networks:
+            - crm_microservice_network
+        command: gunicorn -b 0.0.0.0:8000 app:app
+        environment: 
+            - "URI=postgresql://crmdb:crmdbpassword@db:5432/crm" 
+        depends_on: 
+            - db
+    
+    db:
+        image: postgres:12.2-alpine
+        container_name: postgres_menu_database
+        # ports:
+        #     - "5432"
+        networks:
+            - crm_microservice_network
+        environment:
+            POSTGRES_DB: crm
+            POSTGRES_USER: crmdb
+            POSTGRES_PASSWORD: crmdbpassword
+    
+    nginx:
+        build:
+            context: ./nginx
+            dockerfile: DOCKERFILE_NGINX
+        container_name: nginx_server
+        ports:
+            - "88:80"
+        networks:
+            - crm_microservice_network
+        depends_on: 
+            - crm
+    
+networks:
+    crm_microservice_network: 
+        driver: "bridge"
