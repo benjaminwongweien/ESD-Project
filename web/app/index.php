@@ -179,7 +179,7 @@
 			document.getElementById('data').style.display = "none";
 		});
 		sessionStorage.setItem("name", response.name);
-		window.location.replace("https://localhost/elysion2/web/c_homepage.php");
+		window.location.replace("./c_homepage.php");
 		}
 
 // /// ///  Google JS /// /// //
@@ -192,7 +192,7 @@
 			var name = $("#name").text(profile.getName());
 			
 			sessionStorage.setItem("name", profile.getName());
-			window.location.replace("https://localhost/elysion2/web/c_homepage.php");
+			window.location.replace("./c_homepage.php");
 		}
 		
 

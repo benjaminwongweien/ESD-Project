@@ -22,14 +22,14 @@
 			<!--
 			CSS
 			============================================= -->
-			<link rel="stylesheet" href="homepage_util/css/linearicons.css">
-			<link rel="stylesheet" href="homepage_util/css/font-awesome.min.css">
-			<link rel="stylesheet" href="homepage_util/css/bootstrap.css">
-			<link rel="stylesheet" href="homepage_util/css/magnific-popup.css">
-			<link rel="stylesheet" href="homepage_util/css/nice-select.css">					
-			<link rel="stylesheet" href="homepage_util/css/animate.min.css">
-			<link rel="stylesheet" href="homepage_util/css/owl.carousel.css">
-			<link rel="stylesheet" href="homepage_util/css/main.css">
+			<link rel="stylesheet" href="./homepage_util/css/linearicons.css">
+			<link rel="stylesheet" href="./homepage_util/css/font-awesome.min.css">
+			<link rel="stylesheet" href="./homepage_util/css/bootstrap.css">
+			<link rel="stylesheet" href="./homepage_util/css/magnific-popup.css">
+			<link rel="stylesheet" href="./homepage_util/css/nice-select.css">					
+			<link rel="stylesheet" href="./homepage_util/css/animate.min.css">
+			<link rel="stylesheet" href="./homepage_util/css/owl.carousel.css">
+			<link rel="stylesheet" href="./homepage_util/css/main.css">
 
 			<script>
 				var username = sessionStorage.getItem("name");
@@ -42,7 +42,7 @@
 			    <div class="container">
 			    	<div class="row align-items-center justify-content-between d-flex">
 				      <div id="logo">
-				        <a href="index.php"><img src="homepage_util/img/logo.png" alt="" title="" /></a>
+				        <a href="index.php"><img src="./homepage_util/img/logo.png" alt="" title="" /></a>
 				      </div>
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
@@ -51,8 +51,8 @@
 				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""><p id="user"></p></a>
 				            <ul>
-				              <li><a href="orders.php">Orders</a></li>
-				              <li><a href="logout.php">Logout</a></li>
+				              <li id="logout"><a href="./orders.php">Orders</a></li>
+				              <li><a href="./logout.php">Logout</a></li>
 				            </ul>
 				          </li>
 				        </ul>
@@ -474,6 +474,7 @@
 			<script src="homepage_util/js/parallax.min.js"></script>	
 			<script src="homepage_util/js/mail-script.js"></script>	
 			<script src="homepage_util/js/main.js"></script>	
+			<script src="homepage_util/js/logout_script.js"></script>	
 
 
 			<!-- Display user name upon logging in -->
