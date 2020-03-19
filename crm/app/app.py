@@ -37,7 +37,7 @@ app.app_context().push()
 def error(e):
     return jsonify({"status": "error", "error": e.description}), e.code
 
-
+# get the user info using chatId
 @app.route("/chatId", methods=["POST"])
 def chatId():
     import csv
@@ -54,7 +54,7 @@ def chatId():
     else:
         return {"status": 0, "data": {"msg": "cannot read chat_id"}}
 
-
+# get user information using userId
 @app.route("/userId", methods=["POST"])
 def userId():
     import csv
@@ -74,7 +74,7 @@ def userId():
     else:
         return {"status": 0, "data": {"msg": "cannot read uid"}}
 
-
+# get all user and info by usertype
 @app.route("/type", methods=["POST"])
 def uType():
     import csv
