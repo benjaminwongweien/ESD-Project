@@ -15,64 +15,47 @@ public class Order {
     @Column(name="CustomerID")
     private int customerID;
     
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="orderID")
-    private int orderID;
+    private String orderID;
 
     private int vendorID;
     private int delivererID;
     private int foodID;
     private int quantity;
-    private String checkoutID;
+    private int price;
     private String order_status;
+    private String delivery_address;
 
     public Order() {
         
     }
 
 
-    public Order(int customerID, int vendorID, int delivererID, 
-        int foodID, int quantity, String checkoutID, String order_status) {
+    public Order(int customerID, String orderID, int vendorID, int delivererID, 
+        int foodID, int quantity, int price, String order_status, String delivery_address) {
         
-        this.customerID = customerID;
-        this.vendorID = vendorID;
+        this(customerID, orderID, foodID, quantity, price, order_status, delivery_address);
         this.delivererID = delivererID;
-        this.foodID = foodID;
-        this.quantity = quantity;
-        this.checkoutID = checkoutID;
-        this.order_status = order_status;
+        
 
     }
 
     // Used to create Pending Order after user confirms order cart and makes payment
-    public Order(int customerID, int foodID, int quantity, String checkoutID, String order_status) {
+    public Order(int customerID, String orderID, int foodID, int quantity, int price , String order_status, String delivery_address) {
         this.customerID = customerID;
-        this.foodID = foodID;
-        this.quantity = quantity;
-        this.checkoutID = checkoutID;
-        this.order_status = order_status;
-    }
-
-    // General Constructor for Order
-    public Order(int customerID, int orderID, int vendorID, int delivererID, 
-        int foodID, int quantity, String checkoutID, String order_status) {
-        
-        this.customerID = customerID;
-        this.vendorID = vendorID;
         this.orderID = orderID;
-        this.delivererID = delivererID;
         this.foodID = foodID;
         this.quantity = quantity;
-        this.checkoutID = checkoutID;
+        this.price = price;
         this.order_status = order_status;
-
+        this.delivery_address = delivery_address;
     }
 
     public int getCustomerId() {
         return customerID;
     }
 
-    public int getOrderID() {
+    public String getOrderID() {
         return orderID;
     }
 
@@ -80,7 +63,6 @@ public class Order {
     public int getVendorID() {
         return vendorID;
     }
- 
  
     public int getDelivererID() {
         return delivererID;
@@ -94,11 +76,11 @@ public class Order {
         return quantity;
     }
 
-    public String getCheckoutID() {
-        return checkoutID;
-    }
-
     public String getStatus() {
         return order_status;
+    }
+
+    public String getDeliveryAddress() {
+        return delivery_address;
     }
 }

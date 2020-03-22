@@ -35,7 +35,7 @@
 <body>
 	
 	<div class="limiter">
-		<div class="container-login100" style="background-image: url('login_util/images/bg-01.jpg');">
+		<div class="container-login100" style="background-image: url('login_util/images/bg-04.jpg');">
 			<div class="wrap-login100 p-l-110 p-r-110 p-t-62 p-b-33">
 				<form class="login100-form validate-form flex-sb flex-w">
 					<span class="login100-form-title p-b-53">
@@ -49,8 +49,6 @@
 							</div>	
 							Facebook
 							<div style="opacity:0;position:absolute;">
-								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
-								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
 								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
 							</div>
 						</a>
@@ -71,7 +69,7 @@
 						</div> -->
 					
 					<!-- default google button -->
-					<a href="c_homepage.php" class="btn-google m-b-20" id="google_button">
+					<a href="#" class="btn-google m-b-20" id="google_button">
 						<div>
 							<img src="login_util/images/icons/icon-google.png" alt="GOOGLE" style="position:relative;">
 						</div>	
@@ -80,14 +78,48 @@
 							<div href="#" class="g-signin2" data-onsuccess="onSignIn" data-width="205" data-height="75"></div>  
 						</div>
 					</a>
+
+					<div class="p-t-31 p-b-9">
+						<span class="txt1">
+							Username
+						</span>
+					</div>
+					<div class="wrap-input100 validate-input" data-validate = "Username is required">
+						<input class="input100" type="text" name="username" >
+						<span class="focus-input100"></span>
+					</div>
 					
-					<!-- working google button -->
-					<!-- <div style="opacity:0.5">
-						<div href="#" class="g-signin2" data-onsuccess="onSignIn"></div>  
+					<div class="p-t-13 p-b-9">
+						<span class="txt1">
+							Password
+						</span>
+					</div>
+					<div class="wrap-input100 validate-input" data-validate = "Password is required">
+						<input class="input100" type="password" name="pass" >
+						<span class="focus-input100"></span>
+					</div>
+
+					<div class="container-login100-form-btn m-t-17">
+						<button class="login100-form-btn">
+							Sign In
+						</button>
+					</div>
+
+					<div class="w-full text-center p-t-55">
+						<span class="txt2">
+							Not a member?
+						</span>
+
+						<a href="#" class="txt2 bo1">
+							Sign up now
+						</a>
+					</div>
+					<br>
+					<!-- <div>
+							All rights reserved | Image taken from : https://qz.com/1038229/to-lose-weight-you-need-to-understand-the-psychology-of-why-you-crave-the-wrong-things/
 					</div> -->
-				
-				</form>
-			</div>
+				</form>	
+			</div>	
 		</div>
 	</div>
 
@@ -130,7 +162,15 @@
 		console.log('statusChangeCallback');
 		console.log(response);                   // The current login status of the person.
 		if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-			testAPI();
+			sessionStorage.setItem("fb_response", response);
+			FB.api('/me', function(response) {
+				console.log('Successful login for: ' + response.name);
+
+				sessionStorage.setItem("name", response.name);
+				console.log("here");
+				console.log(sessionStorage.getItem("name"));
+				// window.location.replace("./c_homepage.php");
+			});
 		} else {                                 // Not logged into your webpage or we are unable to tell.
 			document.getElementById('status').innerHTML = 'Please log ' +
 			'into this webpage.';
@@ -167,20 +207,6 @@
 		fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 
-
-		function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
-		console.log('Welcome!  Fetching your information.... ');
-		FB.api('/me', function(response) {
-			console.log('Successful login for: ' + response.name);
-			document.getElementById('status').innerHTML =
-			'Thanks for logging in, ' + response.name + '!';
-			document.getElementById('logout').style.display = "block";
-			document.getElementById('g-signin2').style.display = "none";
-			document.getElementById('data').style.display = "none";
-		});
-		sessionStorage.setItem("name", response.name);
-		window.location.replace("./c_homepage.php");
-		}
 
 // /// ///  Google JS /// /// //
 		function onSignIn(googleUser) {

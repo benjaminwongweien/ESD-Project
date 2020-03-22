@@ -10,6 +10,7 @@
 
 /* The STRIPE Library Dependencies: curl, json, mbstring */
 require_once(__DIR__ . "/vendor/autoload.php");
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 ?>
 
 <!doctype html>
@@ -27,7 +28,7 @@ require_once(__DIR__ . "/vendor/autoload.php");
   // If deployed, these should be stored as an evironment variable
   Stripe\Stripe::setApiKey('sk_test_IGEllSO26K2ZNmsjykkK0yom00Wh5CGkdw');
 
-  $customer = \Stripe\Checkout\Session::create([
+  @$customer = \Stripe\Checkout\Session::create([
     'success_url'          => "http://localhost/run/success.php?customerid={$_POST['customerid']}&session_id={CHECKOUT_SESSION_ID}",
     'cancel_url'           => "http://localhost/run/cancel?customerid={$_POST['customerid']}&session_id={CHECKOUT_SESSION_ID}",
     'payment_method_types' => ['card'],
@@ -44,7 +45,13 @@ require_once(__DIR__ . "/vendor/autoload.php");
   ]);
 
   // Obtain the Checkout/Session ID from the customer object using the getter method
-  $id = $customer->getLastResponse()->json['id'];
+  @$id = $customer->getLastResponse()->json['id'];
+
+  if (!empty($id)) {
+    echo "An unknown error occured you will be redirected back to the checkout page shortly...";
+    header("Location: http://localhost/food?vendor_id={$_POST['vendor_id']}");
+
+  }
 
   // Perform the Javascript Redirect to Checkout
   echo '<script src="https://js.stripe.com/v3/"></script>';
