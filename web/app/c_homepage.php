@@ -33,7 +33,16 @@
 
 			<script>
 				var username = sessionStorage.getItem("name");
-				console.log(username);
+
+				if ("fb_response" in sessionStorage) {
+					alert('yes');
+
+				} else {
+					alert('no');
+					
+				}
+
+
 			</script>
 		</head>
 		<body>
@@ -51,8 +60,8 @@
 				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""><p id="user"></p></a>
 				            <ul>
-				              <li id="logout"><a href="./orders.php">Orders</a></li>
-				              <li><a href="./logout.php">Logout</a></li>
+				              <li><a href="./orders.php">Orders</a></li>
+				              <li id="logout"><a href="./logout.php">Logout</a></li>
 				            </ul>
 				          </li>
 				        </ul>
@@ -480,6 +489,14 @@
 			<!-- Display user name upon logging in -->
 			<script>
 				document.getElementById("user").innerHTML = username;
+
+				function logOut(){
+					FB.logout(function(response) {
+						statusChangeCallback(response);
+						document.getElementById('logout').style.display = "none";
+						location.reload();
+					});
+				}
 			</script>
 		</body>
 	</html>
