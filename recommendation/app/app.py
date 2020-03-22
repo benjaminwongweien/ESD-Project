@@ -1,11 +1,11 @@
 """
-Menu Microservice
+Recommendation Microservice
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
 import os
 import json
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
 import random
@@ -46,7 +46,7 @@ def error(e):
 
 @app.route("/vendor_pos", methods=["GET"])
 def vendor_pos():
-    return globals['vendors']
+    return jsonify(globals['vendors'])
 
 
 @app.route("/recommendation", methods=["GET"])
@@ -111,6 +111,3 @@ def before_first_request_func():
         vendors[i]['position'] = position
     globals['vendors'] = vendors
 
-
-if __name__ == '__main__':
-    app.run(port=5001)

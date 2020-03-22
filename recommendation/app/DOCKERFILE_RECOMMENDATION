@@ -10,9 +10,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # --- Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-# update and install nginx
-RUN apt-get update && apt-get -y upgrade 
-# && apt-get install -y --no-install-recommends gcc nginx
+# update
+# RUN apt-get update && apt-get -y upgrade 
 
 # Move everything from the development folder to production folder
 COPY . .
