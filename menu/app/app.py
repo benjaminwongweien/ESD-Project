@@ -40,7 +40,7 @@ def error(e):
 @app.route("/bootstrap", methods=["GET"])
 def bootstrap():
   """Bootstrap the Server"""
-  print(db.create_all())
+  db.create_all()
   db.session.commit()
   import csv
   with open("menu.csv","r", encoding="cp1252") as file:

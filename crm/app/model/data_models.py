@@ -6,15 +6,14 @@ CRM Microservice Data Models
 from .base import db
 
 class User(db.Model):
-    username  = db.Column(db.String(80), primary_key=True, autoincrement=True)
-    user_type = db.Column(db.String(80), nullable=False)
+    username  = db.Column(db.String(80), primary_key=True)
+    user_type = db.Column(db.Integer, nullable=False)
     chat_id   = db.Column(db.String(80), nullable=True )
     
     def __init__(self,username,user_type,chat_id = None):
         self.username     = username
         self.user_type    = user_type
         self.chat_id      = chat_id
-        self.vendor_image = vendor_image
         
     def directory(self):
         return [
