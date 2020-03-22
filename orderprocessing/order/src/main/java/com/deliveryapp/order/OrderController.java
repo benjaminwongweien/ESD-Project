@@ -51,6 +51,24 @@ public class OrderController {
         return OrderRepo.save(order);
     }
 
+    @PostMapping("/testpoint")
+    public Order findOrderByorderID(@RequestBody Map<String, String> body) {
+        String orderID = body.get("orderID");
+        int customerID = Integer.parseInt(body.get("CustomerID"));
+        int vendorID = Integer.parseInt(body.get("vendorID"));
+        int foodID = Integer.parseInt(body.get("foodID"));
+        int delivererID = Integer.parseInt(body.get("delivererID"));
+        int quantity = Integer.parseInt(body.get("quantity"));
+        int price = Integer.parseInt(body.get("price"));
+        String order_status = body.get("order_status");
+        String delivery_address = body.get("delivery_address");
+
+        // Order order = OrderRepo.findOrderByorderID(orderID);
+        Order order = new Order(customerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address);
+        orderSender.sendOrder(order);
+        return order;
+    }
+
 
 
 }

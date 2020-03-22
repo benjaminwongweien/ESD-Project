@@ -22,20 +22,23 @@ public class OrderSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Value("${order.rabbitmq.routingkey}")
     String routingkey;
+
+    @Value("${order.rabbitmq.exchange}")
+    String exchange;
 
     public void sendOrder(Order order) {
         try {
             String orderJson = objectMapper.writeValueAsString(order);
             Message message = MessageBuilder.withBody(orderJson.getBytes()).setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
-            this.rabbitTemplate.convertAndSend(routingkey, message);
+            this.rabbitTemplate.convertAndSend(exchange, routingkey, message);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
     }
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
 }

@@ -2,8 +2,6 @@ package com.deliveryapp.order;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,10 +9,9 @@ import javax.persistence.Table;
 @Table(name = "Orders")
 public class Order {
     
-    @Id
-    @Column(name="CustomerID")
     private int customerID;
     
+    @Id
     @Column(name="orderID")
     private String orderID;
 
@@ -24,6 +21,8 @@ public class Order {
     private int quantity;
     private int price;
     private String order_status;
+
+    @Column(name="delivery_address")
     private String delivery_address;
 
     public Order() {
@@ -34,15 +33,16 @@ public class Order {
     public Order(int customerID, String orderID, int vendorID, int delivererID, 
         int foodID, int quantity, int price, String order_status, String delivery_address) {
         
-        this(customerID, orderID, foodID, quantity, price, order_status, delivery_address);
+        this(customerID, orderID, vendorID, foodID, quantity, price, order_status, delivery_address);
         this.delivererID = delivererID;
         
 
     }
 
     // Used to create Pending Order after user confirms order cart and makes payment
-    public Order(int customerID, String orderID, int foodID, int quantity, int price , String order_status, String delivery_address) {
+    public Order(int customerID, String orderID, int vendorID, int foodID, int quantity, int price , String order_status, String delivery_address) {
         this.customerID = customerID;
+        this.vendorID = vendorID;
         this.orderID = orderID;
         this.foodID = foodID;
         this.quantity = quantity;
@@ -51,7 +51,7 @@ public class Order {
         this.delivery_address = delivery_address;
     }
 
-    public int getCustomerId() {
+    public int getCustomerID() {
         return customerID;
     }
 
@@ -76,11 +76,15 @@ public class Order {
         return quantity;
     }
 
-    public String getStatus() {
+    public String getOrder_status() {
         return order_status;
     }
 
-    public String getDeliveryAddress() {
+    public String getDelivery_address() {
         return delivery_address;
+    }
+
+    public int getPrice() {
+        return price;
     }
 }
