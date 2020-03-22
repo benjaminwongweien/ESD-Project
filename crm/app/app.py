@@ -56,55 +56,47 @@ def dump():
     users = User.query.all()
     return jsonify([user.json(0,1,2) for user in users])
         
-# get the user info using chatId
+
 @app.route("/chatid", methods=["POST"])
 def chatId():
+    '''get the user info using chatId'''
     chat_id = request.form.get("chatid")
     if chat_id:
         user = User.query.filter_by(chat_id=chat_id).first()
-        # with open("users.csv", "r", encoding="cp1252") as file:
-        #     csvfile = csv.reader(file, delimiter=",")
-        #     csvfile = list(csvfile)
-        #     for user in csvfile:
-        #         if user[2] == chat_id:
-        #             return {"status": 1, "data": {"uid": user[0], "user_type": user[1]}}
         if user:
-            return jsonify({"status": 1, "data": user.json(0,1)})
+            return jsonify(user.json(0,1,2))
         else:
             return jsonify({"status": 0, "data": {"msg": "user not found"}})
     else:
         return jsonify({"status": 0, "data": {"msg": "cannot read chat_id"}})
 
-# get user information using userId
-@app.route("/userId", methods=["POST"])
-def userId():
-    if uid:
-        with open("users.csv", "r", encoding="cp1252") as file:
-            csvfile = csv.reader(file, delimiter=",")
-            csvfile = list(csvfile)
-            for user in csvfile:
-                if user[0] == uid:
-                    return {
-                        "status": 1,
-                        "data": {"chat_id": user[2], "user_type": user[1]},
-                    }
-        return {"status": 0, "data": {"msg": "user not found"}}
-    else:
-        return {"status": 0, "data": {"msg": "cannot read uid"}}
 
-# get all user and info by usertype
-@app.route("/type", methods=["POST"])
-def uType():
-    uType = request.args.get("type")
-    if uType:
-        with open("users.csv", "r", encoding="cp1252") as file:
-            csvfile = csv.reader(file, delimiter=",")
-            csvfile = list(csvfile)
-            users = [{"uid": u[0], "chatId": u[2]}
-                     for u in csvfile if u[1] == uType]
-            userString = json.loads(json.dumps(users))
-            return {"status": 1, "data": userString}
-        return {"status": 0, "data": {"msg": "type not found"}}
+
+@app.route("/username", methods=["POST"])
+def username():
+    ''' get user information using userId'''
+    username = request.form.get("username")
+    if username:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return jsonify(user.json(0,1,2))
+        else:
+            return jsonify({"status": 0, "data": {"msg": "user not found"}})
+    else:
+        return jsonify({"status": 0, "data": {"msg": "cannot read userid"}})
+
+
+
+@app.route("/usertype", methods=["POST"])
+def user_type():
+    '''get all user and info by usertype'''
+    user_type = request.form.get("user_type")
+    if user_type:
+        users = User.query.filter_by(user_type=user_type).all()
+        if users:
+            return jsonify([user.json(0,2) for user in users])
+        else:
+            return {"status": 0, "data": {"msg": "type not found"}}
     else:
         return {"status": 0, "data": {"msg": "cannot read type"}}
 
