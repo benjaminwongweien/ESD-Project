@@ -1,5 +1,5 @@
 """
-Menu Microservice
+User Microservice
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
@@ -99,12 +99,13 @@ def register():
             existingUIds = [u[0] for u in csvfile]
             existingTeleIds = [u[2] for u in csvfile]
             if uid in existingUIds:
-                return {"status": 0, "data": {"msg": "existing user id"}}
+                return {"status": 0, "data": {"msg": "user id exists"}}
             if teleId in existingTeleIds:
-                return {"status": 0, "data": {"msg": "existing tele id"}}
-        with open("users.csv", "a", encoding="cp1252") as file:
-            file.write('\n'+uid+','+uType+','+teleId)
-            return {"status": 1, "data": "success"}
+                return {"status": 0, "data": {"msg": "tele id exists"}}
+            else:
+                with open("users.csv", "a", encoding="cp1252") as file:
+                    file.write(uid+','+uType+','+teleId)
+                    return {"status": 1, "data": "success"}
     else:
         return {"status": 0, "data": {"msg": "cannot read data"}}
 
