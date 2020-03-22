@@ -1,4 +1,9 @@
+# Docker-Compose - RabbitMQ Broker
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
 version: '3.7'
+
 services:
 
     rabbitmq:
@@ -8,11 +13,16 @@ services:
             - "5673:5672"
             - "15673:15672"
         networks:
-            - rabbitmq_broker_network
+            - broker_network
         environment:
             - RABBITMQ_DEFAULT_USER=rabbit
             - RABBITMQ_DEFAULT_PASS=tibbar  
+        # volumes:
+        #     -
+        # command:
+        # depends_on: 
+        #     - 
     
 networks:
-    rabbitmq_broker_network: 
+    broker_network: 
         driver: "bridge"
