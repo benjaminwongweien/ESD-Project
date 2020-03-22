@@ -9,6 +9,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from model.base import db
 from model.data_models import Vendor, Food
+import csv
 
 
 def create_app():
@@ -40,8 +41,6 @@ def error(e):
 # get the user info using chatId
 @app.route("/chatId", methods=["POST"])
 def chatId():
-    import csv
-
     chat_id = request.args.get("chatId")
     if chat_id:
         with open("users.csv", "r", encoding="cp1252") as file:
@@ -57,9 +56,6 @@ def chatId():
 # get user information using userId
 @app.route("/userId", methods=["POST"])
 def userId():
-    import csv
-
-    uid = request.args.get("uid")
     if uid:
         with open("users.csv", "r", encoding="cp1252") as file:
             csvfile = csv.reader(file, delimiter=",")
@@ -77,19 +73,40 @@ def userId():
 # get all user and info by usertype
 @app.route("/type", methods=["POST"])
 def uType():
-    import csv
-
     uType = request.args.get("type")
     if uType:
         with open("users.csv", "r", encoding="cp1252") as file:
             csvfile = csv.reader(file, delimiter=",")
             csvfile = list(csvfile)
-            users = [{"uid": u[0], "chatId": u[2]} for u in csvfile if u[1] == uType]
+            users = [{"uid": u[0], "chatId": u[2]}
+                     for u in csvfile if u[1] == uType]
             userString = json.loads(json.dumps(users))
             return {"status": 1, "data": userString}
         return {"status": 0, "data": {"msg": "type not found"}}
     else:
         return {"status": 0, "data": {"msg": "cannot read type"}}
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    uid = request.json.get("uid")
+    uType = request.json.get("type")
+    teleId = request.json.get("tid")
+    if uid and uType and teleId:
+        with open("users.csv", "r", encoding="cp1252") as file:
+            csvfile = csv.reader(file, delimiter=",")
+            csvfile = list(csvfile)
+            existingUIds = [u[0] for u in csvfile]
+            existingTeleIds = [u[2] for u in csvfile]
+            if uid in existingUIds:
+                return {"status": 0, "data": {"msg": "existing user id"}}
+            if teleId in existingTeleIds:
+                return {"status": 0, "data": {"msg": "existing tele id"}}
+        with open("users.csv", "a", encoding="cp1252") as file:
+            file.write('\n'+uid+','+uType+','+teleId)
+            return {"status": 1, "data": "success"}
+    else:
+        return {"status": 0, "data": {"msg": "cannot read data"}}
 
 
 if __name__ == "__main__":
