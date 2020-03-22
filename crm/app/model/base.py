@@ -1,7 +1,7 @@
 ##!/usr/bin/python
 
 """
-Menu Microservice Model Base
+CRM Microservice Model Base
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """

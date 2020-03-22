@@ -1,5 +1,5 @@
 """
-User Microservice
+CRM Microservice
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
@@ -8,22 +8,22 @@ import json
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from model.base import db
-from model.data_models import Vendor, Food
-import csv
+from model.data_models import User
 
-
-def create_app():
+def create_app(uri):
     """
-  Creates and starts the App with all the required settings
-  """
+    Creates and starts the App with all the required settings
+    """
     app = Flask(__name__)
     CORS(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     return app
 
 
 # app=create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
-app = create_app()
+app = create_app(os.environ["URI"])
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
 app.app_context().push()
 
@@ -38,20 +38,42 @@ app.app_context().push()
 def error(e):
     return jsonify({"status": "error", "error": e.description}), e.code
 
+
+@app.route("/bootstrap", methods=["GET"])
+def bootstrap():
+    import csv
+    db.create_all()
+    db.session.commit()
+    with open("users.csv", "r", encoding="cp1252") as file:
+        csvfile = list(csv.reader(file, delimiter=","))
+    for user in csvfile:
+        db.session.add(User(*user))
+    db.session.commit()
+    return jsonify({"bootstrap": "success"})
+
+@app.route("/dump", methods=["GET"])
+def dump():
+    users = User.query.all()
+    return jsonify([user.json(0,1,2) for user in users])
+        
 # get the user info using chatId
-@app.route("/chatId", methods=["POST"])
+@app.route("/chatid", methods=["POST"])
 def chatId():
-    chat_id = request.args.get("chatId")
+    chat_id = request.form.get("chatid")
     if chat_id:
-        with open("users.csv", "r", encoding="cp1252") as file:
-            csvfile = csv.reader(file, delimiter=",")
-            csvfile = list(csvfile)
-            for user in csvfile:
-                if user[2] == chat_id:
-                    return {"status": 1, "data": {"uid": user[0], "user_type": user[1]}}
-        return {"status": 0, "data": {"msg": "user not found"}}
+        user = User.query.filter_by(chat_id=chat_id).first()
+        # with open("users.csv", "r", encoding="cp1252") as file:
+        #     csvfile = csv.reader(file, delimiter=",")
+        #     csvfile = list(csvfile)
+        #     for user in csvfile:
+        #         if user[2] == chat_id:
+        #             return {"status": 1, "data": {"uid": user[0], "user_type": user[1]}}
+        if user:
+            return jsonify({"status": 1, "data": user.json(0,1)})
+        else:
+            return jsonify({"status": 0, "data": {"msg": "user not found"}})
     else:
-        return {"status": 0, "data": {"msg": "cannot read chat_id"}}
+        return jsonify({"status": 0, "data": {"msg": "cannot read chat_id"}})
 
 # get user information using userId
 @app.route("/userId", methods=["POST"])
@@ -108,7 +130,3 @@ def register():
                     return {"status": 1, "data": "success"}
     else:
         return {"status": 0, "data": {"msg": "cannot read data"}}
-
-
-if __name__ == "__main__":
-    app.run()
