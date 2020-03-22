@@ -1,5 +1,5 @@
 """
-Menu Microservice
+CRM Microservice
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
@@ -8,21 +8,23 @@ import json
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from model.base import db
-from model.data_models import Vendor, Food
+from model.data_models import User
 
 
-def create_app():
+def create_app(uri):
     """
-  Creates and starts the App with all the required settings
-  """
+    Creates and starts the App with all the required settings
+    """
     app = Flask(__name__)
     CORS(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     return app
 
 
 # app=create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
-app = create_app()
+app = create_app(os.environ["URI"])
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
 app.app_context().push()
 
