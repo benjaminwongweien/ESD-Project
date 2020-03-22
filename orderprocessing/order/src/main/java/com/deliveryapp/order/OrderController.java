@@ -1,12 +1,12 @@
 package com.deliveryapp.order;
 
-import com.deliveryapp.order.sender.*;
-import com.deliveryapp.order.receiver.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import com.deliveryapp.order.rabbitmq.OrderReceiver;
+import com.deliveryapp.order.rabbitmq.OrderSender;
 
 @RestController
 @RequestMapping(value="/order")
@@ -47,24 +47,8 @@ public class OrderController {
         return OrderRepo.findBydelivererID(delivererID);
     }
 
-    
-
-    @PostMapping("/create")
-    public Order create(@RequestBody Map<String, String> body) {
-
-        String customerID = body.get("customer_id");
-        String food = body.get("food_id");
-        String qty = body.get("quantity");
-
-        int custID = Integer.parseInt(customerID);
-        int foodID = Integer.parseInt(food);
-        int quantity = Integer.parseInt(qty);
-
-        String checkoutID = body.get("checkout_id");
-        String status = body.get("status");
-
-        orderReceiver.receiveMessage(customerID);
-        return OrderRepo.save(new Order(custID, foodID, quantity, checkoutID, status));
+    public Order create(Order order) {
+        return OrderRepo.save(order);
     }
 
 
