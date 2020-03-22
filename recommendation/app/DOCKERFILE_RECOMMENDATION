@@ -1,7 +1,11 @@
-# pull official base image
+# Docker-Build - Recommendation Microservice
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
+# pull the official Python image
 FROM python:3.8.1-slim-buster
 
-# set work directory
+# set the work directory
 WORKDIR /app
 
 # set environment variables
@@ -10,12 +14,11 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # --- Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-# update
-# RUN apt-get update && apt-get -y upgrade 
-
-# Move everything from the development folder to production folder
+# move everything from the development folder to production folder
 COPY . .
 
+# upgrade pip
 RUN pip install --upgrade pip
 
+# install dependencies
 RUN pip install -r requirements.txt

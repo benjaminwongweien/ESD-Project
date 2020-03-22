@@ -1,4 +1,9 @@
+# Docker-Compose - CRM Microservice
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
 version: '3.7'
+
 services:
 
     crm:
@@ -6,40 +11,50 @@ services:
             context: ./app
             dockerfile: DOCKERFILE_CRM
         container_name: crm_microservice
-        # ports: (This exposes the port and we don't want that we want to expose the nginx port)
-        #     - "8000"
+        # ports:
+        #     - "8000:8000"
         networks:
-            - crm_microservice_network
-        command: gunicorn -b 0.0.0.0:8000 app:app
+            - network
         environment: 
-            - "URI=postgresql://crmdb:crmdbpassword@db:5432/crm" 
+            - "URI=postgresql://crmdb:crmdbpassword@crm_db:5432/crm"
+        # volumes:
+        #     -
+        command: gunicorn -b 0.0.0.0:8000 app:app
         depends_on: 
-            - db
+            - crm_db
     
-    db:
+    crm_db:
         image: postgres:12.2-alpine
-        container_name: postgres_menu_database
+        container_name: crm_postgres_database
         # ports:
         #     - "5432"
         networks:
-            - crm_microservice_network
+            - network
         environment:
             POSTGRES_DB: crm
             POSTGRES_USER: crmdb
             POSTGRES_PASSWORD: crmdbpassword
+        # volumes:
+        #     - ./postgres:/docker-entrypoint-initdb.d/
+        # command:
+        # depends_on: 
+        #  
     
-    nginx:
-        build:
-            context: ./nginx
-            dockerfile: DOCKERFILE_NGINX
-        container_name: nginx_server
+    crm_nginx:
+        image: nginx:1.17-alpine
+        container_name: crm_nginx
         ports:
             - "88:80"
         networks:
-            - crm_microservice_network
+            - network
+        # environment: 
+        #     -  
+        volumes:
+            - "./nginx:/etc/nginx/conf.d"  
+        # command:  
         depends_on: 
             - crm
     
 networks:
-    crm_microservice_network: 
+    network: 
         driver: "bridge"

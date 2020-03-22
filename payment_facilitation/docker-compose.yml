@@ -1,37 +1,58 @@
+# Docker-Compose - Payment Facilitation Microservice
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
 version: '3.7'
+
 services:
 
     payment_facilitation:
-        image: php:7.4.3-fpm-buster
+        build:
+            context: ./app
+            dockerfile: DOCKERFILE_PAYMENT_FACILITATION
         container_name: payment_facilitation_microservice
-        volumes:
-            - "./app:/var/www/app"
+        # ports:
+        #     -
         networks:
-            - payment_facilitation_network
-
-    nginx_payment_facilitation:
-        image: nginx:1.17-alpine
-        container_name: nginx_server_payment_facilitation
+            - network
+        # environment: 
+        #     - 
         volumes:
             - "./app:/var/www/app"
-            - "./nginx:/etc/nginx/conf.d"
+        # command:
+        # depends_on: 
+        #     -
+
+    payment_facilitation_nginx:
+        image: nginx:1.17-alpine
+        container_name: payment_facilitation_nginx
         ports:
             - "86:80"
         networks:
-            - payment_facilitation_network
+            - network
+        # environment: 
+        #     - 
+        volumes:
+            - "./app:/var/www/app"
+            - "./nginx:/etc/nginx/conf.d"
+        # command:
         depends_on: 
             - payment_facilitation
 
-    composer:
+    payment_facilitation_composer:
         image: composer
-        container_name: composer_payment_facilitation
+        container_name: payment_facilitation_composer
+        # ports:
+        #     - 
+        networks:
+            - network
+        # environment: 
+        #     - 
         volumes:
             - "./app:/app"
         privileged: True
-        networks:
-            - payment_facilitation_network
         command: ["composer", "install"]
 
 networks:
-    payment_facilitation_network: 
+    network: 
         driver: "bridge"

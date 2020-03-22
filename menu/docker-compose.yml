@@ -1,4 +1,9 @@
+# Docker-Compose - Menu Microservice
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
 version: '3.7'
+
 services:
 
     menu:
@@ -6,42 +11,50 @@ services:
             context: ./app
             dockerfile: DOCKERFILE_MENU
         container_name: menu_microservice
-        # ports: (This exposes the port and we don't want that we want to expose the nginx port)
-        #     - "8000"
+        # ports:
+        #     - "8000:8000"
         networks:
-            - menu_microservice_network
-        command: gunicorn -b 0.0.0.0:8000 app:app
+            - network
         environment: 
-            - "URI=postgresql://easydeliverymenudb:easydeliverymenudbpassword@db:5432/menu" 
+            - "URI=postgresql://easydeliverymenudb:easydeliverymenudbpassword@menu_db:5432/menu"
+        # volumes:
+        #     - 
+        command: gunicorn -b 0.0.0.0:8000 app:app
         depends_on: 
-            - db
+            - menu_db
     
-    db:
+    menu_db:
         image: postgres:12.2-alpine
-        container_name: postgres_menu_database
+        container_name: menu_postgres_database
         # ports:
         #     - "5432"
         networks:
-            - menu_microservice_network
-        volumes:
-            - ./postgres:/docker-entrypoint-initdb.d/
+            - network
         environment:
             POSTGRES_DB: menu
             POSTGRES_USER: easydeliverymenudb
             POSTGRES_PASSWORD: easydeliverymenudbpassword
-    
-    nginx:
-        build:
-            context: ./nginx
-            dockerfile: DOCKERFILE_NGINX
-        container_name: nginx_server
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d/
+        # command:
+        # depends_on: 
+        #     -
+
+    menu_nginx:
+        image: nginx:1.17-alpine
+        container_name: menu_nginx
         ports:
             - "85:80"
         networks:
-            - menu_microservice_network
+            - network
+        # environment: 
+        #     -  
+        volumes:
+            - "./nginx:/etc/nginx/conf.d"
+        # command:     
         depends_on: 
             - menu
     
 networks:
-    menu_microservice_network: 
+    network: 
         driver: "bridge"
