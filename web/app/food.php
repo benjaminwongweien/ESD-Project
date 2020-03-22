@@ -97,9 +97,10 @@
 													echo "<div class='meta-text mt-30 text-center'>";
 														echo "<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 														//Need to change
-														echo "<input type='hidden' value='haojunisfantastic' name='customerid'>";
-														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='customerid'>";
-														echo "<input type='hidden' value='{$food['food_name']}' name='foodname'>";
+														echo "<input type='hidden' value='haojunisfantastic' name='customer_id'>";
+														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='vendor_id'>";
+														echo "<input type='hidden' value='{$food['food_id']}' name='food_id'>";
+														echo "<input type='hidden' value='{$food['food_name']}' name='food_name'>";
 														echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
 														echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
 														echo "<input class='genric-btn info-border circle' type='submit' value='Buy'>";
