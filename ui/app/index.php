@@ -156,20 +156,26 @@
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	
+<!-- Check cookies -->
+	<script>
+		console.log(document.cookie);
+	</script>
+
 <!-- Facebook JS -->
 		<script>
 		function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
 		console.log('statusChangeCallback');
 		console.log(response);                   // The current login status of the person.
 		if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-			sessionStorage.setItem("fb_response", response);
-			FB.api('/me', function(response) {
-				console.log('Successful login for: ' + response.name);
-
-				sessionStorage.setItem("name", response.name);
-				console.log("here");
-				console.log(sessionStorage.getItem("name"));
-				// window.location.replace("./c_homepage.php");
+			var url = '/me?fields=name,email';
+      		FB.api(url, function(response) {
+				document.cookie = "fb_status = " + response.status;
+				document.cookie = "name = " + response.name;
+				document.cookie = "email = " + response.email;
+				document.cookie = "login_type = " + "facebook";
+				document.cookie = "logout_button = <li><a href='#' onclick='logOut()'>Logout</a></li>";
+				console.log(document.cookie);
+				window.location.replace("./c_homepage.php");
 			});
 		} else {                                 // Not logged into your webpage or we are unable to tell.
 			document.getElementById('status').innerHTML = 'Please log ' +
@@ -188,6 +194,7 @@
 		window.fbAsyncInit = function() {
 		FB.init({
 			appId      : '201004657801578',
+			cookie     : true,
 			xfbml      : true,                     // Parse social plugins on this webpage.
 			version    : 'v6.0'           // Use this Graph API version for this call.
 		});
@@ -213,11 +220,15 @@
 			var profile = googleUser.getBasicProfile();
 			$(".g-signin2").css("display", "none");
 			$(".data").css("display", "block");
-			var pic = $("#pic").attr('src',  profile.getImageUrl());
-			var email = $("#email").text(profile.getEmail());
-			var name = $("#name").text(profile.getName());
-			
-			sessionStorage.setItem("name", profile.getName());
+			// var pic = $("#pic").attr('src',  profile.getImageUrl());
+			// var email = $("#email").text(profile.getEmail());
+			// var name = $("#name").text(profile.getName());
+			document.cookie = "fb_status = " + "null";
+			document.cookie = "name = " + profile.getName();
+			document.cookie = "email = " + profile.getEmail();
+			document.cookie = "login_type = " + "google";
+			document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
+			// console.log(document.cookie);
 			window.location.replace("./c_homepage.php");
 		}
 		
