@@ -9,7 +9,7 @@ version: '3.7'
 
 services:
 
-    menu:
+    order:
         build:
             context: ./app
             dockerfile: DOCKERFILE_MENU
@@ -26,7 +26,7 @@ services:
         depends_on: 
             - menu_db
     
-    menu_db:
+    order_db:
         image: postgres:12.2-alpine
         container_name: menu_postgres_database
         # ports:
@@ -34,29 +34,15 @@ services:
         networks:
             - network
         environment:
-            POSTGRES_DB: menu
-            POSTGRES_USER: easydeliverymenudb
-            POSTGRES_PASSWORD: easydeliverymenudbpassword
+            MYSQL_DATABASE: OrderDB
+            MYSQL_ROOT_PASSWORD: ordersecretpasswordwowomgsonice
+            MYSQL_USER: orderdb
+            MYSQL_PASSWORD: orderdbpassword
         volumes:
-            - ./postgres:/docker-entrypoint-initdb.d/
+            - ./order/mysql:/docker-entrypoint-initdb.d/
         # command:
         # depends_on: 
         #     -
-
-    menu_nginx:
-        image: nginx:1.17-alpine
-        container_name: menu_nginx
-        ports:
-            - "85:80"
-        networks:
-            - network
-        # environment: 
-        #     -  
-        volumes:
-            - "./nginx:/etc/nginx/conf.d"
-        # command:     
-        depends_on: 
-            - menu
     
 networks:
     network: 
