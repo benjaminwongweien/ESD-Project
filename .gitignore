@@ -1,7 +1,5 @@
 ### Python ###
 *.pyc
 
-HELP.md
-
 ### VS Code ###
 .vscode/

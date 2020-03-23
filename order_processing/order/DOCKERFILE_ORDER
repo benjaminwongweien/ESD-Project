@@ -1,11 +1,11 @@
-FROM openjdk:8-jdk-alpine
+FROM gradle:6.2.2-jdk8
 
-RUN addgroup -S spring && adduser -S spring -G spring
+WORKDIR /usr/app/
 
-USER spring:spring
+COPY . .    
 
-ARG DEPENDENCY=build/dependency
+RUN gradle wrapper --debug
 
-COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/BOOT-INF/classes /app
+RUN ./gradlew clean build  --debug
+
+CMD ["./wait-for-it.sh", "-t", "60", "order_db:3306", "--", "java","-jar", "build/libs/order-0.0.1-SNAPSHOT.jar"]

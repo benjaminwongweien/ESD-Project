@@ -30,15 +30,15 @@ INSERT INTO Orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity
 
 -- INSERT NEWLY ORDERS THAT ARE PAID
 
-INSERT INTO ORDERS (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
+INSERT INTO Orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
   1004, "2039473942", 1, NULL, 17, 8, 10, "Order Received", "BLK322 WOODLANDS AVENUE"
 );
 
-INSERT INTO ORDERS (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
+INSERT INTO Orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
   1006, "8347238428328", 5, NULL, 4, 4, 8, "Order Received", "BLK459 LORANG CHUAN"
 );
 
-INSERT INTO ORDERS (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
+INSERT INTO Orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
   1008, "9382094823", 3, NULL, 12, 7, 10, "Order Received", "BLK772 HOUGANG AVE 3"
 );
 

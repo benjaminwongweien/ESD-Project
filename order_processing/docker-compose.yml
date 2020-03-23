@@ -1,5 +1,5 @@
 #
-# Docker-Compose - Menu Microservice
+# Docker-Compose - Order Microservice
 #
 
 # @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
@@ -11,26 +11,26 @@ services:
 
     order:
         build:
-            context: ./app
-            dockerfile: DOCKERFILE_MENU
-        container_name: menu_microservice
-        # ports:
-        #     - "8000:8000"
+            context: ./order
+            dockerfile: DOCKERFILE_ORDER
+        container_name: order_microservice
+        ports:
+            - "8080:8080"
         networks:
             - network
-        environment: 
-            - "URI=postgresql://easydeliverymenudb:easydeliverymenudbpassword@menu_db:5432/menu"
-        # volumes:
+        # environment: 
         #     - 
-        command: gunicorn -b 0.0.0.0:8000 app:app
+        volumes:
+            - "./grade-cache:/home/gradle/.gradle"
+        # command: 
         depends_on: 
-            - menu_db
+            - order_db
     
     order_db:
-        image: postgres:12.2-alpine
-        container_name: menu_postgres_database
-        # ports:
-        #     - "5432"
+        image: mysql
+        container_name: order_mysql_database
+        ports:
+            - "3310:3306"
         networks:
             - network
         environment:
@@ -39,7 +39,7 @@ services:
             MYSQL_USER: orderdb
             MYSQL_PASSWORD: orderdbpassword
         volumes:
-            - ./order/mysql:/docker-entrypoint-initdb.d/
+            - ./mysql:/docker-entrypoint-initdb.d/
         # command:
         # depends_on: 
         #     -
