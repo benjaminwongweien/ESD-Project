@@ -1,8 +1,10 @@
 """
-Menu Microservice Data Models
+Data Models - Menu Microservice
+
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
+
 from .base import db
 
 class Vendor(db.Model):

@@ -1,9 +1,9 @@
 --
--- PostgreSQL database dump
+-- PostgreSQL Init Script - Menu Microservice
 --
 
--- Dumped from database version 12.2
--- Dumped by pg_dump version 12.2
+-- @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+-- @Team   - G3T4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;

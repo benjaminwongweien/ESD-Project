@@ -1,5 +1,6 @@
 """
 Menu Microservice
+
 @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 @Team   - G3T4
 """
@@ -36,41 +37,6 @@ app.app_context().push()
 def error(e):
   return jsonify({"status": "error",
                   "error" : e.description}), e.code
-
-@app.route("/bootstrap", methods=["GET"])
-def bootstrap():
-  """Bootstrap the Server"""
-  db.create_all()
-  db.session.commit()
-  import csv
-  with open("menu.csv","r", encoding="cp1252") as file:
-    csvfile = csv.reader(file,delimiter=",",quotechar='"')
-    csvfile = list(csvfile)
-  
-  for x in range(1,6):
-    line = csvfile[x-1]
-    db.session.add(Vendor(line[0],
-                          line[1],
-                          line[2],
-                          "vendor/{}".format(x)))  
-  db.session.commit()
-
-  vendor_id=1
-  food_id=1
-  for x in range(7,36):
-    line = csvfile[x-1]
-    if line[0] == "":
-      vendor_id += 1
-    else:
-      db.session.add(Food(vendor_id,
-                          line[0],
-                          line[1],
-                          line[2],
-                          line[3],
-                          "food/{}/{}".format(vendor_id,food_id)))
-      food_id += 1
-  db.session.commit()
-  return jsonify({"boostrap": "success"})
 
 @app.route("/all_vendor", methods=["GET"])
 def all_vendors():
