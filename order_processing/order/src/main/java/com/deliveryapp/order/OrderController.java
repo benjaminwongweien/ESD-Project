@@ -28,21 +28,21 @@ public class OrderController {
 
     @PostMapping("/history/customer")
     public List<Order> findOrdersbyUserID(@RequestBody Map<String, String> body) {
-        String custID = body.get("userid");
+        String custID = body.get("customerID");
         int CustID = Integer.parseInt(custID);
         return OrderRepo.findByCustomerID(CustID);
     }
 
     @PostMapping("/history/vendor")
     public List<Order> findOrdersbyVendorID(@RequestBody Map<String, String> body) {
-        String vendorID = body.get("vendorid");
+        String vendorID = body.get("vendorID");
         int venID = Integer.parseInt(vendorID);
         return OrderRepo.findByvendorID(venID);
     }
 
     @PostMapping("/history/deliverer")
     public List<Order> findOrdersbyDelivererID(@RequestBody Map<String, String> body) {
-        String delID = body.get("delivererid");
+        String delID = body.get("delivererID");
         int delivererID = Integer.parseInt(delID);
         return OrderRepo.findBydelivererID(delivererID);
     }
