@@ -53,8 +53,10 @@
 
     function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
       console.log('Welcome!  Fetching your information.... ');
-      FB.api('/me', function(response) {
+      var url = '/me?fields=name,email';
+      FB.api(url, function(response) {
         console.log('Successful login for: ' + response.name);
+        console.log('Successful login for: ' + response.email);
         document.getElementById('status').innerHTML =
           'Thanks for logging in, ' + response.name + '!';
         document.getElementById('logout').style.display = "block";
@@ -62,6 +64,12 @@
         document.getElementById('data').style.display = "none";
       });
     }
+
+    
+          // FB.api(url, function (response) {
+          //     alert(response.name);
+          //     alert(response.email);
+          // });
 
     function logOut(){
       FB.logout(function(response) {
@@ -84,7 +92,7 @@
 <body>
 
 
-<!--  The JS SDK Login Button -->
+<!--  GOOGLE -->
   <div class="g-signin2" data-onsuccess="onSignIn"></div>
   <div class="data">
       <p>Profile Details</p>
@@ -95,6 +103,8 @@
   </div>
   
   
+
+  <!-- FACEBOOK -->
   <div class="facebook">
     <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
     </fb:login-button>

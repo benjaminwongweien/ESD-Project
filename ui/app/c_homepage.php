@@ -1,6 +1,4 @@
-<? session_start(); ?>
-	
-	<!DOCTYPE html>
+<!DOCTYPE html>
 	<html lang="zxx" class="no-js">
 	<head>
 		<!-- Mobile Specific Meta -->
@@ -32,17 +30,13 @@
 			<link rel="stylesheet" href="./homepage_util/css/main.css">
 
 			<script>
-				var username = sessionStorage.getItem("name");
+				console.log(document.cookie);
 
-				if ("fb_response" in sessionStorage) {
-					alert('yes');
-
-				} else {
-					alert('no');
-					
+				if (document.cookie == "") {
+					// redirect users to login page
+					window.location.replace("./logout.php");
 				}
-
-
+		
 			</script>
 		</head>
 		<body>
@@ -58,10 +52,12 @@
 				          <li class="menu-active"><a href="#home">Home</a></li>
 				          <li><a href="vendors.php">Vendors</a></li>
 				          <!-- <li><a href="orders.php">Orders</a></li> -->
-						  <li class="menu-has-children"><a href=""><p id="user"></p></a>
-				            <ul>
-				              <li><a href="./orders.php">Orders</a></li>
-				              <li id="logout"><a href="./logout.php">Logout</a></li>
+						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
+				            <ul id="logout">
+							  <li><a href="./orders.php">Orders</a></li>
+							  <?php echo $_COOKIE['logout_button'] ?>
+							  <!-- <li><a href="./logout.php">Logout</a></li> -->
+							  <!-- <li><button onclick="logOut()">Logout</button></li> -->
 				            </ul>
 				          </li>
 				        </ul>
@@ -75,6 +71,7 @@
 				<div class="container">
 					<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
+						
 							<h4 class="text-white text-uppercase">Wide Options of Choice</h4>
 							<h1>
 								Delicious Menu					
@@ -180,178 +177,7 @@
 					</div>
 				</div>	
 			</section>
-			<!-- End related Area -->	
-
-
-			<!-- Start team Area -->
-			<!-- <section class="team-area section-gap" id="chefs">
-				<div class="container">
-					<div class="row d-flex justify-content-center">
-						<div class="menu-content pb-70 col-lg-8">
-							<div class="title text-center">
-								<h1 class="mb-10">Meet Our Qualified Chefs</h1>
-								<p>Who are in extremely love with eco friendly system.</p>
-							</div>
-						</div>
-					</div>						
-					<div class="row justify-content-center d-flex align-items-center">
-						<div class="col-md-3 single-team">
-						    <div class="thumb">
-						        <img class="img-fluid" src="img/t1.jpg" alt="">
-						        <div class="align-items-center justify-content-center d-flex">
-									<a href="#"><i class="fa fa-facebook"></i></a>
-									<a href="#"><i class="fa fa-twitter"></i></a>
-									<a href="#"><i class="fa fa-linkedin"></i></a>
-						        </div>
-						    </div>
-						    <div class="meta-text mt-30 text-center">
-							    <h4>Ethel Davis</h4>
-							    <p>Managing Director (Sales)</p>									    	
-						    </div>
-						</div>
-						<div class="col-md-3 single-team">
-						    <div class="thumb">
-						        <img class="img-fluid" src="img/t2.jpg" alt="">
-						        <div class="align-items-center justify-content-center d-flex">
-									<a href="#"><i class="fa fa-facebook"></i></a>
-									<a href="#"><i class="fa fa-twitter"></i></a>
-									<a href="#"><i class="fa fa-linkedin"></i></a>
-						        </div>
-						    </div>
-						    <div class="meta-text mt-30 text-center">
-							    <h4>Rodney Cooper</h4>
-							    <p>Creative Art Director (Project)</p>			    	
-						    </div>
-						</div>	
-						<div class="col-md-3 single-team">
-						    <div class="thumb">
-						        <img class="img-fluid" src="img/t3.jpg" alt="">
-						        <div class="align-items-center justify-content-center d-flex">
-									<a href="#"><i class="fa fa-facebook"></i></a>
-									<a href="#"><i class="fa fa-twitter"></i></a>
-									<a href="#"><i class="fa fa-linkedin"></i></a>
-						        </div>
-						    </div>
-						    <div class="meta-text mt-30 text-center">
-							    <h4>Dora Walker</h4>
-							    <p>Senior Core Developer</p>			    	
-						    </div>
-						</div>	
-						<div class="col-md-3 single-team">
-						    <div class="thumb">
-						        <img class="img-fluid" src="img/t4.jpg" alt="">
-						        <div class="align-items-center justify-content-center d-flex">
-									<a href="#"><i class="fa fa-facebook"></i></a>
-									<a href="#"><i class="fa fa-twitter"></i></a>
-									<a href="#"><i class="fa fa-linkedin"></i></a>
-						        </div>
-						    </div>
-						    <div class="meta-text mt-30 text-center">
-							    <h4>Lena Keller</h4>
-							    <p>Creative Content Developer</p>			    	
-						    </div>
-						</div>																		
-					</div>
-				</div>	
-			</section> -->
-			<!-- End team Area -->			
-
-			<!-- start blog Area -->		
-			<!-- <section class="blog-area section-gap" id="blog">
-				<div class="container">
-					<div class="row d-flex justify-content-center">
-						<div class="menu-content pb-70 col-lg-8">
-							<div class="title text-center">
-								<h1 class="mb-10">Latest From Our Blog</h1>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore  et dolore magna aliqua.</p>
-							</div>
-						</div>
-					</div>					
-					<div class="row">
-						<div class="col-lg-3 col-md-6 single-blog">
-							<div class="thumb">
-								<img class="img-fluid" src="img/b1.jpg" alt="">
-							</div>
-							<p class="date">10 Jan 2018</p>
-							<a href="#"><h4>Cooking Perfect Fried Rice
-							in minutes</h4></a>
-							<p>
-								inappropriate behavior ipsum dolor sit amet, consectetur.
-							</p>
-							<div class="meta-bottom d-flex justify-content-between">
-								<p><span class="lnr lnr-heart"></span> 15 Likes</p>
-								<p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-							</div>									
-						</div>
-						<div class="col-lg-3 col-md-6 single-blog">
-							<div class="thumb">
-								<img class="img-fluid" src="img/b2.jpg" alt="">
-							</div>
-							<p class="date">10 Jan 2018</p>
-							<a href="#"><h4>Secret of making Heart 
-							Shaped eggs</h4></a>
-							<p>
-								inappropriate behavior ipsum dolor sit amet, consectetur.
-							</p>
-							<div class="meta-bottom d-flex justify-content-between">
-								<p><span class="lnr lnr-heart"></span> 15 Likes</p>
-								<p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-							</div>									
-						</div>
-						<div class="col-lg-3 col-md-6 single-blog">
-							<div class="thumb">
-								<img class="img-fluid" src="img/b3.jpg" alt="">
-							</div>
-							<p class="date">10 Jan 2018</p>
-							<a href="#"><h4>How to check steak if 
-							it is tender or not</h4></a>
-							<p>
-								inappropriate behavior ipsum dolor sit amet, consectetur.
-							</p>
-							<div class="meta-bottom d-flex justify-content-between">
-								<p><span class="lnr lnr-heart"></span> 15 Likes</p>
-								<p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-							</div>									
-						</div>
-						<div class="col-lg-3 col-md-6 single-blog">
-							<div class="thumb">
-								<img class="img-fluid" src="img/b4.jpg" alt="">
-							</div>
-							<p class="date">10 Jan 2018</p>
-							<a href="#"><h4>Addiction When Gambling
-							Becomes A Problem</h4></a>
-							<p>
-								inappropriate behavior ipsum dolor sit amet, consectetur.
-							</p>
-							<div class="meta-bottom d-flex justify-content-between">
-								<p><span class="lnr lnr-heart"></span> 15 Likes</p>
-								<p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-							</div>									
-						</div>						
-					</div>
-				</div>	
-			</section> -->
-			<!-- end blog Area -->	
-
-			<!-- Start Contact Area -->
-			<!--<section class="contact-area" id="contact">
-				<div class="container-fluid">
-					<div class="row align-items-center d-flex justify-content-center">
-						<div class="mapouter"><div class="gmap_canvas"><iframe width="582" height="545" id="gmap_canvas" src="https://maps.google.com/maps?q=singapore%20management%20university&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://www.embedgooglemap.net/blog/divi-discount-code-elegant-themes-coupon/"></a></div><style>.mapouter{position:relative;text-align:right;height:545px;width:582px;}.gmap_canvas {overflow:hidden;background:none!important;height:545px;width:582px;}</style></div>
-						<div class="col-lg-4 col-md-12 pt-100 pb-100">
-							<form class="form-area" id="myForm" action="mail.php" method="post" class="contact-form text-right">
-								<input name="fname" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mt-10" required="" type="text">
-								<input name="email" placeholder="Enter email address" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" class="common-input mt-10" required="" type="email">
-								<textarea class="common-textarea mt-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-								<button class="primary-btn mt-20">Send Message<span class="lnr lnr-arrow-right"></span></button>
-								<div class="mt-10 alert-msg">
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</section> -->
-			<!-- End Contact Area -->				
+			<!-- End related Area -->				
 
 			<!-- start footer Area -->		
 			<footer class="footer-area section-gap">
@@ -433,16 +259,52 @@
 			<script src="homepage_util/js/main.js"></script>	
 			<script src="homepage_util/js/logout_script.js"></script>	
 
-
-			<!-- Display user name upon logging in -->
+			<!-- FACEBOOK -->
 			<script>
-				document.getElementById("user").innerHTML = username;
+				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
+				console.log('statusChangeCallback');
+				console.log(response);                   // The current login status of the person.	
+				
+				if (response.status === 'connected') {   // Logged into your webpage and Facebook.
+						console.log("Logged in as facebook");
+						console.log(document.cookie);
+					} else {                                 // Not logged into your webpage or we are unable to tell.
+						console.log("Not logged in as facebook")
+					}
+				}
 
+				function checkLoginState() {               // Called when a person is finished with the Login Button.
+					FB.getLoginStatus(function(response) {   // See the onlogin handler
+						statusChangeCallback(response);
+					});
+				}
+				window.fbAsyncInit = function() {
+				FB.init({
+					appId      : '201004657801578',
+					cookie     : true,
+					xfbml      : true,                     // Parse social plugins on this webpage.
+					version    : 'v6.0'           // Use this Graph API version for this call.
+				});
+
+
+				FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
+					statusChangeCallback(response);        // Returns the login status.
+				});
+				};
+				(function(d, s, id) {                      // Load the SDK asynchronously
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "https://connect.facebook.net/en_US/sdk.js";
+				fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+
+				
 				function logOut(){
 					FB.logout(function(response) {
 						statusChangeCallback(response);
 						document.getElementById('logout').style.display = "none";
-						location.reload();
+						window.location.replace("./logout.php");
 					});
 				}
 			</script>
