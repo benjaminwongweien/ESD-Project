@@ -18,9 +18,9 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
   - RabbiMQ AMQP Messaging Broker
   - Payment Microservise using Stripe API   
   - Notfication Microservice using Telegram API
-  - Web UI with Google and Facebook Login Enabled
   - Netflix/Eureka API Gateway built on Spring Boot
   - Order Process Microservice built on Spring Boot
+  - Web UI with Google and Facebook Login Enabled
   - Recommendation Microservice using Google Maps API
 
 ### Tech
