@@ -2,6 +2,11 @@
 
 [![Inline docs](http://inch-ci.org/github/benjaminwongweien/elysion.svg?branch=master)](http://inch-ci.org/github/benjaminwongweien/elysion)
 
+<p align="left">
+  <img width="318.978mm" height="97.003448mm" src="./logo.svg">
+</p>
+
+
 EaSy Delivery is a Microservice Driven Solution for Food Delivery.
 
 # Features!
