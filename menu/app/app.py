@@ -12,9 +12,7 @@ from model.base import db
 from model.data_models import Vendor, Food
 
 def create_app(uri):
-  """
-  Creates and starts the App with all the required settings
-  """
+  """ Creates and starts the App with all the required settings """
   app = Flask(__name__)
   CORS(app)
   app.config['SQLALCHEMY_DATABASE_URI'] = uri

@@ -1,8 +1,10 @@
 """
-CRM Microservice Data Models
-@Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
-@Team   - G3T4
+Data Models - CRM Microservice
+
+@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+@team   - G3T4
 """
+
 from .base import db
 
 class User(db.Model):

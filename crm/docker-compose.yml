@@ -1,4 +1,7 @@
+#
 # Docker-Compose - CRM Microservice
+#
+
 # @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
 # @Team   - G3T4
 
@@ -34,11 +37,10 @@ services:
             POSTGRES_DB: crm
             POSTGRES_USER: crmdb
             POSTGRES_PASSWORD: crmdbpassword
-        # volumes:
-        #     - ./postgres:/docker-entrypoint-initdb.d/
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d/
         # command:
         # depends_on: 
-        #  
     
     crm_nginx:
         image: nginx:1.17-alpine
