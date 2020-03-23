@@ -51,7 +51,7 @@ This will compose the required EaSy Delivery images and pull in the necessary de
 ### Ports
 
 | Microservice                    | Exposed |  :  | Internal | Link                   |
-|  ----------                     | ------: | :-: | -------- | :---------------:      |
+| ------------------------------- | ------: | :-: | -------- | :--------------------: |
 | UI - NGINX                      | 443     |  :  | 443      | https://localhost/     |
 | UI - PHP-FPM                    | -       |  :  | 9000     | -                      |
 | Menu - NGINX                    | 85      |  :  | 80       | http://localhost:85/   |
@@ -66,7 +66,9 @@ This will compose the required EaSy Delivery images and pull in the necessary de
 | Recommendation - NGINX          | 89      |  :  | 80       | http://localhost:89/   |
 | Recommendation - Flask          | -       |  :  | 8000     | -                      |
 | RabbitMQ Broker                 | 5673    |  :  | 5672     | http://localhost:5673/ |
-| RabbitMQ Management             | 15673   |  :  | 15672    | http://localhost:15673/|           
+| RabbitMQ Management             | 15673   |  :  | 15672    | http://localhost:15673/| 
+| Order Processing - Spring Boot  | 8080    |  :  | 8080     | http://localhost:8080/ |
+| Order Processing - MySQL        | -       |  :  | 3306     | -                      |          
 
 ### Todos
 
