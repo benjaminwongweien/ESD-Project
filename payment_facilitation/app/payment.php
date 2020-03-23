@@ -69,7 +69,7 @@
 <body>
   <?php
 
-  /* --- Require the Dependencies --- */
+/* --- Require the Dependencies --- */
   // uses composer autoload
   require_once(__DIR__ . "/vendor/autoload.php");
 
@@ -168,7 +168,6 @@
   $connection->close();
 
   // perform the Javascript redirect to checkout
-  echo '';
   echo "<script src='https://js.stripe.com/v3/'></script>
         <script>
           var stripe = Stripe('pk_test_56Qu5vUEGwiUGLHrQ1IZXORf00M3K2og5l');
