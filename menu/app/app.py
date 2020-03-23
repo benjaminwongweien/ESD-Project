@@ -36,6 +36,14 @@ def error(e):
   return jsonify({"status": "error",
                   "error" : e.description}), e.code
 
+@app.route("/dump", methods=["GET"])
+def dump():
+  """ Dumps all the Table Information -> Debug Purposes """
+  vendors = Vendor.query.all()
+  foods   = Food.query.all()
+  return jsonify({"vendor": [vendor.json(0,1,2,3,4) for vendor in vendors],
+                  "food": [food.json(0,1,2,3,4,5,6,7,8) for food in foods]})
+
 @app.route("/all_vendor", methods=["GET"])
 def all_vendors():
   """ Obtains JSON of all Vendors """

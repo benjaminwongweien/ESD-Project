@@ -35,10 +35,16 @@ app.app_context().push()
 @app.errorhandler(504)
 def error(e):
     return jsonify({"status": "error", "error": e.description}), e.code
-        
+
+@app.route("/dump", methods=["GET"])
+def dump():
+  """ Dumps all the Table Information -> Debug Purposes """
+  users = User.query.all()
+  return jsonify({"user": [user.json(0,1,2,3,4) for user in users]})
+
 @app.route("/chatid", methods=["POST"])
 def chatId():
-    ''' get the user's info based on the chat id -> telegram bot '''
+    """ get the user's info based on the chat id -> telegram bot """
     chat_id = request.form.get("chatid")
     if chat_id:
         user = User.query.filter_by(chat_id=chat_id).first()
@@ -54,7 +60,7 @@ def chatId():
 
 @app.route("/username", methods=["POST"])
 def username():
-    ''' get the user's info based on the username '''
+    """ get the user's info based on the username """
     username = request.form.get("username")
     if username:
         user = User.query.filter_by(username=username).first()
@@ -69,7 +75,7 @@ def username():
 
 @app.route("/usertype", methods=["POST"])
 def user_type():
-    ''' get all the user's information based on usertype '''
+    """ get all the user's information based on usertype """
     user_type = request.form.get("user_type")
     if user_type:
         users = User.query.filter_by(user_type=user_type).all()
@@ -84,7 +90,7 @@ def user_type():
 
 @app.route("/register", methods=["POST"])
 def register():
-    ''' registers a user '''
+    """ registers a user """
     uid = request.form.get("uid")
     uType = request.form.get("type")
     teleId = request.form.get("tid")
@@ -104,7 +110,7 @@ def register():
 
 @app.route("/register_tele", methods=["POST"])
 def register():
-    ''' registers a user's telegram chat id '''
+    """ registers a user's telegram chat id """
     uid = request.form.get("uid")
     uType = request.form.get("type")
     teleId = request.form.get("tid")

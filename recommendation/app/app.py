@@ -1,8 +1,10 @@
 """
 Recommendation Microservice
-@Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
-@Team   - G3T4
+
+@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+@team   - G3T4
 """
+
 import os
 import json
 from flask import Flask, jsonify, request
@@ -14,11 +16,8 @@ globals = {}
 dummy_address = {'lat': 1.2, 'lng': 103}
 dummy_history = []
 
-
 def create_app():
-    """
-    Creates and starts the App with all the required settings
-    """
+    """ Creates and starts the App with all the required settings """
     app = Flask(__name__)
     CORS(app)
     # app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -31,7 +30,6 @@ app = create_app()
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
 app.app_context().push()
 
-
 @app.errorhandler(400)
 @app.errorhandler(404)
 @app.errorhandler(405)
@@ -43,11 +41,9 @@ def error(e):
     return jsonify({"status": "error",
                     "error": e.description}), e.code
 
-
 @app.route("/vendor_pos", methods=["GET"])
 def vendor_pos():
     return jsonify(globals['vendors'])
-
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():

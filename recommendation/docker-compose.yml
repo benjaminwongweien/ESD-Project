@@ -16,7 +16,7 @@ services:
         networks:
             - network
         # environment: 
-        #     - "URI=postgresql://crmdb:crmdbpassword@recommendationdb:5432/rec" 
+        #     - "URI=mysql+mysqlconnector://recdb:recdbpassword@recommendationdb:3306/rec" 
         # volumes:
         #     - 
         command: gunicorn -b 0.0.0.0:8000 app:app
@@ -24,18 +24,19 @@ services:
         #     - recommendationdb
     
     # recommendationdb:
-    #     image: postgres:12.2-alpine
-    #     container_name: postgres_menu_database
+    #     image: mysql
+    #     container_name: mysql_recommendation_database
     #     # ports:
-    #     #     - "5432"
+    #     #     - "3306"
     #     networks:
     #         - network
     #     environment:
-    #         POSTGRES_DB: rec
-    #         POSTGRES_USER: recdb
-    #         POSTGRES_PASSWORD: recdbpassword
+    #         MYSQL_DATABASE: rec
+    #         MYSQL_ROOT_PASSWORD: recsecretpasswordwowomgsonice
+    #         MYSQL_USER: recdb
+    #         MYSQL_PASSWORD: recdbpassword
     #     volumes:
-    #         - ./postgres:/docker-entrypoint-initdb.d/
+    #         - ./mysql:/docker-entrypoint-initdb.d/
     #     # command:
     #     # depends_on: 
     
