@@ -41,7 +41,7 @@ function redirect_to_error($e,$location=FALSE) {
     redirect_to_error("Request Missing GET");
   }
   else {
-    if (empty($_POST['customer_id']) || empty($_POST['session_id'])) {
+    if (empty($_GET['customer_id']) || empty($_GET['session_id'])) {
         redirect_to_error(("Request Missing GET Var"));
     }
   }
