@@ -2,8 +2,8 @@
 
 [![Inline docs](http://inch-ci.org/github/benjaminwongweien/elysion.svg?branch=master)](http://inch-ci.org/github/benjaminwongweien/elysion)
 
-<p align="left">
-  <img width="500px" height="500px" align="center" src="./logo.svg">
+<p align="center">
+  <img width="400px" height="400px" src="./logo.svg">
 </p>
 
 
