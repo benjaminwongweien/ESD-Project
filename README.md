@@ -27,7 +27,6 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
 
 EaSy Delivery uses a number of open source projects to work properly:
 
-* [jQuery] - duh XD
 * [Flask](https://palletsprojects.com/p/flask/) - A lightweight WSGI web application framework.
 * [Docker](https://www.docker.com) - Empowering App Development for Developers.
 * [Stripe](https://stripe.com/en-sg) - Online payment processing for internet businesses.
