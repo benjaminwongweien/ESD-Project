@@ -20,11 +20,6 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
   - Order Process Microservice built on Spring Boot
   - Recommendation Microservice using Google Maps API
 
-You can also:
-  - Import and save files from GitHub, Dropbox, Google Drive and One Drive
-  - Drag and drop markdown and HTML files into Dillinger
-  - Export documents as Markdown, HTML and PDF
-
 ### Tech
 
 EaSy Delivery uses a number of open source projects to work properly:
