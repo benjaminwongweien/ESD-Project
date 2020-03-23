@@ -128,7 +128,6 @@
 					</div>
 				</div>	
 			</section>
-			<!-- End top-dish Area -->
 
 			<!-- Start related Area -->
 			<section class="related-area section-gap">
@@ -144,28 +143,32 @@
 					<div class="row justify-content-center">
 						<div class="active-realated-carusel">
 							<?php
-								$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
+								$all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
 								foreach ($all_food['food'] as $food) {
-									if( $food['vendor_id'] == 1){
-										echo "<form action='http://localhost:86/payment.php' method='POST'>";
-										echo "<div class='row align-items-center'>";
-											echo "<div class='col-lg-6 rel-left'>";
-												echo "<h3>{$food['food_name']}</h3>";
-												echo "<p class='pt-30 pb-30'>{$food['food_description']}</p>";
-												echo "<p>Price: \$ {$food['food_price']}</p>";
-												echo "<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-												echo "<input class='genric-btn info-border circle' type='submit' value='Buy Now'>";
-
-												echo "<input type='hidden' value='{$food['vendor_id']}' name='customerid'>";
-												echo "<input type='hidden' value='{$food['food_name']}' name='foodname'>";
-												echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
-												echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
-											echo "</div>";
-											echo "<div class='thumb'>";
-												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}' alt=''>";
-											echo "</div>";
-										echo "</div>";
-										echo "</form>";
+									if($food['vendor_id'] == 1){
+										echo "
+										<form action='http://host.docker.internal:86/payment.php' method='POST'>
+											<div class='row align-items-center'>
+												<div class='col-lg-6 rel-left'>
+													<h3>{$food['food_name']}</h3>
+													<p class='pt-30 pb-30'>{$food['food_description']}</p>
+													<p>Price: \${$food['food_price']}</p>
+													<label style='padding-right: 5px'>Delivery Address: </label><br>
+													<textarea name='delivery_address' rows='2' cols='18'></textarea><br><br>
+													<input value='1' min='1' style='width: 50px' type='number' name='quantity'>
+													<input class='genric-btn info-border circle' type='submit' value='Buy Now'>
+													<input type='hidden' value='{}' name='customer_id'>
+													<input type='hidden' value='{$food['vendor_id']}' name='vendor_id'>
+													<input type='hidden' value='{$food['food_name']}' name='food_name'>
+													<input type='hidden' value='{$food['food_description']}' name='food_description'>
+													<input type='hidden' value='{$food['food_price']}' name='amount'>
+													<input type='hidden' value='{$food['food_id']}' name='food_id'>
+												</div>
+												<div class='thumb' style='padding-left: 200px'>
+													<img class='img-fluid' style='border-radius: 15px; width:200px; height:200px' src='http://host.docker.internal:85/static/{$food['food_image']}' alt=''>
+												</div>
+											</div>
+											</form>";
 									}
 								}
 							?>					

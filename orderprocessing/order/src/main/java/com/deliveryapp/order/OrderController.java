@@ -1,12 +1,12 @@
 package com.deliveryapp.order;
 
-import com.deliveryapp.order.sender.*;
-import com.deliveryapp.order.receiver.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import com.deliveryapp.order.rabbitmq.OrderReceiver;
+import com.deliveryapp.order.rabbitmq.OrderSender;
 
 @RestController
 @RequestMapping(value="/order")
@@ -47,24 +47,26 @@ public class OrderController {
         return OrderRepo.findBydelivererID(delivererID);
     }
 
-    
+    public Order create(Order order) {
+        return OrderRepo.save(order);
+    }
 
-    @PostMapping("/create")
-    public Order create(@RequestBody Map<String, String> body) {
+    @PostMapping("/testpoint")
+    public Order findOrderByorderID(@RequestBody Map<String, String> body) {
+        String orderID = body.get("orderID");
+        int customerID = Integer.parseInt(body.get("CustomerID"));
+        int vendorID = Integer.parseInt(body.get("vendorID"));
+        int foodID = Integer.parseInt(body.get("foodID"));
+        int delivererID = Integer.parseInt(body.get("delivererID"));
+        int quantity = Integer.parseInt(body.get("quantity"));
+        int price = Integer.parseInt(body.get("price"));
+        String order_status = body.get("order_status");
+        String delivery_address = body.get("delivery_address");
 
-        String customerID = body.get("customer_id");
-        String food = body.get("food_id");
-        String qty = body.get("quantity");
-
-        int custID = Integer.parseInt(customerID);
-        int foodID = Integer.parseInt(food);
-        int quantity = Integer.parseInt(qty);
-
-        String checkoutID = body.get("checkout_id");
-        String status = body.get("status");
-
-        orderReceiver.receiveMessage(customerID);
-        return OrderRepo.save(new Order(custID, foodID, quantity, checkoutID, status));
+        // Order order = OrderRepo.findOrderByorderID(orderID);
+        Order order = new Order(customerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address);
+        orderSender.sendOrder(order);
+        return order;
     }
 
 

@@ -1,4 +1,9 @@
+# Docker-Compose - Recommendation Microservice
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
 version: '3.7'
+
 services:
 
     recommendation:
@@ -6,40 +11,49 @@ services:
             context: ./app
             dockerfile: DOCKERFILE_RECOMMENDATION
         container_name: recommendation_microservice
-        # ports: (This exposes the port and we don't want that we want to expose the nginx port)
+        # ports:
         #     - "8000"
         networks:
-            - recommendation_microservice_network
-        command: gunicorn -b 0.0.0.0:8000 app:app
+            - network
         # environment: 
-        #     - "URI=postgresql://crmdb:crmdbpassword@db:5432/crm" 
+        #     - "URI=postgresql://crmdb:crmdbpassword@recommendationdb:5432/rec" 
+        # volumes:
+        #     - 
+        command: gunicorn -b 0.0.0.0:8000 app:app
         # depends_on: 
-        #     - db
+        #     - recommendationdb
     
-    # db:
+    # recommendationdb:
     #     image: postgres:12.2-alpine
     #     container_name: postgres_menu_database
     #     # ports:
     #     #     - "5432"
     #     networks:
-    #         - recommendation_microservice_network
+    #         - network
     #     environment:
-    #         POSTGRES_DB: crm
-    #         POSTGRES_USER: crmdb
-    #         POSTGRES_PASSWORD: crmdbpassword
+    #         POSTGRES_DB: rec
+    #         POSTGRES_USER: recdb
+    #         POSTGRES_PASSWORD: recdbpassword
+    #     volumes:
+    #         - ./postgres:/docker-entrypoint-initdb.d/
+    #     # command:
+    #     # depends_on: 
     
-    nginx:
-        build:
-            context: ./nginx
-            dockerfile: DOCKERFILE_NGINX
+    recommendation_nginx:
+        image: nginx:1.17-alpine 
         container_name: nginx_server_recommendation
         ports:
             - "89:80"
         networks:
-            - recommendation_microservice_network
+            - network
+        # environment: 
+        #     -  
+        volumes:
+            - "./nginx:/etc/nginx/conf.d" 
+        # command:
         depends_on: 
             - recommendation
     
 networks:
-    recommendation_microservice_network: 
+    network: 
         driver: "bridge"

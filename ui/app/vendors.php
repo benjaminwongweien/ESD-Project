@@ -75,12 +75,12 @@
 					<div class="container">					
 						<div class="row justify-content-center d-flex align-items-left">
 						<?php
-							$vendors = json_decode(file_get_contents("http://localhost:85/all_vendor"), TRUE);
+							$vendors = json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
 							
 							foreach ($vendors['vendors'] as $vendor) {
 								echo "<div class='col single-team'>";
 									echo "<div class='thumb'>";
-										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://localhost:85/static/{$vendor['vendor_image']}'></a>";
+										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://host.docker.internal:85/static/{$vendor['vendor_image']}'></a>";
 									echo "</div>";
 									echo "<div class='meta-text mt-30 text-justify'>";
 										echo "<h4>{$vendor['vendor_name']}</h4>";	

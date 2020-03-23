@@ -55,8 +55,8 @@
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
 						<?php
-							$vendors= json_decode(file_get_contents("http://localhost:85/all_vendor"), TRUE);
-							$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
+							$vendors= json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
+							$all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
 
 							foreach ($vendors['vendors'] as $vendor) {
 								if( $_GET["vendor_id"] == $vendor['vendor_id']) {
@@ -81,9 +81,9 @@
 									foreach ($all_food['food'] as $food) {
 										if( $_GET["vendor_id"] == $food['vendor_id']){
 											echo "<div class='col-md-3 single-team'>";
-												echo "<form action='http://localhost:86/payment.php' method='POST'>";
+												echo "<form action='http://host.docker.internal:86/payment.php' method='POST'>";
 												echo "<div class='thumb'>";
-													echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
+													echo "<img class='img-fluid' src='http://host.docker.internal:85/static/{$food['food_image']}'>";
 												echo "</div>";
 												echo "<div class='meta-text mt-30 text-justify'>";
 													echo "<h4>{$food['food_name']}</h4>";	
@@ -94,12 +94,15 @@
 														echo "<p>Availability: <b>No</b></p>";
 													}
 													echo "<p>Price: \$ {$food['food_price']}</p>";
+													echo "<label>Delivery Address: </label>&nbsp;&nbsp;";
+													echo "<textarea name='delivery_address' rows='2' cols='18'></textarea><br><br>";
 													echo "<div class='meta-text mt-30 text-center'>";
 														echo "<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 														//Need to change
-														echo "<input type='hidden' value='haojunisfantastic' name='customerid'>";
-														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='customerid'>";
-														echo "<input type='hidden' value='{$food['food_name']}' name='foodname'>";
+														echo "<input type='hidden' value='haojunisfantastic' name='customer_id'>";
+														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='vendor_id'>";
+														echo "<input type='hidden' value='{$food['food_id']}' name='food_id'>";
+														echo "<input type='hidden' value='{$food['food_name']}' name='food_name'>";
 														echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
 														echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
 														echo "<input class='genric-btn info-border circle' type='submit' value='Buy'>";
@@ -119,7 +122,11 @@
 				</section>
 			</div>
 				<!-- End team Area -->
-				
+
+			<section class="team-area pt-100">
+				<div class="container">
+				</div>
+			</section> -->
 			<!-- Start Generic Area -->
 			<!-- <section class="about-generic-area section-gap">
 				<div class="container border-top-generic">
