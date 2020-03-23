@@ -64,7 +64,7 @@ This will compose the required EaSy Delivery images and pull in the necessary de
 | Recommendation - NGINX          | 89      |  :  | 80       | http://localhost:89/   |
 | Recommendation - Flask          | -       |  :  | 8000     | -                      |
 | RabbitMQ Broker                 | 5673    |  :  | 5672     | http://localhost:5673/ |
-| RabbitMQ Management             | 15673   |  :  | 15672    | http://localhost:15673 |           
+| RabbitMQ Management             | 15673   |  :  | 15672    | http://localhost:15673/|           
 
 ### Todos
 
