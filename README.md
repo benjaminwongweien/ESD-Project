@@ -3,7 +3,7 @@
 [![Inline docs](http://inch-ci.org/github/benjaminwongweien/elysion.svg?branch=master)](http://inch-ci.org/github/benjaminwongweien/elysion)
 
 <p align="left">
-  <img width="50px" height="50px" src="./logo.svg">
+  <img width="500px" height="500px" align="center" src="./logo.svg">
 </p>
 
 
