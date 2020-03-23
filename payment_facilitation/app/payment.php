@@ -145,12 +145,12 @@
   $message = new AMQPMessage(
     json_encode(
       [
-        'order_id'         => $id,
-        'customer_id'      => $_POST['customer_id'],
-        'vendor_id'        => $_POST['vendor_id'],
-        'food_id'          => $_POST['food_id'],
-        'quantity'         => $_POST['quantity'],
-        'price'            => $_POST['amount'],
+        'orderID'          => $id,
+        'customerID'       => $_POST['customer_id'],
+        'vendorID'         => strval($_POST['vendor_id']),
+        'foodID'           => strval($_POST['food_id']),
+        'quantity'         => strval($_POST['quantity']),
+        'price'            => strval($_POST['amount']),
         'order_status'     => 'Awaiting Payment',
         'delivery_address' => $_POST['delivery_address']
       ]

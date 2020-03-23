@@ -11,7 +11,7 @@
 
 /* --- Error Handling Functions --- */
 
-function redirect_to_error($e,$location=FALSE) {
+  function redirect_to_error($e,$location=FALSE) {
     if (!$location) {
       $url = "https://localhost/c_homepage.php";
     }
@@ -94,8 +94,8 @@ function redirect_to_error($e,$location=FALSE) {
   $message = new AMQPMessage(
     json_encode(
       [
-        'order_id'         => $_GET['session_id'],
-        'order_status'     => 'Payment Cancelled',
+        'orderID'      => $_GET['session_id'],
+        'order_status' => 'Payment Cancelled',
       ]
     )
   );
