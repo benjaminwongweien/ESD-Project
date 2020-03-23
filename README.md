@@ -52,7 +52,7 @@ This will compose the required EaSy Delivery images and pull in the necessary de
 
 | Microservice                    | Exposed |  :  | Internal | Link                   |
 |  ----------                     | ------: | :-: | -------- | :---------------:      |
-| UI - NGINX                      | 443     |  :  | 443      | http://localhost/      |
+| UI - NGINX                      | 443     |  :  | 443      | https://localhost/     |
 | UI - PHP-FPM                    | -       |  :  | 9000     | -                      |
 | Menu - NGINX                    | 85      |  :  | 80       | http://localhost:85/   |
 | Menu - Flask                    | -       |  :  | 8000     | -                      |
