@@ -1,6 +1,6 @@
 """
 Data Models Init - Menu Microservice
 
-@Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
-@Team   - G3T4
+@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+@team   - G3T4
 """
