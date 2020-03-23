@@ -1,31 +1,43 @@
 <?php
-/* Validation Section of the Code*/
+/**
+ * Main Payment Page | payment.php - Payment Facilitation Microservice
+ * 
+ * @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+ * @team   - G3T4
+ * 
+ * - DEPENDENCIES -
+ * (1) stripe/stripe-php       - Payment
+ * (2) php-amqplib/php-amqplib - RabbitMQ Compatibility
+*/
 
-function redirect_to_error($e,$location=FALSE) {
+/* --- Error Handling Functions --- */
 
-  if (!$location) {
-    $url = "https://localhost/c_homepage.php";
+  function redirect_to_error($e,$location=FALSE) {
+    if (!$location) {
+      $url = "https://localhost/c_homepage.php";
+    }
+    else {
+      $url = "https://localhost/food.php?vendor_id={$_POST['vendor_id']}";
+    }
+    echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset='utf-8'>
+              <title>Redirecting...</title>
+              <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=yes'>
+              <meta http-equiv='refresh' content='10;URL=https://localhost/c_homepage.php'>
+          </head>
+          <body>
+              You are being automatically redirected due to an error.<br />
+              If your browser does not redirect you in 10 seconds, or you do
+              not wish to wait, <a href='https://localhost/c_homepage.php'>click here</a>. 
+          </body>
+          </html>";
+    exit();
   }
-  else {
-    $url = "https://localhost/food.php?vendor_id={$_POST['vendor_id']}";
-  }
-  echo "<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Redirecting...</title>
-            <meta http-equiv='refresh' 
-        content='10;URL=https://localhost/c_homepage.php'>
-        </head>
-        <body>
-            You are being automatically redirected to an error.<br />
-            If your browser does not redirect you in 10 seconds, or you do
-            not wish to wait, <a href='https://localhost/c_homepage.php'>click here</a>. 
-        </body>
-        </html>";
-  exit();
-}
 
-// Validate the POST Request
+/* --- Error Handling Functions --- */
+
   if (!$_POST) {
     redirect_to_error("Request Missing POST");
   }
@@ -41,18 +53,11 @@ function redirect_to_error($e,$location=FALSE) {
         empty($_POST['delivery_address'])
       ) {
         redirect_to_error(("Request Missing POST Var"));
-      }
+    }
   }
-
-// Validate the contents of the POST Request
-  // we need to cURL Menu Microservice for all the details as only some information is sent over
-  // Code Here
-
-/* The STRIPE Library Dependencies: curl, json, mbstring */
-require_once(__DIR__ . "/vendor/autoload.php");
 ?>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -63,9 +68,13 @@ require_once(__DIR__ . "/vendor/autoload.php");
 
 <body>
   <?php
-  // This is the Private Key
-  // If deployed, these should be stored as an evironment variable
+
+  /* --- Require the Dependencies --- */
+  // uses composer autoload
+  require_once(__DIR__ . "/vendor/autoload.php");
+
   try {
+    // initialize Stripe with private key
     Stripe\Stripe::setApiKey('sk_test_IGEllSO26K2ZNmsjykkK0yom00Wh5CGkdw');
 
     $customer = \Stripe\Checkout\Session::create([
@@ -76,7 +85,7 @@ require_once(__DIR__ . "/vendor/autoload.php");
         [
           'name'        => $_POST['food_name'],
           'description' => $_POST['food_description'],
-          'images' => ['https://media.giphy.com/media/QUSUYLUUAIZ7EQpepf/giphy.gif'],
+          'images'      => ['https://media.giphy.com/media/QUSUYLUUAIZ7EQpepf/giphy.gif'],
           'amount'      => $_POST['amount'] * 100,
           'currency'    => 'sgd',
           'quantity'    => $_POST['quantity'],
@@ -84,12 +93,15 @@ require_once(__DIR__ . "/vendor/autoload.php");
       ],
     ]);
   }
+  // throw an error if stripe session fails to create
   catch (Exception $e) {
     redirect_to_error($e,TRUE);
   }
-  // Obtain the Checkout/Session ID from the customer object using the getter method
+
+  // obtain the checkout session id from the customer object using the getter method
   $id = $customer->getLastResponse()->json['id'];
 
+  // initialize AMQP Classes
   use PhpAmqpLib\Connection\AMQPStreamConnection;
   use PhpAmqpLib\Message\AMQPMessage;
 
@@ -155,17 +167,17 @@ require_once(__DIR__ . "/vendor/autoload.php");
   $channel->close();
   $connection->close();
 
-  // Perform the Javascript Redirect to Checkout
-  echo '<script src="https://js.stripe.com/v3/"></script>';
-  echo "<script>
+  // perform the Javascript redirect to checkout
+  echo '';
+  echo "<script src='https://js.stripe.com/v3/'></script>
+        <script>
           var stripe = Stripe('pk_test_56Qu5vUEGwiUGLHrQ1IZXORf00M3K2og5l');
 
           stripe.redirectToCheckout({
             sessionId: '$id'
           }).then(function (result) {
-            window.location.replace('http://localhost/run/cancel?customerid={$_POST['customer_id']}&session_id={CHECKOUT_SESSION_ID}')
+            window.location.replace('http://localhost:86/cancel.php?customer_id={$_POST['customer_id']}&session_id={CHECKOUT_SESSION_ID}')
           }); 
-
         </script>";
   ?>
   </body>
