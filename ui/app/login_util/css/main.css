@@ -117,7 +117,7 @@ textarea::-moz-placeholder { color: #555555;}
 textarea:-ms-input-placeholder { color: #555555;}
 
 label {
-  display: block;
+  display: inline-block;
   margin: 0;
 }
 
@@ -306,6 +306,15 @@ iframe {
   border-radius: 10px;
 }
 
+.wrap-inputRadio {
+  width: 100%;
+  position: relative;
+  background-color: #f7f7f7;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  font-size: 20px;
+
+}
 
 /*---------------------------------------------*/
 .input100 {
@@ -319,6 +328,18 @@ iframe {
   background: transparent;
   height: 60px;
   padding: 0 20px;
+}
+
+.inputRadio {
+  font-family: Poppins-Regular;
+  color: #333333;
+  line-height: 1.2;
+  font-size: 25px;
+
+  display: inline-flex;
+  width: 15%;
+  background: transparent;
+  height: 20px;
 }
 /*------------------------------------------------------------------
 [ Focus Input ]*/

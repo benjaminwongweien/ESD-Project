@@ -37,32 +37,38 @@
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('login_util/images/bg-04.jpg');">
 			<div class="wrap-login100 p-l-110 p-r-110 p-t-62 p-b-33">
-				<form class="login100-form validate-form flex-sb flex-w">
+				<form class="login100-form validate-form flex-sb flex-w" id="user_registration" name="user_registration">
 					<span class="login100-form-title p-b-53">
-						Sign In With
+						Register
 					</span>
-						
-						<!-- default FB button -->
-						<a href="c_homepage.php" class="btn-face m-b-20" id="facebook_button">
-							<div>
-								<i class="fa fa-facebook-official" style="position:relative;"></i>
-							</div>	
-							Facebook
-							<div style="opacity:0;position:absolute;">
-								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
-							</div>
-						</a>
+
+					<div class="p-t-31 p-b-9">
+						<span class="txt1">
+							Email
+						</span>
+					</div>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" name="username" value= <?= $_COOKIE['email'] ?> disabled>
+						<span class="focus-input100"></span>
+					</div>
 					
-					<!-- default google button -->
-					<a href="#" class="btn-google m-b-20" id="google_button">
-						<div>
-							<img src="login_util/images/icons/icon-google.png" alt="GOOGLE" style="position:relative;">
-						</div>	
-							Google
-						<div style="opacity:0;position:absolute;">
-							<div href="#" class="g-signin2" data-onsuccess="onSignIn" data-width="205" data-height="75"></div>  
-						</div>
-					</a>
+					<div class="p-t-13 p-b-9">
+						<span class="txt1">
+							User type
+						</span>
+					</div>
+					<div class="wrap-inputRadio validate-input" id="user_type">
+						<input class="inputRadio" type="radio" id="user" name="user_type" value="user" ><label for="user">User</label> <br>
+						<input class="inputRadio" type="radio" id="vendor" name="user_type" value="vendor"><label for="vendor">Vendor</label> <br>
+						<input class="inputRadio" type="radio" id="driver" name="user_type" value="driver"><label for="driver">Driver</label> <br>
+					</div>
+
+					<div class="container-login100-form-btn m-t-17">
+						<button class="login100-form-btn">
+							Sign Up
+						</button>
+					</div>
+
 					<br>
 					<!-- <div>
 							All rights reserved | Image taken from : https://qz.com/1038229/to-lose-weight-you-need-to-understand-the-psychology-of-why-you-crave-the-wrong-things/
@@ -95,83 +101,37 @@
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	
-<!-- Check cookies -->
+<!--  -->
 	<script>
 		console.log(document.cookie);
-	</script>
 
-<!-- Facebook JS -->
-		<script>
-		function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-		console.log('statusChangeCallback');
-		console.log(response);                   // The current login status of the person.
-		if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-			var url = '/me?fields=name,email';
-      		FB.api(url, function(response) {
-				document.cookie = "fb_status = " + response.status;
-				document.cookie = "name = " + response.name;
-				document.cookie = "email = " + response.email;
-				document.cookie = "login_type = " + "facebook";
-				document.cookie = "logout_button = <li><a href='#' onclick='logOut()'>Logout</a></li>";
-				console.log(document.cookie);
-				window.location.replace("./c_homepage.php");
-			});
-		} else {                                 // Not logged into your webpage or we are unable to tell.
-			document.getElementById('status').innerHTML = 'Please log ' +
-			'into this webpage.';
-		}
-		}
-
-
-		function checkLoginState() {               // Called when a person is finished with the Login Button.
-		FB.getLoginStatus(function(response) {   // See the onlogin handler
-			statusChangeCallback(response);
-		});
-		}
-
-
-		window.fbAsyncInit = function() {
-		FB.init({
-			appId      : '201004657801578',
-			cookie     : true,
-			xfbml      : true,                     // Parse social plugins on this webpage.
-			version    : 'v6.0'           // Use this Graph API version for this call.
-		});
-
-
-		FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
-			statusChangeCallback(response);        // Returns the login status.
-		});
-		};
-
-
-		(function(d, s, id) {                      // Load the SDK asynchronously
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "https://connect.facebook.net/en_US/sdk.js";
-		fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-
-
-// /// ///  Google JS /// /// //
-		function onSignIn(googleUser) {
-			var profile = googleUser.getBasicProfile();
-			$(".g-signin2").css("display", "none");
-			$(".data").css("display", "block");
-			// var pic = $("#pic").attr('src',  profile.getImageUrl());
-			// var email = $("#email").text(profile.getEmail());
-			// var name = $("#name").text(profile.getName());
-			document.cookie = "fb_status = " + "null";
-			document.cookie = "name = " + profile.getName();
-			document.cookie = "email = " + profile.getEmail();
-			document.cookie = "login_type = " + "google";
-			document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
-			// console.log(document.cookie);
-			window.location.replace("./c_homepage.php");
+		function accessCookie(cookieName)
+        {
+          var name = cookieName + "=";
+		  var allCookieArray = document.cookie.split(';');
+		  console.log(allCookieArray);
+          for(var i=0; i<allCookieArray.length; i++)
+          {
+			var temp = allCookieArray[i].trim();
+			console.log(temp);
+            if (temp.includes("email"))
+            	return temp;
+       	  }
+        	return "";
 		}
 		
+		var email_cookie = accessCookie(document.cookie);
+		email = email_cookie.slice(6);
+		console.log(email);
+		// var email = $_COOKIE["email"];
 
+		$("#user_type").click(function(){
+			var user_type=$("input:radio[name=user_type]:checked").val();
+			console.log(user_type);
+			// alert(value);
+		})
+
+		console.log(user_type);
 	</script>
 
 </body>
