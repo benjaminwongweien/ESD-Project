@@ -94,8 +94,8 @@
   $message = new AMQPMessage(
     json_encode(
       [
-        'order_id'         => $_GET['session_id'],
-        'order_status'     => 'Payment Cancelled',
+        'orderID'      => $_GET['session_id'],
+        'order_status' => 'Payment Cancelled',
       ]
     )
   );
