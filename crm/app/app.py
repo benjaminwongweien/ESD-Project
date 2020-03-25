@@ -109,7 +109,7 @@ def register():
 
 
 @app.route("/register_tele", methods=["POST"])
-def register():
+def register_tele():
     """ registers a user's telegram chat id """
     uid = request.form.get("uid")
     uType = request.form.get("type")
