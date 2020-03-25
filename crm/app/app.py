@@ -40,7 +40,7 @@ def error(e):
 def dump():
   """ Dumps all the Table Information -> Debug Purposes """
   users = User.query.all()
-  return jsonify({"user": [user.json(0,1,2,3) for user in users]})
+  return jsonify({"user": [user.json(0,1,2) for user in users]})
 
 @app.route("/chatid", methods=["POST"])
 def chatId():
