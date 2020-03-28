@@ -52,21 +52,21 @@ def vendor_pos():
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
     # uncomment when order api is working
-    # uid = request.args.get('uid')
-    # if uid == None:
-    #     return random.choice(globals['vendors']) 
-    # order_url = "http://localhost:8080/order/history/customer"
-    # order_hist_request = requests.post(url=order_url, json={"userid": uid})
-    # order_hist_data = order_hist_request.json()
+    uid = request.args.get('uid')
+    if uid == None:
+        return random.choice(globals['vendors']) 
+    order_url = "http://localhost:8080/order/history/customer"
+    order_hist_request = requests.post(url=order_url, json={"userid": uid})
+    order_hist_data = order_hist_request.json()
 
 
     # order_hist_data hardcoded: 
-    order_hist_data = [
-        {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
-            'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'},
-        {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
-            'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'}
-    ]
+    # order_hist_data = [
+    #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
+    #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'},
+    #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
+    #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'}
+    # ]
 
     address_list = [o['address'] for o in order_hist_data]
     top_address = max(set(address_list), key=address_list.count)
