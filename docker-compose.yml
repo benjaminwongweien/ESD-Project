@@ -99,63 +99,210 @@ services:
         depends_on: 
             - menu
  
-        ##############################
-        #     CRM MICROSERVCICE      #    
-        ##############################            
+    ##############################
+    #     CRM MICROSERVCICE      #    
+    ##############################            
 
-        crm:
-            build:
-                context: ./crm/app
-                dockerfile: DOCKERFILE_CRM
-            container_name: crm_microservice
-            # ports:
-            #     - "8000:8000"
-            networks:
-                - network
-            environment: 
-                - "URI=postgresql://crmdb:crmdbpassword@crm_db:5432/crm"
-            # volumes:
-            #     -
-            command: gunicorn -b 0.0.0.0:8000 app:app
-            depends_on: 
-                - crm_db
-        
-        crm_db:
-            image: postgres:12.2-alpine
-            container_name: crm_postgres_database
-            # ports:
-            #     - "5432"
-            networks:
-                - network
-            environment:
-                POSTGRES_DB: crm
-                POSTGRES_USER: crmdb
-                POSTGRES_PASSWORD: crmdbpassword
-            volumes:
-                - ./crm/postgres:/docker-entrypoint-initdb.d/
-            # command:
-            # depends_on: 
-        
-        crm_nginx:
-            image: nginx:1.17-alpine
-            container_name: crm_nginx
-            ports:
-                - "88:80"
-            networks:
-                - network
-            # environment: 
-            #     -  
-            volumes:
-                - "./crm/nginx:/etc/nginx/conf.d"  
-            # command:  
-            depends_on: 
-                - crm
+    crm:
+        build:
+            context: ./crm/app
+            dockerfile: DOCKERFILE_CRM
+        container_name: crm_microservice
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        environment: 
+            - "URI=postgresql://crmdb:crmdbpassword@crm_db:5432/crm"
+        # volumes:
+        #     -
+        command: gunicorn -b 0.0.0.0:8000 app:app
+        depends_on: 
+            - crm_db
+    
+    crm_db:
+        image: postgres:12.2-alpine
+        container_name: crm_postgres_database
+        # ports:
+        #     - "5432"
+        networks:
+            - network
+        environment:
+            POSTGRES_DB: crm
+            POSTGRES_USER: crmdb
+            POSTGRES_PASSWORD: crmdbpassword
+        volumes:
+            - ./crm/postgres:/docker-entrypoint-initdb.d/
+        # command:
+        # depends_on: 
+    
+    crm_nginx:
+        image: nginx:1.17-alpine
+        container_name: crm_nginx
+        ports:
+            - "88:80"
+        networks:
+            - network
+        # environment: 
+        #     -  
+        volumes:
+            - "./crm/nginx:/etc/nginx/conf.d"  
+        # command:  
+        depends_on: 
+            - crm
 
-            ##############################
-            #     CRM MICROSERVCICE      #    
-            ############################## 
+    ##############################
+    #    PAYMENT MICROSERVCICE   #    
+    ############################## 
+
+    payment_facilitation:
+        build:
+            context: ./payment_facilitation/app
+            dockerfile: DOCKERFILE_PAYMENT_FACILITATION
+        container_name: payment_facilitation_microservice
+        # ports:
+        #     -
+        networks:
+            - network
+        # environment: 
+        #     - 
+        volumes:
+            - "./payme nt_facilitation/app:/var/www/app"
+        # command:
+        # depends_on: 
+        #     -
+
+    payment_facilitation_nginx:
+        image: nginx:1.17-alpine
+        container_name: payment_facilitation_nginx
+        ports:
+            - "86:80"
+        networks:
+            - network
+        # environment: 
+        #     - 
+        volumes:
+            - "./payment_facilitation/app:/var/www/app"
+            - "./payment_facilitation/nginx:/etc/nginx/conf.d"
+        # command:
+        depends_on: 
+            - payment_facilitation
+
+    payment_facilitation_composer:
+        image: composer
+        container_name: payment_facilitation_composer
+        # ports:
+        #     - 
+        networks:
+            - network
+        # environment: 
+        #     - 
+        volumes:
+            - "./payment_facilitation/app:/app"
+        privileged: True
+        command: ["composer", "install"]
+
+
+    ##################################
+    # ORDER PROCEESING MICROSERVCICE #    
+    ##################################
+
+    order:
+        build:
+            context: ./order_processing/order
+            dockerfile: DOCKERFILE_ORDER
+        container_name: order_microservice
+        ports:
+            - "8080:8080"
+        networks:
+            - network
+        # environment: 
+        #     - 
+        volumes:
+            - "./order_processing/grade-cache:/home/gradle/.gradle"
+        # command: 
+        depends_on: 
+        - order_db
+
+    order_db:
+        image: mysql
+        container_name: order_mysql_database
+        ports:
+            - "3310:3306"
+        networks:
+            - network
+        environment:
+            MYSQL_DATABASE: OrderDB
+            MYSQL_ROOT_PASSWORD: ordersecretpasswordwowomgsonice
+            MYSQL_USER: orderdb
+            MYSQL_PASSWORD: orderdbpassword
+        volumes:
+            - ./order_processing/mysql:/docker-entrypoint-initdb.d/
+        # command:
+        # depends_on: 
+        #     -
+
+
+
+    ##################################
+    #  RECOMMENDATION MICROSERVCICE  #    
+    ##################################
+    recommendation:
+        build:
+            context: ./recommendation/app
+            dockerfile: DOCKERFILE_RECOMMENDATION
+        container_name: recommendation_microservice
+        # ports:
+        #     - "8000"
+        networks:
+            - network
+        # environment: 
+        #     - "URI=mysql+mysqlconnector://recdb:recdbpassword@recommendationdb:3306/rec" 
+        # volumes:
+        #     - 
+        command: gunicorn -b 0.0.0.0:8000 app:app
+        # depends_on: 
+        #     - recommendationdb
+
+
+    recommendation_nginx:
+        image: nginx:1.17-alpine 
+        container_name: nginx_server_recommendation
+        ports:
+            - "89:80"
+        networks:
+            - network
+        # environment: 
+        #     -  
+        volumes:
+            - "./recommendation/nginx:/etc/nginx/conf.d" 
+        # command:
+        depends_on: 
+            - recommendation
 
     
+    ##############################
+    #  RABBIT MQ MICROSERVCICE   #    
+    ############################## 
+    rabbitmq:
+        image: rabbitmq:3.8.3-management
+        container_name: rabbitmq_broker
+        ports:
+            - "5673:5672"
+            - "15673:15672"
+        networks:
+            - network
+        environment:
+            - RABBITMQ_DEFAULT_USER=rabbit
+            - RABBITMQ_DEFAULT_PASS=tibbar  
+        # volumes:
+        #     -
+        # command:
+        # depends_on: 
+        #     - 
+
+
+
 networks:
     network: 
         driver: "bridge"
