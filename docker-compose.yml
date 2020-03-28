@@ -1,0 +1,161 @@
+#
+# Docker-Compose - EaSy Delivery 
+#
+
+# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @team   - G3T4
+
+version: '3.7'
+
+services:
+    
+    ##############################
+    #             UI             #    
+    ##############################
+
+    ui:
+        image: php:7.4.3-fpm-buster
+        container_name: ui_container
+        # ports:
+        #     - 
+        networks:
+            - network
+        # environment:
+        #     -
+        volumes:
+            - "./ui/app:/var/www/app"
+        # command: 
+        # depends_on:
+        #    - 
+
+    ui_nginx:
+        image: nginx:1.17-alpine
+        container_name: nginx_server_ui
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - network
+        # environment: 
+        #
+        volumes:
+            - "./ui/app:/var/www/app"
+            - "./ui/nginx:/etc/nginx/conf.d"
+            - "./ui/certs:/etc/nginx/certs"
+        # command:
+        depends_on: 
+            - ui
+
+    ##############################
+    #     MENU MICROSERVCICE     #    
+    ##############################
+
+    menu:
+        build:
+            context: ./menu/app
+            dockerfile: DOCKERFILE_MENU
+        container_name: menu_microservice
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        environment: 
+            - "URI=postgresql://easydeliverymenudb:easydeliverymenudbpassword@menu_db:5432/menu"
+        # volumes:
+        #     - 
+        command: gunicorn -b 0.0.0.0:8000 app:app
+        depends_on: 
+            - menu_db
+    
+    menu_db:
+        image: postgres:12.2-alpine
+        container_name: menu_postgres_database
+        # ports:
+        #     - "5432"
+        networks:
+            - network
+        environment:
+            POSTGRES_DB: menu
+            POSTGRES_USER: easydeliverymenudb
+            POSTGRES_PASSWORD: easydeliverymenudbpassword
+        volumes:
+            - ./menu/postgres:/docker-entrypoint-initdb.d/
+        # command:
+        # depends_on: 
+        #     -
+
+    menu_nginx:
+        image: nginx:1.17-alpine
+        container_name: menu_nginx
+        ports:
+            - "85:80"
+        networks:
+            - network
+        # environment: 
+        #     -  
+        volumes:
+            - "./menu/nginx:/etc/nginx/conf.d"
+        # command:     
+        depends_on: 
+            - menu
+ 
+        ##############################
+        #     CRM MICROSERVCICE      #    
+        ##############################            
+
+        crm:
+            build:
+                context: ./crm/app
+                dockerfile: DOCKERFILE_CRM
+            container_name: crm_microservice
+            # ports:
+            #     - "8000:8000"
+            networks:
+                - network
+            environment: 
+                - "URI=postgresql://crmdb:crmdbpassword@crm_db:5432/crm"
+            # volumes:
+            #     -
+            command: gunicorn -b 0.0.0.0:8000 app:app
+            depends_on: 
+                - crm_db
+        
+        crm_db:
+            image: postgres:12.2-alpine
+            container_name: crm_postgres_database
+            # ports:
+            #     - "5432"
+            networks:
+                - network
+            environment:
+                POSTGRES_DB: crm
+                POSTGRES_USER: crmdb
+                POSTGRES_PASSWORD: crmdbpassword
+            volumes:
+                - ./crm/postgres:/docker-entrypoint-initdb.d/
+            # command:
+            # depends_on: 
+        
+        crm_nginx:
+            image: nginx:1.17-alpine
+            container_name: crm_nginx
+            ports:
+                - "88:80"
+            networks:
+                - network
+            # environment: 
+            #     -  
+            volumes:
+                - "./crm/nginx:/etc/nginx/conf.d"  
+            # command:  
+            depends_on: 
+                - crm
+
+            ##############################
+            #     CRM MICROSERVCICE      #    
+            ############################## 
+
+    
+networks:
+    network: 
+        driver: "bridge"
