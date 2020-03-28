@@ -78,7 +78,7 @@
   );
 
   list($queue_name, ,) = $channel->queue_declare(
-    "receive_order_queue", # queue
+    "update_order_queue", # queue
     FALSE,                 # passive
     TRUE,                  # durable
     FALSE,                 # exclusive
@@ -88,14 +88,14 @@
   $channel->queue_bind(
     $queue_name,        # queue_name
     EXCHANGE_NAME,      # exchange name
-    'receive_order_key' # routing key
+    'update_order_key' # routing key
   );
 
   $message = new AMQPMessage(
     json_encode(
       [
         'orderID'      => $_GET['session_id'],
-        'order_status' => 'Payment Cancelled',
+        'order_status' => 'Payment Success',
       ]
     )
   );
@@ -103,8 +103,9 @@
   $channel->basic_publish(
     $message,
     EXCHANGE_NAME,
-    'receive_order_key',
-    ['delivery_mode' => 2]
+    'update_order_key',
+    ['delivery_mode' => 2,
+    'content-type' => 'application/json']
   );
 
   $channel->close();

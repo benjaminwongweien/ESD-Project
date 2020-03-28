@@ -3,13 +3,13 @@ USE OrderDB;
 DROP TABLE IF EXISTS orders;
 
 CREATE TABLE orders (
-  CustomerID INT NOT NULL,
+  CustomerID VARCHAR(100) NOT NULL,
   orderID VARCHAR(200) NOT NULL, -- this is the checkoutID from Stripe
-  vendorID INT NOT NULL,
-  delivererID INT NOT NULL,
-  foodID INT NOT NULL,
+  vendorID VARCHAR(100) NOT NULL,
+  delivererID VARCHAR(100) NOT NULL,
+  foodID VARCHAR(100) NOT NULL,
   quantity INT NOT NULL,
-  price FLOAT NOT NULL,
+  price INT NOT NULL,
   -- checkoutID VARCHAR(100) NOT NULL,
   order_status VARCHAR(100),
   delivery_address VARCHAR(1000) NOT NULL,
