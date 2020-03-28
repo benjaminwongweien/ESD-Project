@@ -45,64 +45,81 @@ def dump():
 @app.route("/chatid", methods=["POST"])
 def chatId():
     """ get the user's info based on the chat id -> telegram bot """
-    chat_id = request.form.get("chatid")
-    if chat_id:
-        user = User.query.filter_by(chat_id=chat_id).first()
-        if user:
-            return jsonify(user.json(0,1,2))
+    if request.is_json:
+        chat_id = request.json.get("chatid")
+        if chat_id:
+            user = User.query.filter_by(chat_id=chat_id).first()
+            if user:
+                return jsonify(user.json(0,1,2))
+            else:
+                return jsonify(
+                    {"status": 0, 
+                    "data": {"msg": "user not found"}}), 400
         else:
-            return jsonify(
-                {"status": 0, 
-                 "data": {"msg": "user not found"}})
+            return jsonify({"status": 0,
+                            "data": {"msg": "missing data in request"}} ),400
     else:
         return jsonify({"status": 0, 
-                        "data": {"msg": "cannot read chat_id"}})
+                        "data": {"msg": "message not json"}}),400
 
 @app.route("/username", methods=["POST"])
 def username():
     """ get the user's info based on the username """
-    username = request.form.get("username")
-    if username:
-        user = User.query.filter_by(username=username).first()
-        if user:
-            return jsonify(user.json(0,1,2))
+    if request.is_json:
+        username = request.json.get("username")
+        if username:
+            user = User.query.filter_by(username=username).first()
+            if user:
+                return jsonify(user.json(0,1,2))
+            else:
+                return jsonify({"status": 0, 
+                                "data": {"msg": "user not found"}}), 400
         else:
-            return jsonify({"status": 0, 
-                            "data": {"msg": "user not found"}})
+            return jsonify({"status": 0,
+                            "data": {"msg": "missing data in request"}} ),400
     else:
         return jsonify({"status": 0, 
-                        "data": {"msg": "cannot read userid"}})
+                        "data": {"msg": "message not json"}}),400
 
 @app.route("/usertype", methods=["POST"])
 def user_type():
     """ get all the user's information based on usertype """
-    user_type = request.form.get("user_type")
-    if user_type:
-        users = User.query.filter_by(user_type=user_type).all()
-        if users:
-            return jsonify([user.json(0,2) for user in users])
+    if request.is_json:
+        username = request.json.get("user_type")
+        if user_type:
+            users = User.query.filter_by(user_type=user_type).all()
+            if users:
+                return jsonify([user.json(0,2) for user in users])
+            else:
+                return jsonify({"status": 0, 
+                        "data": {"msg": "type not found"}}), 400
         else:
-            return jsonify({"status": 0, 
-                    "data": {"msg": "type not found"}})
+            return jsonify({"status": 0,
+                            "data": {"msg": "missing data in request"}} ),400        
     else:
         return jsonify({"status": 0,
-                "data": {"msg": "cannot read type"}})
+                "data": {"msg": "cannot read type"}}), 400
 
 @app.route("/register", methods=["POST"])
 def register():
     """ registers a user """
-    uid = request.form.get("uid")
-    uType = request.form.get("type")
-    teleId = request.form.get("tid")
-    if uid and uType:
-       users = User.query.filter_by(username=uid).scalar()
-       if users:
-            return jsonify({"status": 0, 
-                    "data": {"msg": "user is registered in the system"}})
-       else:
-           db.session.add(User(uid,uType,teleId))
-           db.session.commit()
-           return jsonify({"registration":"success"})
+    print(request)
+    if request.is_json:
+        uid = request.json.get("uid")
+        uType = request.json.get("type")
+        teleId = request.json.get("tid")
+        if uid and uType:
+            users = User.query.filter_by(username=uid).scalar()
+            if users:
+                    return jsonify({"status": 0, 
+                            "data": {"msg": "user is registered in the system"}})
+            else:
+                db.session.add(User(uid,uType,teleId))
+                db.session.commit()
+                return jsonify({"registration":"success"})
+        else:
+            return jsonify({"status": 0,
+                            "data": {"msg": "missing data in request"}} ),400    
     else:
         return jsonify({"status": 0, 
                 "data": {"msg": "cannot read data"}})
@@ -111,18 +128,22 @@ def register():
 @app.route("/register_tele", methods=["POST"])
 def register_tele():
     """ registers a user's telegram chat id """
-    uid = request.form.get("uid")
-    uType = request.form.get("type")
-    teleId = request.form.get("tid")
-    if uid and uType:
-       users = User.query.filter_by(username=uid).scalar()
-       if not users:
-            return jsonify({"status": 0, 
-                    "data": {"msg": "user is not registered in the system"}})
-       else:
-           user = User.query.filter_by(username=uid).update({"chat_id": teleId})
-           db.session.commit()
-           return jsonify({"registration":"success"})
+    if request.is_json:
+        uid = request.json.get("uid")
+        uType = request.json.get("type")
+        teleId = request.json.get("tid")
+        if uid and uType:
+            users = User.query.filter_by(username=uid).scalar()
+            if not users:
+                    return jsonify({"status": 0, 
+                            "data": {"msg": "user is not registered in the system"}})
+            else:
+                user = User.query.filter_by(username=uid).update({"chat_id": teleId})
+                db.session.commit()
+                return jsonify({"registration":"success"})
+        else:
+            return jsonify({"status": 0,
+                            "data": {"msg": "missing data in request"}} ),400  
     else:
         return jsonify({"status": 0, 
-                "data": {"msg": "cannot read data"}})
+                "data": {"msg": "cannot read data"}}), 400

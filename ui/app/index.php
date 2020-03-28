@@ -120,7 +120,10 @@
 				document.cookie = "login_type = " + "facebook";
 				document.cookie = "logout_button = <li><a href='#' onclick='logOut()'>Logout</a></li>";
 				console.log(document.cookie);
-				window.location.replace("./c_homepage.php");
+
+				authentication(response.email);
+
+				// window.location.replace("./c_homepage.php");
 			});
 		} else {                                 // Not logged into your webpage or we are unable to tell.
 			document.getElementById('status').innerHTML = 'Please log ' +
@@ -174,10 +177,42 @@
 			document.cookie = "login_type = " + "google";
 			document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
 			// console.log(document.cookie);
-			window.location.replace("./c_homepage.php");
+
+			authentication(profile.getEmail());
+
+			
 		}
 		
+		function authentication(email){
+			var email = email;
+			console.log(email); 
 
+			$.getJSON("http://localhost:88/dump", function(data, status){
+				var items = [];
+				var exist = 0;
+				$.each( data, function( key, val ) {
+					$.each( val, function( key2, val2 ) {
+						$.each( val2, function( key3, val3 ) {
+							items.push( key3 + val3);	
+							alert(key3);
+
+							if (key3 == "username" && val3 == email) {
+								exist = 1;
+							}
+						});
+					});
+				});
+
+				if (exist == 0){
+					window.location.replace("./register.php");
+				}
+				else{
+					window.location.replace("./c_homepage.php");
+				}
+				
+			});
+
+		}
 	</script>
 
 </body>
