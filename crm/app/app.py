@@ -12,6 +12,44 @@ from flask_cors import CORS
 from model.base import db
 from model.data_models import User
 
+#####################
+#   JSON MESSAGES   #
+#####################
+
+# REGISTRATION IS SUCCESSFUL
+REGISTER_SUCCESS = {"status": 0,
+                    "data":
+                        {"register": "success"}
+                    }
+     
+# THE MESSAGE RECEIVED IS NOT JSON
+FORMAT_ERROR     = {"status": 1, 
+                    "data": 
+                        {"msg": "message not json"}
+                    }
+
+# THE MESSAGE RECEIVED HAS INCOMPLETE DATA
+INCOMPLETE_ERROR = {"status": 2,
+                    "data": 
+                        {"msg": "missing data in request"}
+                    }
+
+# USER INFORMATION IS NOT FOUND
+NON_EXIST_ERROR  =  {"status": 3, 
+                     "data": 
+                         {"msg": "user(s) not found"}
+                    }
+
+# USER INFORMATION IS ALREADY IN THE SYSTEM
+EXIST_ERROR      =  {"status": 4, 
+                     "data": 
+                         {"msg": "user is already registered in the system"}
+                    }
+
+#####################
+#     FLASK APP     #
+#####################
+
 def create_app(uri):
     """ Creates and starts the App with all the required settings """
     app = Flask(__name__)
@@ -21,10 +59,17 @@ def create_app(uri):
     db.init_app(app)
     return app
 
-# app=create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
+######################
+#      INIT APP      #
+######################
+
+# app = create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
 app = create_app(os.environ["URI"])
-# https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
-app.app_context().push()
+app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
+
+######################
+#       ROUTES       #
+######################
 
 @app.errorhandler(400)
 @app.errorhandler(404)
@@ -43,24 +88,20 @@ def dump():
   return jsonify({"user": [user.json(0,1,2) for user in users]})
 
 @app.route("/chatid", methods=["POST"])
-def chatId():
+def chat_id():
     """ get the user's info based on the chat id -> telegram bot """
     if request.is_json:
-        chat_id = request.json.get("chatid")
+        chat_id = request.json.get("tid")
         if chat_id:
             user = User.query.filter_by(chat_id=chat_id).first()
             if user:
                 return jsonify(user.json(0,1,2))
             else:
-                return jsonify(
-                    {"status": 0, 
-                    "data": {"msg": "user not found"}}), 400
+                return jsonify(NON_EXIST_ERROR), 400
         else:
-            return jsonify({"status": 0,
-                            "data": {"msg": "missing data in request"}} ),400
+            return jsonify(INCOMPLETE_ERROR), 400
     else:
-        return jsonify({"status": 0, 
-                        "data": {"msg": "message not json"}}),400
+        return jsonify(FORMAT_ERROR), 400
 
 @app.route("/username", methods=["POST"])
 def username():
@@ -72,14 +113,11 @@ def username():
             if user:
                 return jsonify(user.json(0,1,2))
             else:
-                return jsonify({"status": 0, 
-                                "data": {"msg": "user not found"}}), 400
+                return jsonify(NON_EXIST_ERROR), 400
         else:
-            return jsonify({"status": 0,
-                            "data": {"msg": "missing data in request"}} ),400
+            return jsonify(INCOMPLETE_ERROR), 400
     else:
-        return jsonify({"status": 0, 
-                        "data": {"msg": "message not json"}}),400
+        return jsonify(FORMAT_ERROR), 400
 
 @app.route("/usertype", methods=["POST"])
 def user_type():
@@ -91,59 +129,44 @@ def user_type():
             if users:
                 return jsonify([user.json(0,2) for user in users])
             else:
-                return jsonify({"status": 0, 
-                        "data": {"msg": "type not found"}}), 400
+                return jsonify(NON_EXIST_ERROR), 400
         else:
-            return jsonify({"status": 0,
-                            "data": {"msg": "missing data in request"}} ),400        
+            return jsonify(INCOMPLETE_ERROR), 400       
     else:
-        return jsonify({"status": 0,
-                "data": {"msg": "cannot read type"}}), 400
+        return jsonify(FORMAT_ERROR), 400
 
 @app.route("/register", methods=["POST"])
 def register():
     """ registers a user """
-    print(request)
     if request.is_json:
-        uid = request.json.get("uid")
-        uType = request.json.get("type")
-        teleId = request.json.get("tid")
+        uid, uType = request.json.get("uid"), request.json.get("type")
         if uid and uType:
             users = User.query.filter_by(username=uid).scalar()
             if users:
-                    return jsonify({"status": 0, 
-                            "data": {"msg": "user is registered in the system"}})
+                    return jsonify(EXIST_ERROR), 400
             else:
-                db.session.add(User(uid,uType,teleId))
+                db.session.add(User(uid, uType, request.json.get("tid")))
                 db.session.commit()
-                return jsonify({"registration":"success"})
+                return jsonify(REGISTER_SUCCESS), 200
         else:
-            return jsonify({"status": 0,
-                            "data": {"msg": "missing data in request"}} ),400    
+            return jsonify(INCOMPLETE_ERROR), 400    
     else:
-        return jsonify({"status": 0, 
-                "data": {"msg": "cannot read data"}})
-
+        return jsonify(FORMAT_ERROR), 400
 
 @app.route("/register_tele", methods=["POST"])
 def register_tele():
     """ registers a user's telegram chat id """
     if request.is_json:
-        uid = request.json.get("uid")
-        uType = request.json.get("type")
-        teleId = request.json.get("tid")
-        if uid and uType:
+        uid, teleId = request.json.get("uid"), request.json.get("tid")
+        if uid and teleId:
             users = User.query.filter_by(username=uid).scalar()
             if not users:
-                    return jsonify({"status": 0, 
-                            "data": {"msg": "user is not registered in the system"}})
+                    return jsonify(EXIST_ERROR), 400
             else:
                 user = User.query.filter_by(username=uid).update({"chat_id": teleId})
                 db.session.commit()
-                return jsonify({"registration":"success"})
+                return jsonify(REGISTER_SUCCESS), 200
         else:
-            return jsonify({"status": 0,
-                            "data": {"msg": "missing data in request"}} ),400  
+            return jsonify(INCOMPLETE_ERROR),400  
     else:
-        return jsonify({"status": 0, 
-                "data": {"msg": "cannot read data"}}), 400
+        return jsonify(FORMAT_ERROR), 400
