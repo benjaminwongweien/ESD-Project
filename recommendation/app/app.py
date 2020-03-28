@@ -111,3 +111,4 @@ def before_first_request_func():
         vendors[i]['position'] = position
     globals['vendors'] = vendors
 
+    
