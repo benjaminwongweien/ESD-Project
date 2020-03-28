@@ -1,0 +1,11 @@
+
+{
+    "customerID" : 1008, 
+    "orderID" : "87347027",
+    "vendorID" : 13,
+    "foodID" : 24,
+    "quantity":10,
+    "price":10,
+    "order_status" : "Awaiting Payment",
+    "delivery_address" : "Singapore"
+}

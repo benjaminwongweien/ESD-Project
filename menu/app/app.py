@@ -1,7 +1,8 @@
 """
 Menu Microservice
-@Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
-@Team   - G3T4
+
+@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+@team   - G3T4
 """
 import os
 import json
@@ -11,9 +12,7 @@ from model.base import db
 from model.data_models import Vendor, Food
 
 def create_app(uri):
-  """
-  Creates and starts the App with all the required settings
-  """
+  """ Creates and starts the App with all the required settings """
   app = Flask(__name__)
   CORS(app)
   app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -37,40 +36,13 @@ def error(e):
   return jsonify({"status": "error",
                   "error" : e.description}), e.code
 
-@app.route("/bootstrap", methods=["GET"])
-def bootstrap():
-  """Bootstrap the Server"""
-  db.create_all()
-  db.session.commit()
-  import csv
-  with open("menu.csv","r", encoding="cp1252") as file:
-    csvfile = csv.reader(file,delimiter=",",quotechar='"')
-    csvfile = list(csvfile)
-  
-  for x in range(1,6):
-    line = csvfile[x-1]
-    db.session.add(Vendor(line[0],
-                          line[1],
-                          line[2],
-                          "vendor/{}".format(x)))  
-  db.session.commit()
-
-  vendor_id=1
-  food_id=1
-  for x in range(7,36):
-    line = csvfile[x-1]
-    if line[0] == "":
-      vendor_id += 1
-    else:
-      db.session.add(Food(vendor_id,
-                          line[0],
-                          line[1],
-                          line[2],
-                          line[3],
-                          "food/{}/{}".format(vendor_id,food_id)))
-      food_id += 1
-  db.session.commit()
-  return jsonify({"boostrap": "success"})
+@app.route("/dump", methods=["GET"])
+def dump():
+  """ Dumps all the Table Information -> Debug Purposes """
+  vendors = Vendor.query.all()
+  foods   = Food.query.all()
+  return jsonify({"vendor": [vendor.json(0,1,2,3,4) for vendor in vendors],
+                  "food": [food.json(0,1,2,3,4,5,6,7,8) for food in foods]})
 
 @app.route("/all_vendor", methods=["GET"])
 def all_vendors():

@@ -1,0 +1,15 @@
+#
+# Docker-Build - Recommendation Microservice NGINX Server
+#
+
+# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @team   - G3T4
+
+# pull the official NGINX image
+FROM nginx:1.17-alpine 
+
+# remove the default NGINX configuration
+RUN rm /etc/nginx/conf.d/default.conf
+
+# add the new NGINX configuration
+COPY nginx.conf /etc/nginx/conf.d

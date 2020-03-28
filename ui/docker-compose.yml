@@ -1,0 +1,44 @@
+# Docker-Compose - Web UI
+# @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @Team   - G3T4
+
+version: '3.7'
+
+services:
+
+    ui:
+        image: php:7.4.3-fpm-buster
+        container_name: ui_container
+        # ports:
+        #     - 
+        networks:
+            - network
+        # environment:
+        #     -
+        volumes:
+            - "./app:/var/www/app"
+        # command: 
+        # depends_on:
+        #    - 
+
+    ui_nginx:
+        image: nginx:1.17-alpine
+        container_name: nginx_server_ui
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - network
+        # environment: 
+        #
+        volumes:
+            - "./app:/var/www/app"
+            - "./nginx:/etc/nginx/conf.d"
+            - "./certs:/etc/nginx/certs"
+        # command:
+        depends_on: 
+            - ui
+
+networks:
+    network: 
+        driver: "bridge"

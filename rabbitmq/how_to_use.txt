@@ -1,0 +1,12 @@
+To Access this service from a container:
+Broker       :     --hostname: host.docker.internal
+                   --username: rabbit
+                   --password: tibbar
+
+To Access this service from host:
+Broker       :     --hostname: localhost
+                   --username: rabbit
+                   --password: tibbar
+
+Management UI:     http://localhost:15673/
+

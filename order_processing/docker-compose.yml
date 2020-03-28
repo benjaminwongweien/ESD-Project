@@ -1,0 +1,49 @@
+#
+# Docker-Compose - Order Microservice
+#
+
+# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @team   - G3T4
+
+version: '3.7'
+
+services:
+
+    order:
+        build:
+            context: ./order
+            dockerfile: DOCKERFILE_ORDER
+        container_name: order_microservice
+        ports:
+            - "8080:8080"
+        networks:
+            - network
+        # environment: 
+        #     - 
+        volumes:
+            - "./grade-cache:/home/gradle/.gradle"
+        # command: 
+        depends_on: 
+            - order_db
+    
+    order_db:
+        image: mysql
+        container_name: order_mysql_database
+        # ports:
+        #     - "3310:3306"
+        networks:
+            - network
+        environment:
+            MYSQL_DATABASE: OrderDB
+            MYSQL_ROOT_PASSWORD: ordersecretpasswordwowomgsonice
+            MYSQL_USER: orderdb
+            MYSQL_PASSWORD: orderdbpassword
+        volumes:
+            - ./mysql:/docker-entrypoint-initdb.d/
+        # command:
+        # depends_on: 
+        #     -
+    
+networks:
+    network: 
+        driver: "bridge"

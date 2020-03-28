@@ -1,2 +1,11 @@
+### Python ###
 *.pyc
-*.vscode
+
+### VS Code ###
+.vscode
+order_processing/order/src/main/resources/application.properties
+
+## Order_processing ##
+.gradle
+.settings
+.bin
