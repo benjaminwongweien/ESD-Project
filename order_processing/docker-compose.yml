@@ -20,8 +20,8 @@ services:
             - network
         # environment: 
         #     - 
-        volumes:
-            - "./grade-cache:/home/gradle/.gradle"
+        # volumes:
+        #     - "./gradle-cache:/home/gradle/.gradle"
         # command: 
         depends_on: 
             - order_db
