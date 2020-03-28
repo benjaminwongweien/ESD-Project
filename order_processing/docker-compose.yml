@@ -29,8 +29,8 @@ services:
     order_db:
         image: mysql
         container_name: order_mysql_database
-        # ports:
-        #     - "3310:3306"
+        ports:
+            - "3310:3306"
         networks:
             - network
         environment:
