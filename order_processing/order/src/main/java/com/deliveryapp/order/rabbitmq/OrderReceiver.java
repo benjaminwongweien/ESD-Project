@@ -14,12 +14,25 @@ public class OrderReceiver {
     OrderController orderController;
 
     @RabbitListener(bindings = @QueueBinding(
-        value = @Queue(value = "receive_order_queue.queue", durable = "true"),
-        exchange = @Exchange(value = "receive_order_exchange.exchange", ignoreDeclarationExceptions = "false"),
+        value = @Queue(value = "receive_order_queue", durable = "true"),
+        exchange = @Exchange(value = "receive_order_exchange", ignoreDeclarationExceptions = "false"),
         key = "receive_order_key.key")
     )
     public void receiveMessage(@Payload Order order) {
         orderController.create(order);
+    }
+
+
+    @RabbitListener(bindings = @QueueBinding(
+        value = @Queue(value = "update_order_queue", durable = "true"),
+        exchange = @Exchange(value = "receive_order_exchange", ignoreDeclarationExceptions = "false"),
+        key = "update_order_key.key")
+    )
+    public void receiveUpdate(@Payload Order order) {
+        String orderID = order.getOrderID();
+        Order data = orderController.findOrderByorderID(orderID);
+        data.setOrder_status(order.getOrder_status());
+        orderController.update(data);
     }
 
 }

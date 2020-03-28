@@ -29,37 +29,43 @@ public class OrderController {
     @PostMapping("/history/customer")
     public List<Order> findOrdersbyUserID(@RequestBody Map<String, String> body) {
         String custID = body.get("customerID");
-        int CustID = Integer.parseInt(custID);
-        return OrderRepo.findByCustomerID(CustID);
+        return OrderRepo.findByCustomerID(custID);
     }
 
     @PostMapping("/history/vendor")
     public List<Order> findOrdersbyVendorID(@RequestBody Map<String, String> body) {
         String vendorID = body.get("vendorID");
-        int venID = Integer.parseInt(vendorID);
-        return OrderRepo.findByvendorID(venID);
+        return OrderRepo.findByvendorID(vendorID);
     }
 
     @PostMapping("/history/deliverer")
     public List<Order> findOrdersbyDelivererID(@RequestBody Map<String, String> body) {
         String delID = body.get("delivererID");
-        int delivererID = Integer.parseInt(delID);
-        return OrderRepo.findBydelivererID(delivererID);
+        return OrderRepo.findBydelivererID(delID);
     }
 
     public Order create(Order order) {
         return OrderRepo.save(order);
     }
 
+    public Order update(Order order) {
+        orderSender.sendOrder(order);
+        return OrderRepo.save(order);
+    }
+
+    public Order findOrderByorderID(String orderID) {
+        return OrderRepo.findOrderByorderID(orderID);
+    }
+
     @PostMapping("/testpoint")
     public Order findOrderByorderID(@RequestBody Map<String, String> body) {
         String orderID = body.get("orderID");
-        int customerID = Integer.parseInt(body.get("CustomerID"));
-        int vendorID = Integer.parseInt(body.get("vendorID"));
-        int foodID = Integer.parseInt(body.get("foodID"));
-        int delivererID = Integer.parseInt(body.get("delivererID"));
+        String customerID = body.get("CustomerID");
+        String vendorID = body.get("vendorID");
+        String foodID = body.get("foodID");
+        String delivererID = body.get("delivererID");
         int quantity = Integer.parseInt(body.get("quantity"));
-        int price = Integer.parseInt(body.get("price"));
+        float price = Float.parseFloat(body.get("price"));
         String order_status = body.get("order_status");
         String delivery_address = body.get("delivery_address");
 
