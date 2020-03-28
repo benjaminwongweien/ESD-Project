@@ -64,9 +64,15 @@
 						</div>
 					</a>
 					<br>
-					<!-- <div>
-							All rights reserved | Image taken from : https://qz.com/1038229/to-lose-weight-you-need-to-understand-the-psychology-of-why-you-crave-the-wrong-things/
-					</div> -->
+					<div class="w-full text-center p-t-55">
+						<span class="txt2">
+							Not a member?
+						</span>
+
+						<a href="register.php" class="txt2 bo1">
+							Sign up now
+						</a>
+					</div>
 				</form>	
 			</div>	
 		</div>

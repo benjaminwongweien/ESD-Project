@@ -1,3 +1,11 @@
+<?php 
+	// var_dump($_POST);
+	// var_dump($_POST['username']);
+	// $username = $_COOKIE['email'];
+
+	// var_dump($username);
+	?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +45,7 @@
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('login_util/images/bg-04.jpg');">
 			<div class="wrap-login100 p-l-110 p-r-110 p-t-62 p-b-33">
-				<form class="login100-form validate-form flex-sb flex-w" id="user_registration" name="user_registration">
+				<form class="login100-form validate-form flex-sb flex-w" id="user_registration" name="user_registration" method="POST" action="http://localhost:88/register">
 					<span class="login100-form-title p-b-53">
 						Register
 					</span>
@@ -48,7 +56,7 @@
 						</span>
 					</div>
 					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="username" value= <?= $_COOKIE['email'] ?> disabled>
+						<input class="input100" type="text" name="username" id="username" value= <?php echo $_COOKIE['email'] ?> readonly>
 						<span class="focus-input100"></span>
 					</div>
 					
@@ -62,6 +70,16 @@
 						<input class="inputRadio" type="radio" id="vendor" name="user_type" value="vendor"><label for="vendor">Vendor</label> <br>
 						<input class="inputRadio" type="radio" id="driver" name="user_type" value="driver"><label for="driver">Driver</label> <br>
 					</div>
+					<div class="p-t-31 p-b-9">
+						<span class="txt1">
+							Telegram ID
+						</span>
+						<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" name="chat_id" value="@">
+						<span class="focus-input100"></span>
+					</div>
+					</div>
+
 
 					<div class="container-login100-form-btn m-t-17">
 						<button class="login100-form-btn">
