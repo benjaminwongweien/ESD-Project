@@ -148,6 +148,7 @@
         'orderID'          => $id,
         'customerID'       => $_POST['customer_id'],
         'vendorID'         => strval($_POST['vendor_id']),
+        'delivererID'      => strval(0),
         'foodID'           => strval($_POST['food_id']),
         'quantity'         => strval($_POST['quantity']),
         'price'            => strval($_POST['amount']),
@@ -161,7 +162,8 @@
     $message,
     EXCHANGE_NAME,
     'receive_order_key',
-    ['delivery_mode' => 2]
+    ['delivery_mode' => 2,
+     'content-type' => 'application/json']
   );
 
   $channel->close();

@@ -14,12 +14,12 @@ def make_reply(msg):
     return reply
 
 def user_type(chatId):
-    chatIdURL = "http://localhost:5000/chatId"
-    data = {"chatId":str(chatId)}
-    request_userType = requests.post(chatIdURL, json=data)
+    chatIdURL = "http://localhost:88/chatid"
+    data = {"chatid":chatId}
+    request_userType = requests.post(chatIdURL, data=data)
     user_info = json.loads(request_userType.text.lower())
     try:
-        user_type = user_info["data"]["user_type"]
+        user_type = str(user_info["user_type"])
     except:
         user_type = None
     
@@ -30,9 +30,9 @@ def user_type(chatId):
 #print(user_type(1099183304))
 
 def retrieve_users(uType):
-    userURL = "http://localhost:5000/type"
-    data = {"type":uType}
-    request_users = requests.post(userURL, json=data)
+    userURL = "http://localhost:88/usertype"
+    data = {"user_type":uType}
+    request_users = requests.post(userURL, data=data)
     users = json.loads(request_users.text.lower())
     return users
 
@@ -65,6 +65,7 @@ while True:
             
             sender = str(item["message"]["from"]["id"])
             sender_type = user_type(sender)
+            print(sender_type)
             
             # UNREGISTERED USERS:
             if sender_type == None:
@@ -80,21 +81,20 @@ while True:
                     bot.send_message(reply, sender)
                 
                 else:
-                    if sender_type == "0": #CUSTOMERS
+                    #if sender_type == "0": #CUSTOMERS
+                    if sender_type == "user":
                         customer = sender
                         if message == "/order_status":
                             if accept_order == None:
                                 reply = make_reply("Please wait a moment as we search for a delivery person for you.")
                                 order_status = True
 
-                                all_delivery_person = retrieve_users(1)["data"]
-                                
-                                for i in range(len(all_delivery_person)):
-                                    person = all_delivery_person[i]["chatid"]
-                                    notif = make_reply("There is a pending order!")
-                                    delivery = person
-                                    bot.send_message(notif, delivery)
-                                    
+                                all_delivery_person = retrieve_users(1)
+                                for person in all_delivery_person:
+                                    if person["chat_id"] != None:
+                                        notif = make_reply("There is a pending order!")
+                                        delivery = person["chat_id"]
+                                        bot.send_message(notif, delivery)        
                             else:
                                 reply = make_reply("Great News! Your food has been picked up! Your driver will arrive in 15 - 20 minutes")
                         
