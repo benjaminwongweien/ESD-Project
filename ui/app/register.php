@@ -138,6 +138,7 @@
                        body: JSON.stringify(requestBody),
                     });
 			// console.log("in Post Data");
+			window.location.replace("./c_homepage.php");
         }
 
 		$("#addUser").click(async() => {
