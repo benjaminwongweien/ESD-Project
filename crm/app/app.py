@@ -46,8 +46,7 @@ def dump():
 def chatId():
     """ get the user's info based on the chat id -> telegram bot """
     if request.is_json:
-        information = json.loads(request.json)
-        chat_id = information.get("chatid")
+        chat_id = request.json.get("chatid")
         if chat_id:
             user = User.query.filter_by(chat_id=chat_id).first()
             if user:
@@ -67,8 +66,7 @@ def chatId():
 def username():
     """ get the user's info based on the username """
     if request.is_json:
-        information = json.loads(request.json)
-        username = information.get("username")
+        username = request.json.get("username")
         if username:
             user = User.query.filter_by(username=username).first()
             if user:
@@ -87,8 +85,7 @@ def username():
 def user_type():
     """ get all the user's information based on usertype """
     if request.is_json:
-        information = json.loads(request.json)
-        username = information.get("user_type")
+        username = request.json.get("user_type")
         if user_type:
             users = User.query.filter_by(user_type=user_type).all()
             if users:
@@ -106,11 +103,11 @@ def user_type():
 @app.route("/register", methods=["POST"])
 def register():
     """ registers a user """
+    print(request)
     if request.is_json:
-        information = json.loads(request.json)
-        uid = request.form.get("uid")
-        uType = request.form.get("type")
-        teleId = request.form.get("tid")
+        uid = request.json.get("uid")
+        uType = request.json.get("type")
+        teleId = request.json.get("tid")
         if uid and uType:
             users = User.query.filter_by(username=uid).scalar()
             if users:
@@ -132,10 +129,9 @@ def register():
 def register_tele():
     """ registers a user's telegram chat id """
     if request.is_json:
-        information = json.loads(request.json)
-        uid = request.form.get("uid")
-        uType = request.form.get("type")
-        teleId = request.form.get("tid")
+        uid = request.json.get("uid")
+        uType = request.json.get("type")
+        teleId = request.json.get("tid")
         if uid and uType:
             users = User.query.filter_by(username=uid).scalar()
             if not users:
