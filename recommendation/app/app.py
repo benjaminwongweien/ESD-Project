@@ -12,7 +12,9 @@ from flask_cors import CORS
 import requests
 import random
 
+# list of addresses for all vendors before first request 
 globals = {}
+# hardcoded 
 dummy_address = {'lat': 1.2, 'lng': 103}
 dummy_history = []
 
@@ -41,36 +43,45 @@ def error(e):
     return jsonify({"status": "error",
                     "error": e.description}), e.code
 
+
 @app.route("/vendor_pos", methods=["GET"])
 def vendor_pos():
     return jsonify(globals['vendors'])
 
+
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
     # uncomment when order api is working
-    uid = request.args.get('uid')
-    if uid == None:
-        return random.choice(globals['vendors']) 
-    order_url = "http://localhost:8080/order/history/customer"
-    order_hist_request = requests.post(url=order_url, json={"userid": uid})
-    order_hist_data = order_hist_request.json()
+    # uid = request.args.get('uid')
+    # if uid == None:
+    #     return random.choice(globals['vendors']) 
+    # order_url = "http://localhost:8080/order/history/customer"
+    # order_hist_request = requests.post(url=order_url, json={"userid": uid})
+    # order_hist_data = order_hist_request.json()
+
+
+    # order_hist_data hardcoded: 
     order_hist_data = [
         {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
             'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'},
         {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
             'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'}
     ]
+
     address_list = [o['address'] for o in order_hist_data]
     top_address = max(set(address_list), key=address_list.count)
     gmap_params = {
         'address': top_address,
         'key': 'AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4'
     }
+
+    # request from google API 
     gmap_url = "https://maps.googleapis.com/maps/api/geocode/json?"
     gmap_request = requests.get(url=gmap_url, params=gmap_params)
     gmap_data = gmap_request.json()
     user_position = gmap_data['results'][0]['geometry']['location']
     closest_vendor = {}
+
     closest_dist = 999
     for vendor in globals['vendors']:
         dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
@@ -81,6 +92,9 @@ def recommendation():
     return str(closest_vendor)
 
 
+
+
+
 @app.before_first_request
 def before_first_request_func():
     # uncomment if menu api is working
@@ -88,11 +102,13 @@ def before_first_request_func():
     # menu_request = requests.get(url=menu_url)
     # vendors = menu_request.json()['vendors']
 
+    
     vendors = [
-        {'vendor_location': '68 Orchard Rd, Plaza Singapura, #B1-21/22, Singapore 238839'},
-        {'vendor_location': '52 Li Hwan Terrace, Singapore 556980'},
-        {'vendor_location': 'Raffles Institution Boarding, 1 Raffles Lane, 575954'},
+        {"vendor_id":1,'vendor_location': '68 Orchard Rd, Plaza Singapura, #B1-21/22, Singapore 238839'},
+        {"vendor_id":2,'vendor_location': '52 Li Hwan Terrace, Singapore 556980'},
+        {"vendor_id":3,'vendor_location': 'Raffles Institution Boarding, 1 Raffles Lane, 575954'},
     ]
+    
 
     for i, vendor in enumerate(vendors):
         location = vendor['vendor_location']
@@ -105,6 +121,7 @@ def before_first_request_func():
         gmap_data = gmap_request.json()
         position = gmap_data['results'][0]['geometry']['location']
         vendors[i]['position'] = position
+        print(vendors)
     globals['vendors'] = vendors
 
     
