@@ -116,8 +116,7 @@
 				authentication(response.email);
 			});
 		} else {                                 // Not logged into your webpage or we are unable to tell.
-			document.getElementById('status').innerHTML = 'Please log ' +
-			'into this webpage.';
+			console.log( 'Please log into this webpage.');
 		}
 		}
 

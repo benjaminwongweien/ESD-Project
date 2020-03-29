@@ -299,11 +299,11 @@
 
 				
 				function logOut(){
-					FB.logout(function(response) {
-						statusChangeCallback(response);
-						document.getElementById('logout').style.display = "none";
+					// FB.logout(function(response) {
+						// statusChangeCallback(response);
+						// document.getElementById('logout').style.display = "none";
 						window.location.replace("./logout.php");
-					});
+					// });
 				}
 			</script>
 		</body>

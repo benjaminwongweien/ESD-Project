@@ -27,6 +27,17 @@
 			<link rel="stylesheet" href="homepage_util/css/magnific-popup.css">
 			<link rel="stylesheet" href="homepage_util/css/bootstrap.css">
 			<link rel="stylesheet" href="homepage_util/css/main.css">
+
+			<script>
+				console.log(document.cookie);
+
+				if (document.cookie == "") {
+					// redirect users to login page
+					window.location.replace("./logout.php");
+				}
+
+			</script>
+		
 		</head>
 		<body>
 		  <header id="header" id="home">
@@ -222,5 +233,57 @@
 			<script src="homepage_util/js/jquery.counterup.min.js"></script>
 			<script src="homepage_util/js/mail-script.js"></script>				
 			<script src="homepage_util/js/main.js"></script>	
+										
+
+			<!-- FACEBOOK -->
+			<script>
+				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
+				console.log('statusChangeCallback');
+				console.log(response);                   // The current login status of the person.	
+				
+				if (response.status === 'connected') {   // Logged into your webpage and Facebook.
+						console.log("Logged in as facebook");
+						console.log(document.cookie);
+					} else {                                 // Not logged into your webpage or we are unable to tell.
+						console.log("Not logged in as facebook")
+					}
+				}
+
+				function checkLoginState() {               // Called when a person is finished with the Login Button.
+					FB.getLoginStatus(function(response) {   // See the onlogin handler
+						statusChangeCallback(response);
+					});
+				}
+				window.fbAsyncInit = function() {
+				FB.init({
+					appId      : '201004657801578',
+					cookie     : true,
+					xfbml      : true,                     // Parse social plugins on this webpage.
+					version    : 'v6.0'           // Use this Graph API version for this call.
+				});
+
+
+				FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
+					statusChangeCallback(response);        // Returns the login status.
+				});
+				};
+				(function(d, s, id) {                      // Load the SDK asynchronously
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "https://connect.facebook.net/en_US/sdk.js";
+				fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+
+				
+				function logOut(){
+					// FB.logout(function(response) {
+					// 	statusChangeCallback(response);
+					// 	document.getElementById('logout').style.display = "none";
+						window.location.replace("./logout.php");
+					// });s
+				}
+			</script>
+		
 		</body>
 	</html>
