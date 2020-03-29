@@ -33,20 +33,20 @@
 		    <div class="container">
 		    	<div class="row align-items-center justify-content-between d-flex">
 			      <div id="logo">
-			        <a href="index.php"><img src="homepage_util/img/logo.png" alt="" title="" /></a>
+			        <a href="c_homepage.php"><img src="homepage_util/img/logo.png" alt="" title="" /></a>
 			      </div>
 			      <nav id="nav-menu-container">
-			        <ul class="nav-menu">
-			          <li class="menu-active"><a href="#home">Home</a></li>
-					  	<li><a href="vendors.php">Vendors</a></li>
-				        <li><a href="orders.php">Orders</a></li>
-						<li><a href="#">Login</a>
-							<ul>
-							<li><a href="#">Logout</a></li>
-							</ul>
-						</li>
-			        </ul>
-			      </nav><!-- #nav-menu-container -->		    		
+				        <ul class="nav-menu">
+				          <li><a href="vendors.php">View All Vendors</a></li>
+				          <!-- <li><a href="orders.php">Orders</a></li> -->
+						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
+				            <ul id="logout">
+							  <li><a href="./orders.php">Orders</a></li>
+							  <?php echo $_COOKIE['logout_button'] ?>
+				            </ul>
+				          </li>
+				        </ul>
+				      </nav><!-- #nav-menu-container -->		    		
 		    	</div>
 		    </div>
 		  </header><!-- #header -->			
@@ -59,11 +59,10 @@
 							$all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
 
 							foreach ($vendors['vendors'] as $vendor) {
-								if( $_GET["vendor_id"] == $vendor['vendor_id']) {
-									echo "<h4 class='text-white text-uppercase'>Wide Network of Choice</h4>";
-									echo "<h1>{$vendor['vendor_name']}</h1>";
-									echo "<p class='text-white'>Food delivery near you from a curated choice of local restaurants across Singapore.</p>";
-						?>
+								if( $_GET["vendor_id"] == $vendor['vendor_id']) {?>
+									<h4 class='text-white text-uppercase'>Wide Network of Choice</h4>
+									<h1><?=$vendor['vendor_name']?></h1>
+									<p class='text-white'>Food delivery near you from a curated choice of local restaurants across Singapore.</p>
 						</div>
 					</div>
 				</div>
@@ -79,44 +78,48 @@
 						<div class="row justify-content-center d-flex align-items-left">
 						<?php
 									foreach ($all_food['food'] as $food) {
-										if( $_GET["vendor_id"] == $food['vendor_id']){
-											echo "<div class='col-md-3 single-team'>";
-												echo "<form action='http://host.docker.internal:86/payment.php' method='POST'>";
-												echo "<div class='thumb'>";
-													echo "<img class='img-fluid' src='http://host.docker.internal:85/static/{$food['food_image']}'>";
-												echo "</div>";
-												echo "<div class='meta-text mt-30 text-justify'>";
-													echo "<h4>{$food['food_name']}</h4>";	
-													echo "<p>{$food['food_description']}</p>";
+										if( $_GET["vendor_id"] == $food['vendor_id']){ ?>
+											<div class='col-md-3 single-team'>
+											<form action='http://host.docker.internal:86/payment.php' method='POST'>
+												<div class='thumb'>
+													<img class='img-fluid' src='http://host.docker.internal:85/static/<?=$food['food_image']?>'>
+												</div>
+												<div class='meta-text mt-30 text-justify'>
+													<h4><?=$food['food_name']?></h4>	
+													<p><?=$food['food_description']?></p>
+													<?php
 													if( $food['availability'] == true){
 														echo "<p>Availability: <b>Yes</b></p>";
 													}else{
 														echo "<p>Availability: <b>No</b></p>";
 													}
-													echo "<p>Price: \$ {$food['food_price']}</p>";
-													echo "<label>Delivery Address: </label>&nbsp;&nbsp;";
-													echo "<textarea name='delivery_address' rows='2' cols='18'></textarea><br><br>";
-													echo "<div class='meta-text mt-30 text-center'>";
-														echo "<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-														//Need to change
-														echo "<input type='hidden' value='haojunisfantastic' name='customer_id'>";
-														echo "<input type='hidden' value='{$_GET['vendor_id']}' name='vendor_id'>";
-														echo "<input type='hidden' value='{$food['food_id']}' name='food_id'>";
-														echo "<input type='hidden' value='{$food['food_name']}' name='food_name'>";
-														echo "<input type='hidden' value='{$food['food_description']}' name='food_description'>";
-														echo "<input type='hidden' value='{$food['food_price']}' name='amount'>";
-														echo "<input class='genric-btn info-border circle' type='submit' value='Buy'>";
-													echo "</div>";	
-												echo "</form>";
-												echo "</div>";
-											echo "</div>";
+													?>
+													<p>Price: $ <?=$food['food_price']?></p>
+													<label>Delivery Address: </label>&nbsp;&nbsp;
+													<textarea name='delivery_address' rows='2' cols='18'></textarea><br><br>
+													<div class='meta-text mt-30 text-center'>
+														<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+														<!-- Need to change -->
+														<input type='hidden' value='haojunisfantastic' name='customer_id'>
+														<input type='hidden' value='<?=$_GET['vendor_id']?>' name='vendor_id'>
+														<input type='hidden' value='<?=$food['food_id']?>' name='food_id'>
+														<input type='hidden' value='<?=$food['food_name']?>' name='food_name'>
+														<input type='hidden' value='<?=$food['food_description']?>' name='food_description'>
+														<input type='hidden' value='<?=$food['food_price']?>' name='amount'>
+														<input class='genric-btn info-border circle' type='submit' value='Buy'>
+													</div>	
+												</form>
+												</div>
+											</div>
+
+										<?php
 										}
-									}
-									echo "<br/><br/><br/><br/><br/>";
+									}?>
+									<br/><br/><br/><br/><br/>
+								<?php
 								}
-							}
-						?>
-					
+							}?>
+							
 						</div>
 					</div>	
 				</section>

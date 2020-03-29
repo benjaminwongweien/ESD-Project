@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login to EaSy Delivery</title>
+	<title>Vendor Registration</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -47,36 +47,45 @@
 			<div class="wrap-login100 p-l-110 p-r-110 p-t-62 p-b-33">
 				<form class="login100-form validate-form flex-sb flex-w">
 					<span class="login100-form-title p-b-53">
-						Register
+						Your Details
 					</span>
 
 					<div class="p-t-31 p-b-9">
 						<span class="txt1">
-							Email
+							Name of Food
 						</span>
 					</div>
 					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="username" id="username" value= <?php echo $_COOKIE['email'] ?> readonly>
+						<input class="input100" type="text" name="food_name" id="food_name" placeholder="Name of Shop">
 						<span class="focus-input100"></span>
-					</div>
-					
-					<div class="p-t-13 p-b-9">
+                    </div>
+                    
+                    <div class="p-t-31 p-b-9">
 						<span class="txt1">
-							User type
+							Food Description
 						</span>
 					</div>
-					<div class="wrap-inputRadio validate-input" id="user_type">
-						<input class="inputRadio" type="radio" id="user" name="user_type" value="user" ><label for="user">User</label> <br>
-						<input class="inputRadio" type="radio" id="vendor" name="user_type" value="vendor"><label for="vendor">Vendor</label> <br>
-						<input class="inputRadio" type="radio" id="driver" name="user_type" value="driver"><label for="driver">Driver</label> <br>
+					<div class="wrap-input100 validate-input">
+						<input rows="10" class="input100" name="food_description" id="food_description" placeholder="Store description (What do you cook?)"></textarea>
+						<span class="focus-input100"></span>
+                    </div>
+                    
+                    <div class="p-t-31 p-b-9">
+						<span class="txt1">
+							Price of Food
+						</span>
 					</div>
-
-
-					<div class="container-login100-form-btn m-t-17" >
-						<button class="login100-form-btn" id="addUser">
-							Sign Up
+					<div class="wrap-input100 validate-input">
+						<input type='number'rows="10" class="input100" name="food_price" id="food_price" placeholder="How much?">
+						<span class="focus-input100"></span>
+					</div>
+                    
+                    <div class="container-login100-form-btn m-t-17" >
+						<button class="login100-form-btn" id="next">
+							Next
 						</button>
 					</div>
+					
 
 					<br>
 					<!-- <div>
@@ -112,20 +121,20 @@
 	
 <!--  -->
 	<script>
-		function accessCookie(cookieName){
+        function accessCookie(cookieName, finder){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
 		//   console.log(allCookieArray);
           for(var i=0; i<allCookieArray.length; i++)
           {
 			var temp = allCookieArray[i].trim();
-            if (temp.includes("email"))
+            if (temp.includes(finder))
             	return temp;
        	  }
         	return "";
-		}
-
-		async function postData(serviceURL, requestBody, user_type) {   
+        }
+        
+		async function postData(serviceURL, requestBody) {   
 			const response =
                  await fetch(
                    serviceURL, {   
@@ -135,37 +144,41 @@
                        },
                        body: JSON.stringify(requestBody),
                     });
-			// console.log("in Post Data");
-			if(user_type == "user"){
-				window.location.replace("./c_homepage.php");
-			}
-			else if(user_type == "vendor"){
-				window.location.replace("./v_homepage.php");
-			}
-			
-			else if(user_type == "driver"){
-				window.location.replace("./d_homepage.php");
-			}
+            data = await response.json();
+            if (response.ok){
+				// console.log(data);
+                document.cookie = "food_id = " + data['data']['food_id'];
+                window.location.replace("./v_register4.php");
+            }
+            else {
+                console.log("die");
+            }
         }
 
-		$("#addUser").click(async() => {
-			event.preventDefault()
-		    var email_cookie = accessCookie(document.cookie);
-			var email = email_cookie.slice(6);
-			// console.log(email);
-			var id = "abc"
+		$("#next").click(async() => {
+            let isNext = confirm("You cannot return to the previous pages after submitting. Are you sure your details are correct?"); //true if OK is pressed
+            event.preventDefault()
 
-            var user_type = $("input:radio[name=user_type]:checked").val();
-			var serviceURL = "http://localhost:88/register";
-            var requestBody = {
-        		uid : email, 
-                type: user_type, 
-                tid: id
-            };
-			// console.log(requestBody);
-            // console.log("in button");
+            var food_name = document.getElementById("food_name").value;  
+            var food_description = document.getElementById("food_description").value;
+            var food_price = document.getElementById("food_price").value;
+
+			// console.log(document.cookie);
+		    var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
+			var vendor_id = vendor_id_cookie.slice(10);
+			console.log(vendor_id);
             
-        	postData(serviceURL, requestBody, user_type);
+            if (isNext == true) {
+                var serviceURL = "http://localhost:85/vendor/add";
+                var requestBody = {
+                    vendor_id : vendor_id, 
+                    food_name: food_name, 
+                    food_description : food_description, 
+                    food_price: food_price
+                };
+            }
+            
+        	postData(serviceURL, requestBody);
         });
 	</script>
 

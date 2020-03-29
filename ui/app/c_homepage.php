@@ -36,8 +36,9 @@
 					// redirect users to login page
 					window.location.replace("./logout.php");
 				}
-		
+
 			</script>
+
 		</head>
 		<body>
 
@@ -45,19 +46,16 @@
 			    <div class="container">
 			    	<div class="row align-items-center justify-content-between d-flex">
 				      <div id="logo">
-				        <a href="index.php"><img src="./homepage_util/img/logo.png" alt="" title="" /></a>
+				        <a href="c_homepage.php"><img src="./homepage_util/img/logo.png" alt="" title="" /></a>
 				      </div>
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
-				          <li class="menu-active"><a href="#home">Home</a></li>
-				          <li><a href="vendors.php">Vendors</a></li>
+				          <li><a href="vendors.php">View All Vendors</a></li>
 				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
 							  <li><a href="./orders.php">Orders</a></li>
 							  <?php echo $_COOKIE['logout_button'] ?>
-							  <!-- <li><a href="./logout.php">Logout</a></li> -->
-							  <!-- <li><button onclick="logOut()">Logout</button></li> -->
 				            </ul>
 				          </li>
 				        </ul>

@@ -64,15 +64,7 @@
 						</div>
 					</a>
 					<br>
-					<div class="w-full text-center p-t-55">
-						<span class="txt2">
-							Not a member?
-						</span>
-
-						<a href="register.php" class="txt2 bo1">
-							Sign up now
-						</a>
-					</div>
+					
 				</form>	
 			</div>	
 		</div>
@@ -122,8 +114,6 @@
 				console.log(document.cookie);
 
 				authentication(response.email);
-
-				// window.location.replace("./c_homepage.php");
 			});
 		} else {                                 // Not logged into your webpage or we are unable to tell.
 			document.getElementById('status').innerHTML = 'Please log ' +
@@ -168,18 +158,13 @@
 			var profile = googleUser.getBasicProfile();
 			$(".g-signin2").css("display", "none");
 			$(".data").css("display", "block");
-			// var pic = $("#pic").attr('src',  profile.getImageUrl());
-			// var email = $("#email").text(profile.getEmail());
-			// var name = $("#name").text(profile.getName());
 			document.cookie = "fb_status = " + "null";
 			document.cookie = "name = " + profile.getName();
 			document.cookie = "email = " + profile.getEmail();
 			document.cookie = "login_type = " + "google";
 			document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
-			// console.log(document.cookie);
 
 			authentication(profile.getEmail());
-
 			
 		}
 		
@@ -189,25 +174,34 @@
 
 			$.getJSON("http://localhost:88/dump", function(data, status){
 				var items = [];
+				var user_type = "";
 				var exist = 0;
-				$.each( data, function( key, val ) {
-					$.each( val, function( key2, val2 ) {
-						$.each( val2, function( key3, val3 ) {
-							items.push( key3 + val3);	
-							alert(key3);
+				console.log(data["user"]);
 
-							if (key3 == "username" && val3 == email) {
-								exist = 1;
-							}
-						});
-					});
-				});
+				for( var k in data["user"]){
+					console.log(data["user"][k]);
+					if ( email == data["user"][k]["username"]){
+						user_type = data["user"][k]["user_type"];
+						exist = 1;
+					}
+				}
 
 				if (exist == 0){
 					window.location.replace("./register.php");
 				}
 				else{
-					window.location.replace("./c_homepage.php");
+					// alert(user_type);
+					if(user_type == "user"){
+						window.location.replace("./c_homepage.php");
+					}
+					else if(user_type == "vendor"){
+						window.location.replace("./v_homepage.php");
+					}
+					
+					else if(user_type == "driver"){
+						window.location.replace("./d_homepage.php");
+					}
+					
 				}
 				
 			});
