@@ -42,3 +42,8 @@ INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity
   1008, "9382094823", 3, 0, 12, 7, 10, "Order Received", "BLK772 HOUGANG AVE 3"
 );
 
+
+INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
+  "cjj", "9382094846", 4, 0, 15, 6, 9, "Order Received", "Raffles Institution Boarding"
+);
+
