@@ -8,6 +8,7 @@ import os
 import os.path
 import json
 from flask import Flask, jsonify, request, send_from_directory
+from sqlalchemy import desc
 from flask_cors import CORS
 from model.base import db
 from model.data_models import Vendor, Food
@@ -27,7 +28,7 @@ UPLOAD_SUCCESS = {"status": 0,
                     "data":
                         {"upload": "success"}
                     }
-    
+
 # THE MESSAGE RECEIVED IS NOT JSON
 FORMAT_ERROR     = {"status": 1, 
                     "data": 
@@ -58,6 +59,22 @@ DATABASE_ERROR   =  {"status": 5,
                           "check": "check if your inputs are in the correct format e.g. INT etc"}
                     }
 
+# INCOMPATIBILITY
+BAD_REQUEST    =  {"status": 6,
+                    "data":
+                        {"msg": "one or more of the data sent over is incompatible with the database"}
+                    }
+
+####################
+#    VALIDATION    #
+####################
+
+def is_float(s):
+  try:
+    return float(s)
+  except:
+    return False
+  
 #####################
 #     FLASK APP     #
 #####################
@@ -202,7 +219,7 @@ def purchase():
 #######################
 #    VENDOR UI API    #
 #######################
-@app.route("/register_info")
+@app.route("/register_info", methods=["POST"])
 def register_info():
   """ registeres a new vendor with a menu """
   if request.is_json:
@@ -231,19 +248,23 @@ def register(vendor_id):
   """ updates new vendor information """
   if request.is_json:
     vendor_name        = request.json.get('vendor_name')
-    vendor_email       = request.json.get('vendor_email')
     vendor_description = request.json.get('vendor_description')
     vendor_location    = request.json.get('vendor_location')
-    if all([vendor_name,vendor_email,vendor_description,vendor_location]):
-      try:
-        vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({"vendor_name": vendor_name,
-                                                                     "vendor_email": vendor_email,
-                                                                     "vendor_description": vendor_description,
-                                                                     "vendor_location": vendor_location})
-        db.session.commit()
-        return jsonify(UPLOAD_SUCCESS), 200
-      except:
-        return jsonify(DATABASE_ERROR), 503
+    if all([vendor_name,vendor_description,vendor_location]):     
+      if all([len(var) <= 80 for var in [vendor_name,vendor_location]]): 
+        try:
+          vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({"vendor_name": vendor_name,
+                                                                      "vendor_description": vendor_description,
+                                                                      "vendor_location": vendor_location})
+          if vendor:
+            db.session.commit()
+            return jsonify(UPLOAD_SUCCESS), 200
+          else:
+            return jsonify(NON_EXIST_ERROR), 400
+        except:
+          return jsonify(DATABASE_ERROR), 503
+      else:
+        return jsonify(BAD_REQUEST), 400
     else:
       return jsonify(INCOMPLETE_ERROR), 400
   else:
@@ -258,21 +279,21 @@ def add():
     food_name        = request.json.get('food_name')
     food_description = request.json.get('food_description')
     food_price       = request.json.get('food_price')
-    food_label       = request.json.get('food_label')
     if all([vendor_id,food_name,food_description,food_price]):
-      try:
-        db.session.add(Food(vendor_id,food_name,food_description,food_price,food_label))
-        db.session.commit()
-        food = Food.query.filter_by(vendor_id = vendor_id,
-                                    food_id   = food_id).first()
-        return jsonify({"status": 0,
-                        "data":
-                          { "vendor_id": vendor_id,
-                            "food_id"  : food.food_id}
-                        }), 200
-        return jsonify(UPLOAD_SUCCESS), 200 
-      except:
-        return jsonify(DATABASE_ERROR), 503
+      if is_float(food_price) and len(food_name) <= 80:
+        try:
+          db.session.add(Food(vendor_id,food_name,food_description,food_price))
+          db.session.commit()
+          food = Food.query.filter_by(vendor_id = vendor_id).order_by(desc(Food.food_id)).first()
+          return jsonify({"status": 0,
+                          "data":
+                            { "vendor_id": vendor_id,
+                              "food_id"  : food.food_id}
+                          }), 200
+        except:
+          return jsonify(DATABASE_ERROR), 503
+      else:
+        return jsonify(BAD_REQUEST), 400        
     else:
       return jsonify(INCOMPLETE_ERROR), 400
   else:
