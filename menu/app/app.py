@@ -402,33 +402,34 @@ def staticfiles(file_name):
 
 @app.route("/upload/<string:vendor_id>/<string:food_id>", methods=["POST"])
 def upload_menu(vendor_id,food_id):
-    """ Upload a food image in static folder """
-    if "file" not in request.files:
-      return jsonify(INCOMPLETE_ERROR), 400
-    file = request.files["image"]
-    food = Food.query.filter_by(food_id=food_id).update({f"food_image": "food/{vendor_id}/{food_id}"})
-    if not food:
-      return jsonify(NON_EXIST_ERROR), 400
-    else:
-      db.session.commit()
-      file.filename = food_id
-      path = os.path.join("./static/food", vendor_id)
-      if not os.path.exists(path):
-        os.makedirs(path)
-      file.save(os.path.join(path, file.filename))
-      return jsonify(UPLOAD_SUCCESS), 400
+  """ Upload a food image in static folder """
+  if "image" not in request.files:
+    return jsonify(INCOMPLETE_ERROR), 400
+  file = request.files["image"]
+  food = Food.query.filter_by(food_id=food_id).update({f"food_image": "food/{vendor_id}/{food_id}"})
+  if not food:
+    return jsonify(NON_EXIST_ERROR), 400
+  else:
+    db.session.commit()
+    file.filename = food_id
+    path = os.path.join("./static/food", vendor_id)
+    if not os.path.exists(path):
+      os.makedirs(path)
+    file.save(os.path.join(path, file.filename))
+    return jsonify(UPLOAD_SUCCESS), 200
     
-@app.route("/upload/<string:vendor_id>/", methods=["POST"])
+@app.route("/upload/<string:vendor_id>", methods=["POST"])
 def upload_vendor(vendor_id):
-    """ Upload a vendor_image in static folder """
-    if "file" not in request.files:
-      return jsonify(INCOMPLETE_ERROR), 400
-    file = request.files["image"]
-    vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({f"vendor_image": "vendor/{vendor_id}"})
-    if not vendor:
-      return jsonify(NON_EXIST_ERROR), 400
-    else:
-      db.session.commit()
-      file.filename = vendor_id
-      file.save(os.path.join("./static/vendor", file.filename))
-      return jsonify(UPLOAD_SUCCESS), 400
+  """ Upload a vendor_image in static folder """
+  print("Received the",vendor_id)
+  if "image" not in request.files:
+    return jsonify(INCOMPLETE_ERROR), 400
+  file = request.files["image"]
+  vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({f"vendor_image": "vendor/{vendor_id}"})
+  if not vendor:
+    return jsonify(NON_EXIST_ERROR), 400
+  else:
+    db.session.commit()
+    file.filename = vendor_id
+    file.save(os.path.join("./static/vendor", file.filename))
+    return jsonify(UPLOAD_SUCCESS), 200
