@@ -167,7 +167,7 @@ services:
         # environment: 
         #     - 
         volumes:
-            - "./payme nt_facilitation/app:/var/www/app"
+            - "./payment_facilitation/app:/var/www/app"
         # command:
         # depends_on: 
         #     -
