@@ -263,6 +263,13 @@ def add():
       try:
         db.session.add(Food(vendor_id,food_name,food_description,food_price,food_label))
         db.session.commit()
+        food = Food.query.filter_by(vendor_id = vendor_id,
+                                    food_id   = food_id).first()
+        return jsonify({"status": 0,
+                        "data":
+                          { "vendor_id": vendor_id,
+                            "food_id"  : food.food_id}
+                        }), 200
         return jsonify(UPLOAD_SUCCESS), 200 
       except:
         return jsonify(DATABASE_ERROR), 503
