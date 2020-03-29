@@ -115,7 +115,6 @@
 				if (this.files && this.files[0]) {
 					var img = document.querySelector('img');  // $('img')[0]
 					img.src = URL.createObjectURL(this.files[0]); // set src to blob url
-					// img.onload = imageIsLoaded;
 				}
 			});
 		});
@@ -134,7 +133,10 @@
         	return "";
         }
         
-		async function postData(serviceURL, file) {   
+		async function postData(serviceURL, file) { 
+			
+			console.log(file);
+
 			const response =
                  await fetch(
                    serviceURL, {   
@@ -143,9 +145,10 @@
                        body: file,
                     });
             data = await response.json();
+			console.log(data);
             if (response.ok){
-				console.log(data);
-                // window.location.replace("./v_register3.php");
+				// console.log(data);
+                window.location.replace("./v_register3.php");
             }
             else {
                 console.log("die");
@@ -153,24 +156,22 @@
         }
 
 		$("#next").click(async() => {
-            // let isNext = confirm("You cannot return to the previous pages after submitting. Are you sure your details are correct?"); //true if OK is pressed
+            let isNext = confirm("You cannot return to the previous pages after submitting. Are you sure your details are correct?"); //true if OK is pressed
             event.preventDefault()
 
-			// var img = document.querySelector('img');  // $('img')[0]
-			// img.src = URL.createObjectURL(this.files); // set src to blob url
+			var fd = new FormData(); 
+			// fd.append('image', img.src, "vendor_logo.png"); 
+			// console.log(document.getElementById("fileToUpload"));
+			// console.log(document.getElementById("myImg"));
 
-            var image = document.querySelector('img');
-			var fd = new FormData();
-			fd.append('image', image.files[0]);
+			myFile = document.getElementById("fileToUpload").files[0];
+			fd.append('image', myFile);
 
-		    var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
-            var vendor_id = vendor_id_cookie.slice(10);
-            
-            if (isNext == true) {
-                var serviceURL = "http://localhost:85/upload/" + vendor_id;
-			//     var file = image;
-				postData(serviceURL, fd);
-            }
+			var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
+			var vendor_id = vendor_id_cookie.slice(10);
+
+			var serviceURL = "http://localhost:85/upload/" + vendor_id;
+			postData(serviceURL, fd);
         });
 	</script>
 

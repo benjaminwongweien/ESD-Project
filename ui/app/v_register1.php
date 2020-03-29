@@ -147,7 +147,7 @@
             data = await response.json();
             if (response.ok){
                 document.cookie = "vendor_id = " + data['data']['vendor_id'];
-                window.location.replace("./v_register3.php");
+                window.location.replace("./v_register2.php");
             }
             else {
                 console.log("die");
