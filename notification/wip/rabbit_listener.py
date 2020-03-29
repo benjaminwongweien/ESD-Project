@@ -187,7 +187,56 @@ def callback(channel, method, properties, body):
     ###############################
    
     elif order_status.lower() == "order ready":
-        pass
+        # RETRIEVE ALL THE DRIVERS WITHIN THE DATABASE
+        drivers = requests.post("http://localhost:88/usertype", json={"user_type": "driver"})
+        drivers_info = json.loads(drivers.text)
+        # LIST OF THE CHAT IDS OF DRIVERS     
+        drivers_chatID = []
+        # RETURN CONSIST OF LIST OF JSON WITH USERNAME AND CHAT_ID
+        for driver in drivers_info:
+            driver_chat_id = driver["chat_id"]
+            if driver_chat_id != None:
+                drivers_chatID += [driver_chat_id]
+                # FANOUT THE MESSAGE TO ALL DRIVERS
+                notif_message = bot.display_button("There is a pending order! Would you like to accept?", driver_chat_id)
+    
+        update_id = None
+        order_accepted = None
+
+        while time.time() - now <= 10:
+            updates = bot.get_updates(offset=update_id)
+            updates = updates["result"]
+            
+            if updates: 
+                for item in updates:
+                    update_id = item["update_id"]
+                    # ENSURES THAT THE MOST RECENT MESSAGE HAS BEEN RECEIVED
+                    update_id = update_id + 1
+
+                    try:
+                        message = str(item["message"]["text"])
+                    except:
+                        message = None
+
+            sender = str(item["message"]["from"]["id"])
+            # THE FIRST DRIVER TO ACCEPT --> INFORM WHAT ORDER TO SEND AND WHERE
+            # CURRENT ASSUMPTION: THERE WILL ALWAYS BE AT LEAST ONE PERSON ACCEPTING THE ORDER 
+            if message == "Accept":
+                if order_accepted == None:
+                    order_accepted = True
+                    bot.send_message("Please deliver to this location...", sender)
+                # SECOND DRIVER WHO ACCEPT ONWARDS
+                else:
+                    bot.send_message("Another driver has been assigned to the order", sender)
+            # WELCOMING MESSAGE --> FOR USERS WHO START THE BOT
+            elif message == "/start":
+                bot.send_message("Thank you for subscribing with us!", sender)
+            # ANY OTHER MESSAGES ARE NOT PERMITTED
+            else:
+                bot.send_message("Operation not permitted!", sender)
+        # AFTER WINNDOW TIME, ALL DRIVERS WILL RECEIVE THIS MESSAGE
+        for driver in drivers_chatID:
+            bot.send_message("There are currently no pending orders", driver)
 
     ###############################
     #  TELEGRAM BOT --> CUSTOMER  #
@@ -195,6 +244,11 @@ def callback(channel, method, properties, body):
     ###############################
                   
     elif order_status.lower() == "completed":
-        pass
-
+        # RETRIEVE THE CUSTOMER FOR THAT PARTICULAR ORDER
+        cust_information = requests.post("http://localhost:88/username", json={"username": # CUSTOMER USERNAME })
+        cust_chat_id = cust_information["chat_id"]
+        
+        bot.send_message("Great News! Your order has been delivered", cust_chat_id)
+        bot.send_message("Thank you for your purchase!", cust_chat_id) 
+        bot.rate_service("Please take a few moments to rate our service", cust_chat_id)
 consume()
