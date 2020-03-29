@@ -10,13 +10,15 @@ from .base import db
 class Vendor(db.Model):
     vendor_id          = db.Column(db.Integer,    primary_key=True, autoincrement=True)
     vendor_name        = db.Column(db.String(80), nullable=False)
+    vendor_email       = db.Column(db.String(80), nullable=False)
     vendor_description = db.Column(db.Text,       nullable=True )
     vendor_location    = db.Column(db.String(80), nullable=False)
     vendor_image       = db.Column(db.String(80), nullable=True )
     menu_foods         = db.relationship("Food",  backref="Vendor", lazy=True)
     
-    def __init__(self,vendor_name,vendor_description,vendor_location,vendor_image=None):
+    def __init__(self,vendor_name,vendor_email,vendor_description,vendor_location,vendor_image=None):
         self.vendor_name        = vendor_name
+        self.vendor_email       = vendor_email
         self.vendor_description = vendor_description
         self.vendor_location    = vendor_location
         self.vendor_image       = vendor_image
@@ -25,6 +27,7 @@ class Vendor(db.Model):
         return [
             ("vendor_id"         , self.vendor_id),
             ("vendor_name"       , self.vendor_name),
+            ("vendor_email"      , self.vendor_email),
             ("vendor_description", self.vendor_description),
             ("vendor_location"   , self.vendor_location),
             ("vendor_image"      , self.vendor_image)            
