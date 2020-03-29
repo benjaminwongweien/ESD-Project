@@ -301,7 +301,7 @@ def add():
     
 @app.route("/vendor/update", methods=["PUT"])
 def update():
-  """ allows a vendor to add an item to the menu """
+  """ allows a vendor to update an item on the menu """
   if request.is_json:
     vendor_id        = request.json.get('vendor_id')
     food_id          = request.json.get('food_id')
@@ -309,21 +309,24 @@ def update():
     food_description = request.json.get('food_description')
     food_price       = request.json.get('food_price')
     if all([vendor_id,food_id,food_name,food_name,food_description,food_price]):
-      try:
-        food = Food.query.filter_by(vendor_id = vendor_id,
-                                    food_id   = food_id).update({"food_name"       : food_name,
-                                                                 "food_description": food_description,
-                                                                 "food_price"      : food_price})
-        db.session.commit()
-        food = Food.query.filter_by(vendor_id = vendor_id,
-                                    food_id   = food_id).first()
-        return jsonify({"status": 0,
-                        "data":
-                          { "vendor_id": vendor_id,
-                            "food_id"  : food.food_id}
-                        }), 200
-      except:
-        return jsonify(DATABASE_ERROR), 503
+      if is_float(food_price) and len(food_name) <= 80:
+        try:
+          food = Food.query.filter_by(vendor_id = vendor_id,
+                                      food_id   = food_id).update({"food_name"       : food_name,
+                                                                   "food_description": food_description,
+                                                                   "food_price"      : food_price})
+          db.session.commit()
+          food = Food.query.filter_by(vendor_id = vendor_id,
+                                      food_id   = food_id).first()
+          return jsonify({"status": 0,
+                          "data":
+                            { "vendor_id": vendor_id,
+                              "food_id"  : food.food_id}
+                          }), 200
+        except:
+          return jsonify(DATABASE_ERROR), 503
+      else:
+        return jsonify(BAD_REQUEST), 400     
     else:
       return jsonify(INCOMPLETE_ERROR), 400
   else:
@@ -342,6 +345,8 @@ def delete():
       if food:
         db.session.commit()
         return jsonify(UPLOAD_SUCCESS), 200 
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
     else:
       return jsonify(INCOMPLETE_ERROR), 400
   else:
