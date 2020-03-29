@@ -1,5 +1,4 @@
 Flask==1.1.1
 Flask-Cors==3.0.8
-mysql-connector-python==8.0.19
 gunicorn==20.0.4
 requests==2.22.0

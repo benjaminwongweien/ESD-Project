@@ -6,20 +6,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Orders")
+@Table(name = "orders")
 public class Order {
     
-    private int customerID;
+    private String customerID;
     
     @Id
     @Column(name="orderID")
     private String orderID;
 
-    private int vendorID;
-    private int delivererID;
-    private int foodID;
+    private String vendorID;
+    private String delivererID;
+    private String foodID;
     private int quantity;
-    private int price;
+    private float price;
     private String order_status;
 
     @Column(name="delivery_address")
@@ -30,8 +30,8 @@ public class Order {
     }
 
 
-    public Order(int customerID, String orderID, int vendorID, int delivererID, 
-        int foodID, int quantity, int price, String order_status, String delivery_address) {
+    public Order(String customerID, String orderID, String vendorID, String delivererID, 
+        String foodID, int quantity, float price, String order_status, String delivery_address) {
         
         this(customerID, orderID, vendorID, foodID, quantity, price, order_status, delivery_address);
         this.delivererID = delivererID;
@@ -40,7 +40,7 @@ public class Order {
     }
 
     // Used to create Pending Order after user confirms order cart and makes payment
-    public Order(int customerID, String orderID, int vendorID, int foodID, int quantity, int price , String order_status, String delivery_address) {
+    public Order(String customerID, String orderID, String vendorID, String foodID, int quantity, float price , String order_status, String delivery_address) {
         this.customerID = customerID;
         this.vendorID = vendorID;
         this.orderID = orderID;
@@ -51,7 +51,12 @@ public class Order {
         this.delivery_address = delivery_address;
     }
 
-    public int getCustomerID() {
+    public Order(String orderID, String order_status) {
+        this.orderID = orderID;
+        this.order_status = order_status;
+    }
+
+    public String getCustomerID() {
         return customerID;
     }
 
@@ -60,15 +65,15 @@ public class Order {
     }
 
 
-    public int getVendorID() {
+    public String getVendorID() {
         return vendorID;
     }
  
-    public int getDelivererID() {
+    public String getDelivererID() {
         return delivererID;
     }
 
-    public int getFoodID() {
+    public String getFoodID() {
         return foodID;
     }
 
@@ -84,7 +89,11 @@ public class Order {
         return delivery_address;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return price;
+    }
+
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
     }
 }

@@ -68,6 +68,7 @@ ALTER SEQUENCE public.food_food_id_seq OWNED BY public.food.food_id;
 CREATE TABLE public.vendor (
     vendor_id integer NOT NULL,
     vendor_name character varying(80) NOT NULL,
+    vendor_email character varying(80) NOT NULL,
     vendor_description text,
     vendor_location character varying(80) NOT NULL,
     vendor_image character varying(80)
@@ -149,12 +150,12 @@ COPY public.food (vendor_id, food_id, food_name, food_description, food_image, f
 -- Data for Name: vendor; Type: TABLE DATA; Schema: public; Owner: easydeliverymenudb
 --
 
-COPY public.vendor (vendor_id, vendor_name, vendor_description, vendor_location, vendor_image) FROM stdin;
-1	HJFC	Finger Licking Good!	68 Orchard Rd, Plaza Singapura, #B1-21/22, Singapore 238839	vendor/1
-2	Mom's Kitchen	Take a break from your busy business schedules or need a boost before heading back to your school works or simply just enjoying a leisurely family outing; do drop by here to enjoy a great bowl of your favourite dessert. In Mom's Kitchen, we remain committed to serve fresh and tasty desserts. And we stay open every day to serve to all our customers’ needs. So come visit us soon.	5 Cross St, Unit 01-30, Singapore 048418	vendor/2
-3	Purple Sage	Purple Sage cooks a range of delicious dishes from fresh, local produce. Using a high level of technical skill, they are able to achieve fusion of flavours by taking a modern twist on traditional recipes. Their food contains only the finest, natural ingredients and contains less oil & less salt.	157 Pandan Loop, Singapore 128355	vendor/3
-4	Broth Asia	Broth Asia soup makes you feel warm inside. Happy, safe, comforted, and at home. Each one is unique, an expression of the culture that inspired it and the home cooking that created it.	252 North Bridge Road, #B1-62 Rafffles City Shopping Centre, 179103, 179103	vendor/4
-5	Fusion Spoon	Fusion Spoon is a unique casual dining place for families and friends Visitors can enjoy a wide selection of affordable food and beverages from various cuisine choices such as Western, Asian and Japanese. There is also a waffle and Korean bingsu ice kiosk at Fusion Spoon, for those looking for a little treat after a day out in the Gardens.	Singapore Botanic Gardens, Tanglin Gate, 1 Cluny Rd, #B1-00, 259569	vendor/5
+COPY public.vendor (vendor_id, vendor_name, vendor_email, vendor_description, vendor_location, vendor_image) FROM stdin;
+1	HJFC	slypoon@gmail.com	Finger Licking Good!	68 Orchard Rd, Plaza Singapura, #B1-21/22, Singapore 238839	vendor/1
+2	Mom's Kitchen	faithkoh1997@gmail.com	Take a break from your busy business schedules or need a boost before heading back to your school works or simply just enjoying a leisurely family outing; do drop by here to enjoy a great bowl of your favourite dessert. In Mom's Kitchen, we remain committed to serve fresh and tasty desserts. And we stay open every day to serve to all our customers’ needs. So come visit us soon.	5 Cross St, Unit 01-30, Singapore 048418	vendor/2
+3	Purple Sage	bellelee51197@gmail.com	Purple Sage cooks a range of delicious dishes from fresh, local produce. Using a high level of technical skill, they are able to achieve fusion of flavours by taking a modern twist on traditional recipes. Their food contains only the finest, natural ingredients and contains less oil & less salt.	157 Pandan Loop, Singapore 128355	vendor/3
+4	Broth Asia	bentennisulrulez@gmail.com	Broth Asia soup makes you feel warm inside. Happy, safe, comforted, and at home. Each one is unique, an expression of the culture that inspired it and the home cooking that created it.	252 North Bridge Road, #B1-62 Rafffles City Shopping Centre, 179103, 179103	vendor/4
+5	Fusion Spoon	fusion@fusion.com	Fusion Spoon is a unique casual dining place for families and friends Visitors can enjoy a wide selection of affordable food and beverages from various cuisine choices such as Western, Asian and Japanese. There is also a waffle and Korean bingsu ice kiosk at Fusion Spoon, for those looking for a little treat after a day out in the Gardens.	Singapore Botanic Gardens, Tanglin Gate, 1 Cluny Rd, #B1-00, 259569	vendor/5
 \.
 
 

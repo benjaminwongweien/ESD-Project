@@ -2,8 +2,6 @@
 
 [![Inline docs](http://inch-ci.org/github/benjaminwongweien/elysion.svg?branch=master)](http://inch-ci.org/github/benjaminwongweien/elysion)
 [![codebeat badge](https://codebeat.co/badges/b83dfe49-d566-4f12-b4b2-675979e8e403)](https://codebeat.co/projects/github-com-benjaminwongweien-elysion-master)
-[![star this repo](https://githubbadges.com/star.svg?user=benjaminwongweien&repo=elysion&style=default)](https://github.com/benjaminwongweien/elysion)
-[![fork this repo](https://githubbadges.com/fork.svg?user=benjaminwongweien&repo=elysion&style=default)](https://github.com/benjaminwongweien/elysion/fork)
 
 <p align="center">
   <img width="400px" height="400px" src="./logo.svg">

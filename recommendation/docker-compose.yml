@@ -16,29 +16,12 @@ services:
         networks:
             - network
         # environment: 
-        #     - "URI=mysql+mysqlconnector://recdb:recdbpassword@recommendationdb:3306/rec" 
+        #     -  
         # volumes:
         #     - 
         command: gunicorn -b 0.0.0.0:8000 app:app
         # depends_on: 
-        #     - recommendationdb
-    
-    # recommendationdb:
-    #     image: mysql
-    #     container_name: mysql_recommendation_database
-    #     # ports:
-    #     #     - "3306"
-    #     networks:
-    #         - network
-    #     environment:
-    #         MYSQL_DATABASE: rec
-    #         MYSQL_ROOT_PASSWORD: recsecretpasswordwowomgsonice
-    #         MYSQL_USER: recdb
-    #         MYSQL_PASSWORD: recdbpassword
-    #     volumes:
-    #         - ./mysql:/docker-entrypoint-initdb.d/
-    #     # command:
-    #     # depends_on: 
+        #     - 
     
     recommendation_nginx:
         image: nginx:1.17-alpine 

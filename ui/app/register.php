@@ -45,7 +45,7 @@
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('login_util/images/bg-04.jpg');">
 			<div class="wrap-login100 p-l-110 p-r-110 p-t-62 p-b-33">
-				<form class="login100-form validate-form flex-sb flex-w" id="user_registration" name="user_registration" method="POST" action="http://localhost:88/register">
+				<form class="login100-form validate-form flex-sb flex-w">
 					<span class="login100-form-title p-b-53">
 						Register
 					</span>
@@ -70,19 +70,9 @@
 						<input class="inputRadio" type="radio" id="vendor" name="user_type" value="vendor"><label for="vendor">Vendor</label> <br>
 						<input class="inputRadio" type="radio" id="driver" name="user_type" value="driver"><label for="driver">Driver</label> <br>
 					</div>
-					<div class="p-t-31 p-b-9">
-						<span class="txt1">
-							Telegram ID
-						</span>
-						<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="chat_id" value="@">
-						<span class="focus-input100"></span>
-					</div>
-					</div>
 
-
-					<div class="container-login100-form-btn m-t-17">
-						<button class="login100-form-btn">
+					<div class="container-login100-form-btn m-t-17" >
+						<button class="login100-form-btn" id="addUser">
 							Sign Up
 						</button>
 					</div>
@@ -121,35 +111,55 @@
 	
 <!--  -->
 	<script>
-		console.log(document.cookie);
+		// console.log(document.cookie);
 
 		function accessCookie(cookieName)
         {
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
-		  console.log(allCookieArray);
+		//   console.log(allCookieArray);
           for(var i=0; i<allCookieArray.length; i++)
           {
 			var temp = allCookieArray[i].trim();
-			console.log(temp);
             if (temp.includes("email"))
             	return temp;
        	  }
         	return "";
 		}
-		
-		var email_cookie = accessCookie(document.cookie);
-		email = email_cookie.slice(6);
-		console.log(email);
-		// var email = $_COOKIE["email"];
 
-		$("#user_type").click(function(){
-			var user_type=$("input:radio[name=user_type]:checked").val();
-			console.log(user_type);
-			// alert(value);
-		})
+		async function postData(serviceURL, requestBody) {   
+			const response =
+                 await fetch(
+                   serviceURL, {   
+                       method: 'POST', // or 'PUT'
+                       headers: {
+                           'Content-Type': 'application/json',
+                       },
+                       body: JSON.stringify(requestBody),
+                    });
+			// console.log("in Post Data");
+			window.location.replace("./c_homepage.php");
+        }
 
-		console.log(user_type);
+		$("#addUser").click(async() => {
+			event.preventDefault()
+		    var email_cookie = accessCookie(document.cookie);
+			var email = email_cookie.slice(6);
+			// console.log(email);
+			var id = "abc"
+
+            var user_type = $("input:radio[name=user_type]:checked").val();
+			var serviceURL = "http://localhost:88/register";
+            var requestBody = {
+        		uid : email, 
+                type: user_type, 
+                tid: id
+            };
+			// console.log(requestBody);
+            // console.log("in button");
+            
+        	postData(serviceURL, requestBody);
+        });
 	</script>
 
 </body>
