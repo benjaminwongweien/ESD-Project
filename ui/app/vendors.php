@@ -36,17 +36,17 @@
 			        <a href="index.php"><img src="homepage_util/img/logo.png" alt="" title="" /></a>
 			      </div>
 			      <nav id="nav-menu-container">
-			        <ul class="nav-menu">
-			          <li class="menu-active"><a href="#home">Home</a></li>
-					  	<li><a href="vendors.php">Vendors</a></li>
-				        <li><a href="orders.php">Orders</a></li>
-						<li><a href="#">Login</a>
-							<ul>
-							<li><a href="#">Logout</a></li>
-							</ul>
-						</li>
-			        </ul>
-			      </nav><!-- #nav-menu-container -->		    		
+				        <ul class="nav-menu">
+				          <li><a href="vendors.php">View All Vendors</a></li>
+				          <!-- <li><a href="orders.php">Orders</a></li> -->
+						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
+				            <ul id="logout">
+							  <li><a href="./orders.php">Orders</a></li>
+							  <?php echo $_COOKIE['logout_button'] ?>
+				            </ul>
+				          </li>
+				        </ul>
+				      </nav><!-- #nav-menu-container -->		    		
 		    	</div>
 		    </div>
 		  </header><!-- #header -->			
@@ -77,18 +77,19 @@
 						<?php
 							$vendors = json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
 							
-							foreach ($vendors['vendors'] as $vendor) {
-								echo "<div class='col single-team'>";
-									echo "<div class='thumb'>";
-										echo "<a href='food.php?vendor_id={$vendor['vendor_id']}'><img class='img-fluid' src='http://host.docker.internal:85/static/{$vendor['vendor_image']}'></a>";
-									echo "</div>";
-									echo "<div class='meta-text mt-30 text-justify'>";
-										echo "<h4>{$vendor['vendor_name']}</h4>";	
-										echo "<p>{$vendor['vendor_description']}</p>";
-										echo "<h5>Location</h5>";
-										echo "<p>{$vendor['vendor_location']}</p>";
-									echo "</div>";
-								echo "</div>";
+							foreach ($vendors['vendors'] as $vendor) { ?>
+								<div class='col single-team'>";
+									<div class='thumb'>
+										<a href='food.php?vendor_id=<?=$vendor['vendor_id']?>'><img class='img-fluid' src='http://host.docker.internal:85/static/<?=$vendor['vendor_image']?>'></a>";
+									</div>
+									<div class='meta-text mt-30 text-justify'>
+										<h4><?=$vendor['vendor_name']?></h4>
+										<p><?=$vendor['vendor_description']?></p>
+										<h5>Location</h5>
+										<p><?=$vendor['vendor_location']?></p>
+									</div>
+								</div>
+							<?php
 							}
 						?>
 					
