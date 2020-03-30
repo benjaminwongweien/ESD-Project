@@ -16,7 +16,6 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
   - RabbiMQ AMQP Messaging Broker
   - Payment Microservise using Stripe API   
   - Notfication Microservice using Telegram API
-  - Netflix/Eureka API Gateway built on Spring Boot
   - Order Process Microservice built on Spring Boot
   - Web UI with Google and Facebook Login Enabled
   - Recommendation Microservice using Google Maps API
@@ -31,7 +30,6 @@ EaSy Delivery uses a number of open source projects to work properly:
 * [RabbitMQ](https://www.rabbitmq.com/) - One of the most popular open source message brokers.
 * [Bootstrap](https://getbootstrap.com/) - The most popular HTML, CSS, and JS library in the world.
 * [Spring Boot](https://spring.io/projects/spring-boot) - Create  stand-alone, production-grade Spring based Applications that you can "just run".
-* [Eureka](https://github.com/Netflix/eureka/wiki) - REST (Representational State Transfer) based service that is primarily used in the AWS cloud.
 
 ### Installation
 
