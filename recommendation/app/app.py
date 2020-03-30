@@ -12,14 +12,57 @@ import requests
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
-# list of addresses for all vendors before first request
-globals = {}
-# hardcoded
-dummy_address = {'lat': 1.2, 'lng': 103}
-dummy_history = []
+#####################
+#     CONSTANTS     #
+#####################
+
+globals    = {} # list of addresses for all vendors before first request
+API_KEY    = "AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4"
+VENDOR_URL = "http://localhost:85/all_vendor"
+FOOD_URL   = "http://localhost:85/all_food"
+GMAP_URL   = "https://maps.googleapis.com/maps/api/geocode/json?"
+ORDER_URL  = "http://localhost:8080/order/all"
+
+# dummy_address = {'lat': 1.2, 'lng': 103}  # --- check
+# dummy_history = []                        # --- check
+
+#####################
+#     FLASK APP     #
+#####################
 
 app = Flask(__name__)
 CORS(app)
+
+######################
+#      INIT APP      #
+######################
+
+@app.before_first_request
+def before_first_request_func():
+    # prepare vendor
+    menu_request = requests.get(url=VENDOR_URL)
+    vendors = menu_request.json()['vendors']
+
+    for i, vendor in enumerate(vendors):
+        location = vendor['vendor_location']
+        gmap_params = {
+            'address': location,
+            'key'    : API_KEY
+        }
+        gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
+        gmap_data = gmap_request.json()
+        position = gmap_data['results'][0]['geometry']['location']
+        vendors[i]['position'] = position
+    globals['vendors'] = vendors
+
+    # prepare food
+    menu_request = requests.get(url=FOOD_URL)
+    food = menu_request.json()['food']
+    globals['food'] = food
+
+#######################
+#        DEBUG        #
+#######################
 
 @app.errorhandler(400)
 @app.errorhandler(404)
@@ -31,21 +74,23 @@ CORS(app)
 def error(e):
     return jsonify({"status": "error",
                     "error": e.description}), e.code
-
+    
 @app.route("/vendor_pos", methods=["GET"])
 def vendor_pos():
     return jsonify(globals['vendors']), 200
 
+##########################
+#   RECOMMENDATION API   #
+##########################
+
 @app.route("/all", methods=["GET"])
-# all is an in built function is will collide with this definition
-def all():
-    order_url = "http://localhost:8080/order/all"
+def get_all():
     order_hist_request = requests.get(
-        url=order_url
+        url=ORDER_URL
         # json={"customerID": username}
     )
     order_hist_data = order_hist_request.json()
-    return(str(order_hist_data))
+    return jsonify(order_hist_data), 200
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
@@ -56,8 +101,7 @@ def recommendation():
     if username == None:
         closest_vendor = random.choice(globals['vendors'])
     else:
-        order_url = "http://localhost:8080/order/all"
-        order_hist_request = requests.get(url=order_url)
+        order_hist_request = requests.get(url=ORDER_URL)
         order_hist_data = order_hist_request.json()
         address = [o['delivery_address']
                    for o in order_hist_data if o['customerID'] == username][0]
@@ -74,12 +118,11 @@ def recommendation():
         # top_address = max(set(address_list), key=address_list.count)
         gmap_params = {
             'address': address,
-            'key': 'AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4'
+            'key': API_KEY
         }
 
         # request from google API
-        gmap_url = "https://maps.googleapis.com/maps/api/geocode/json?"
-        gmap_request = requests.get(url=gmap_url, params=gmap_params)
+        gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
         gmap_data = gmap_request.json()
         user_position = gmap_data['results'][0]['geometry']['location']
 
@@ -92,33 +135,7 @@ def recommendation():
                 closest_vendor = vendor
     vendor_id = closest_vendor['vendor_id']
     food_list = [f for f in globals['food'] if f['vendor_id'] == vendor_id]
-    return jsonify({'food_list': str(food_list)}), 200
-
-@app.before_first_request
-def before_first_request_func():
-    # prepare vendor
-    menu_url = "http://localhost:85/all_vendor"
-    menu_request = requests.get(url=menu_url)
-    vendors = menu_request.json()['vendors']
-
-    for i, vendor in enumerate(vendors):
-        location = vendor['vendor_location']
-        gmap_params = {
-            'address': location,
-            'key': 'AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4'
-        }
-        gmap_url = "https://maps.googleapis.com/maps/api/geocode/json?"
-        gmap_request = requests.get(url=gmap_url, params=gmap_params)
-        gmap_data = gmap_request.json()
-        position = gmap_data['results'][0]['geometry']['location']
-        vendors[i]['position'] = position
-    globals['vendors'] = vendors
-
-    # prepare food
-    menu_url = "http://localhost:85/all_food"
-    menu_request = requests.get(url=menu_url)
-    food = menu_request.json()['food']
-    globals['food'] = food
+    return jsonify({'food_list': food_list}), 200
 
     
 
