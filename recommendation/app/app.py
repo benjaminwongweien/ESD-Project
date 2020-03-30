@@ -7,10 +7,10 @@ Recommendation Microservice
 
 import os
 import json
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-import requests
 import random
+import requests
+from flask_cors import CORS
+from flask import Flask, jsonify, request
 
 # list of addresses for all vendors before first request
 globals = {}
@@ -18,21 +18,8 @@ globals = {}
 dummy_address = {'lat': 1.2, 'lng': 103}
 dummy_history = []
 
-
-def create_app():
-    """ Creates and starts the App with all the required settings """
-    app = Flask(__name__)
-    CORS(app)
-    # app.config['SQLALCHEMY_DATABASE_URI'] = uri
-    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    return app
-
-
-# app=create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
-app = create_app()
-# https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
-app.app_context().push()
-
+app = Flask(__name__)
+CORS(app)
 
 @app.errorhandler(400)
 @app.errorhandler(404)
@@ -45,13 +32,12 @@ def error(e):
     return jsonify({"status": "error",
                     "error": e.description}), e.code
 
-
 @app.route("/vendor_pos", methods=["GET"])
 def vendor_pos():
-    return jsonify(globals['vendors'])
-
+    return jsonify(globals['vendors']), 200
 
 @app.route("/all", methods=["GET"])
+# all is an in built function is will collide with this definition
 def all():
     order_url = "http://localhost:8080/order/all"
     order_hist_request = requests.get(
@@ -60,7 +46,6 @@ def all():
     )
     order_hist_data = order_hist_request.json()
     return(str(order_hist_data))
-
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
@@ -107,8 +92,7 @@ def recommendation():
                 closest_vendor = vendor
     vendor_id = closest_vendor['vendor_id']
     food_list = [f for f in globals['food'] if f['vendor_id'] == vendor_id]
-    return {'food_list': str(food_list)}
-
+    return jsonify({'food_list': str(food_list)}), 200
 
 @app.before_first_request
 def before_first_request_func():
