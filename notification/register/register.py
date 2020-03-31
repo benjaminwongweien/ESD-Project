@@ -47,13 +47,13 @@ def register():
     global update_id
     global first
     
-    updates = bot.get_updates(offset=update_id)["result"]
+    updates = bot.get_updates(offset=update_id).get("result",[])
     
     if first:
         if updates:
             first      = False
             update_id  = updates[-1]["update_id"] + 1
-            updates    = bot.get_updates(offset=update_id)["result"]
+            updates = bot.get_updates(offset=update_id).get("result",[])
 
     for item in updates:
         
@@ -72,6 +72,7 @@ def register():
             query       = db.select([Register]).where(Register.columns.message_id==reply_message_id)
             ResultProxy = connection.execute(query)
             ResultSet   = ResultProxy.fetchall()
+            
             if ResultSet:
                 # CHECK IF USER EXISTS IN CRM
                 response = requests.post(CRM_USERNAME_GET, json={"username": message})

@@ -37,27 +37,51 @@ def scheduler():
     s.run()
 
 def driver_publish():
-    query       = db.select([DriverOrder])
-    ResultProxy = connection.execute(query)   
     
-    for order in ResultProxy.fetchall():
+    while True:
+        try:
+            engine            = db.create_engine(os.environ['URI'])
+            connection        = engine.connect()
+            metadata          = db.MetaData()
+            DriverOrder       = db.Table ("deliver_messenger",  metadata,
+                                db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
+                                db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                                db.Column("order_status",        db.String(80), nullable=False                                        ),
+                                db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
+                                db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+            metadata.create_all(engine)
+            break
+        
+        except:
+            print(f"Connection Failed, retrying in 3s...")
+            time.sleep(3)
 
+
+    query       = db.select([DriverOrder]).limit(1)
+    ResultProxy = connection.execute(query)   
+    order       = ResultProxy.fetchall()
+    
+    print("Hello")
+    print(order)
+    
+    if order: 
+        order = order[0]
         order_id, messaging_timestamp = order[0], order[-1]
 
         if messaging_timestamp == None or time.time() - messaging_timestamp >= 10:
 
-            response = requests.post(CRM_USERTYPE_GET, json={"user_type": "driver"}) 
-            response = requests.post(CRM_USERTYPE_GET, json={"user_type": 0}) 
+            response = json.loads(requests.post(CRM_USERTYPE_GET, json={"user_type": "driver"}).text)
             
             for driver in response:
-                driver_chat_id = json.loads(response.text).get("chat_id")
+                driver_chat_id = driver.get("chat_id")
                 
+                print("Sending Message Phase")
                 if driver_chat_id != None:
                     if messaging_timestamp == None:
                         bot.display_button("You have received a new order! Will you accept?", driver_chat_id)
                     
-                else:
-                    bot.display_button("You have pending orders. Please accept the order to proceed", driver_chat_id)
+                    else:
+                        bot.display_button("You have pending orders. Please accept the order to proceed", driver_chat_id)
                 
             query       = db.update(DriverOrder).values(messaging_timestamp=time.time()).where(DriverOrder.columns.order_id==order_id)
             ResultProxy = connection.execute(query)

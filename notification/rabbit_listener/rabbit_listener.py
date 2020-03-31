@@ -85,12 +85,21 @@ while True:
         engine     = db.create_engine(os.environ['URI'])
         connection = engine.connect()
         metadata   = db.MetaData()
-        vendorMessenger   = db.Table ("vendor_messenger",    metadata,
+        
+        VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                             db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                             db.Column("order_status",        db.String(80), nullable=False                                        ),
                             db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
+                            db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
+        
+        DeliverMessenger  = db.Table ("deliver_messenger",    metadata,
+                            db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
+                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                            db.Column("order_status",        db.String(80), nullable=False                                        ),
+                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
+                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ))
         
         metadata.create_all(engine)
         print("Connection Successful")
@@ -132,7 +141,7 @@ def callback(channel, method, properties, body):
     
     body = json.loads(body)
     order_id, vendor_id, order_status = body['orderID'], body['vendorID'], body['order_status']
-
+    print(order_id,vendor_id,order_status)
     ###############################
     #   TELEGRAM BOT --> VENDOR   #
     #    PAYMENT IS SUCCESSFUL    #
@@ -141,7 +150,7 @@ def callback(channel, method, properties, body):
     if order_status.lower() == "payment success":
 
         try:
-            query = db.insert(vendorMessenger).values(order_id     = order_id,
+            query = db.insert(VendorMessenger).values(order_id     = order_id,
                                                       vendor_id    = vendor_id,
                                                       order_status = order_status)
             ResultProxy = connection.execute(query)
@@ -159,8 +168,9 @@ def callback(channel, method, properties, body):
     elif order_status.lower() == "order ready":
         
         try:
-            query = db.update(vendorMessenger).values(order_status = order_status).where(vendorMessenger.vendor_id == vendor_id, 
-                                                                                       vendorMessenger.order_id  == order_id)
+            query = db.insert(DeliverMessenger).values(order_id     = order_id,
+                                                       vendor_id    = vendor_id,
+                                                       order_status = order_status)
             ResultProxy = connection.execute(query)
             channel.basic_ack(delivery_tag = method.delivery_tag)
         except:

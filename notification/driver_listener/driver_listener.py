@@ -35,6 +35,7 @@ VIRTUAL_HOST    = os.environ['VIRTUAL_HOST']
 # URLS
 CRM_USR_FROM_USRNAME = os.environ['CRM_USR_FROM_USRNAME']
 CRM_USR_FROM_USRTYPE = os.environ['CRM_USR_FROM_USRTYPE']
+CRM_USR_FROM_CHATID  = os.environ['CRM_USR_FROM_CHATID']
 
 # BOT API KEY
 API_KEY = os.environ['API_KEY'] 
@@ -73,25 +74,22 @@ count = 0
 print("Attempting to connect to the Database...")
 
 while True:
-    
     try:
-        engine = db.create_engine(os.environ['URI'])
-        connection = engine.connect()
-        metadata = db.MetaData()
-        VendorMessenger   = db.Table ("vendor_messenger",    metadata,
+        engine            = db.create_engine(os.environ['URI'])
+        connection        = engine.connect()
+        metadata          = db.MetaData()
+        DriverOrder       = db.Table ("driver_order",        metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                             db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                             db.Column("order_status",        db.String(80), nullable=False                                        ),
                             db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
-                            db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
-        
+                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
         metadata.create_all(engine)
-        print("Connection Successful")
+        print("Connection Succesful")
         break
     except:
         count += 1
-        print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
+        print(f"Connection Failed, retrying in 3s, tries: {count}")
         time.sleep(3)
 
 ############################
@@ -137,33 +135,34 @@ def scheduler():
 ############################
 
 # globals
-first = True
 update_id = None
 
 def vendor_listen():
     
-    while True:
+    global update_id
     
+    while True:
         try:
-            engine = db.create_engine(os.environ['URI'])
-            connection = engine.connect()
-            metadata = db.MetaData()
-            VendorMessenger   = db.Table ("vendor_messenger",    metadata,
+            engine            = db.create_engine(os.environ['URI'])
+            connection        = engine.connect()
+            metadata          = db.MetaData()
+            DriverOrder       = db.Table ("deliver_messenger",  metadata,
                                 db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                                 db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                                 db.Column("order_status",        db.String(80), nullable=False                                        ),
                                 db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                                db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
-                                db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
-            
+                                db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
             metadata.create_all(engine)
             break
+        
         except:
-            count += 1
-            print(f"Connection Lost... Attempting to Reconnect in 3s...")
+            print(f"Connection Failed, retrying in 3s...")
             time.sleep(3)
 
     updates = bot.get_updates(offset=update_id).get("result",[])
+
+    if updates:
+        update_id = updates[-1]["update_id"] + 1 
     
     print(updates)
     
@@ -174,20 +173,44 @@ def vendor_listen():
         sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
         
         # CHECK IF MESSAGE IS ACCEPT ORDER
-        if message == "Accept Order":
+        if message == "Accept":
             
-            query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
+            query = db.select([DriverOrder]).limit(1)
             ResultProxy = connection.execute(query)
             
-            if output := ResultProxy.fetchall():
-                bot.send_message("You have accepted the Order.", sender)
+            output = ResultProxy.fetchall()
+            
+            if output:
                 
-                query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
-
+                output = output[0]
+                
+                print(output)
+                
+                # SEND MESSAGE TO THE DRIVER WHO ACCEPTED
+                bot.send_message("You have accepted the Delivery Order.", sender)
+                
+                # DELETE THE DATABASE ENTRY
+                query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
                 ResultProxy = connection.execute(query)
                 
-                produce(json.dumps({"orderID"      : output[0][0],
-                                    "order_status" : "order ready"}))
+                # QUERY CRM FOR ALL THE DRIVERS
+                response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
+                
+                # NOTIFY EACH DRIVER IT HAS BEEN TAKEN BY OTHERS
+                for driver in response:
+                    driver_chat_id = driver.get("chat_id")  
+                    if driver_chat_id != sender:
+                        bot.send_message("The order has been accepted by another driver", driver_chat_id)             
+                
+                # QUERY CRM TO OBTAIN DRIVER USERNAME
+                response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
+                
+                print(response)
+                
+                # RABBITMQ TOWARDS ORDER PROCESSING
+                produce(json.dumps({"orderID"      : output[0],
+                                    "driverID"     : response["username"],
+                                    "order_status" : "completed"}))
                 
 # START        
 while True:
