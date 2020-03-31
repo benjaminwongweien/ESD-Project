@@ -169,7 +169,10 @@ def callback(channel, method, properties, body):
             query = db.update(vendorMessenger).values(vendorMessenger.order_status=order_status).where(vendorMessenger.vendor_id==vendorID and vendorMessenger.order_id == orderID)
             
             ResultProxy = connection.execute(query)
-
+        
+        else:
+            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+            
     ###############################
     #  TELEGRAM BOT --> CUSTOMER  #
     #       ORDER DELIVERED       #
