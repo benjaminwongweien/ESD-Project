@@ -115,7 +115,7 @@
 														<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 														<!-- Need to change -->
 														<input type='hidden' value='haojunisfantastic' name='customer_id'>
-														<input type='hidden' value='<?=$_GET['vendor_id']?>' name='vendor_id'>
+														<input type='hidden' value='<?=$food['vendor_email']?>' name='vendor_email'>
 														<input type='hidden' value='<?=$food['food_id']?>' name='food_id'>
 														<input type='hidden' value='<?=$food['food_name']?>' name='food_name'>
 														<input type='hidden' value='<?=$food['food_description']?>' name='food_description'>

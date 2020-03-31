@@ -27,6 +27,16 @@
 			<link rel="stylesheet" href="homepage_util/css/magnific-popup.css">
 			<link rel="stylesheet" href="homepage_util/css/bootstrap.css">
 			<link rel="stylesheet" href="homepage_util/css/main.css">
+
+			<script>
+				console.log(document.cookie);
+
+				if (document.cookie == "") {
+					// redirect users to login page
+					window.location.replace("./logout.php");
+				}
+			</script>
+
 		</head>
 		<body>
 		  <header id="header" id="home">
