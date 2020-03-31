@@ -32,6 +32,9 @@ public class OrderSender {
 
     public void sendOrder(Order order) {
         try {
+            if (order.getOrder_status().equals("Payment Cancelled")) {
+                return;
+            }
             String orderJson = objectMapper.writeValueAsString(order);
             Message message = MessageBuilder.withBody(orderJson.getBytes()).setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
             this.rabbitTemplate.convertAndSend(exchange, routingkey, message);
