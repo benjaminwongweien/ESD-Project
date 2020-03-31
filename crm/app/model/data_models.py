@@ -10,7 +10,7 @@ from .base import db
 class User(db.Model):
     username  = db.Column(db.String(80), primary_key=True)
     user_type = db.Column(db.String(80), nullable=False)
-    chat_id   = db.Column(db.String(80), nullable=True )
+    chat_id   = db.Column(db.Integer, nullable=True )
     
     def __init__(self,username,user_type,chat_id = None):
         self.username     = username

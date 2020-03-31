@@ -17,7 +17,6 @@ load_dotenv(find_dotenv())
 
 API_KEY = os.environ['API_KEY']
 
-
 # Constants to produce (send) to ORDER PROCESSING
 PRODUCER_EXCHANGE    = os.environ['PRODUCER_EXCHANGE']
 PRODUCER_QUEUE       = os.environ['PRODUCER_QUEUE']
@@ -34,6 +33,10 @@ RABBIT_PASSWORD = os.environ['RABBIT_PASSWORD']
 HOST            = os.environ['HOST']
 PORT            = os.environ['PORT']
 VIRTUAL_HOST    = os.environ['VIRTUAL_HOST']
+
+# URLS
+CRM_USR_FROM_USRNAME = "http://localhost:88/username"
+CRM_USR_FROM_USRTYPE = "http://localhost:88/usertype"
 
 # HEXADECIMAL CHAT CONSTANTS
 LINE_BREAK = "%0A"
@@ -97,9 +100,9 @@ def consume():
     
     channel.basic_qos(prefetch_count=1)
     
-    channel.basic_consume(queue=CONSUMER_QUEUE,
-                          on_message_callback=callback,
-                          auto_ack=False)
+    channel.basic_consume(queue               = CONSUMER_QUEUE,
+                          on_message_callback = callback,
+                          auto_ack            = False)
 
     channel.start_consuming()
 
@@ -128,8 +131,11 @@ def callback(channel, method, properties, body):
     if order_status.lower() == "payment success":
         
         # OBTAIN USER'S CHAT ID
-        user_information = requests.post("http://localhost:88/username", json={"username": body['vendorID']})
+        user_information = requests.post(CRM_USR_FROM_USRNAME, 
+                                         json = {"username": body['vendorID']})
+        
         user_information = json.loads(user_information.text)
+        
         chat_id          = user_information["chat_id"]
         
         # TRIGGER THE TELEGRAM BOT
@@ -161,7 +167,9 @@ def callback(channel, method, properties, body):
                    update["message"]["from"]["id"] == chat_id      and \
                    update["message"]["message_id"] >= message_id:
                        success = True
-                       produce(orderid = body['orderID'], 
+                       
+                       # PRODUCE THE MESSAGE SEND IT TOWARDS ORDER PROCESSING
+                       produce(orderid      = body['orderID'], 
                                order_status = "order ready")
                        break
                    
@@ -187,29 +195,36 @@ def callback(channel, method, properties, body):
     ###############################
    
     elif order_status.lower() == "order ready":
+        
         # RETRIEVE ALL THE DRIVERS WITHIN THE DATABASE
-        drivers = requests.post("http://localhost:88/usertype", json={"user_type": "driver"})
+        drivers = requests.post(CRM_USR_FROM_USRTYPE, 
+                                json = {"user_type": "driver"})
+        
         drivers_info = json.loads(drivers.text)
+        
         # LIST OF THE CHAT IDS OF DRIVERS     
         drivers_chatID = []
+        
         # RETURN CONSIST OF LIST OF JSON WITH USERNAME AND CHAT_ID
         for driver in drivers_info:
-            driver_chat_id = driver["chat_id"]
-            if driver_chat_id != None:
-                drivers_chatID += [driver_chat_id]
-                # FANOUT THE MESSAGE TO ALL DRIVERS
-                notif_message = bot.display_button("There is a pending order! Would you like to accept?", driver_chat_id)
+            driver_chat_id = driver.get("chat_id")
+            drivers_chatID.append(driver_chat_id)
+            # FANOUT THE MESSAGE TO ALL DRIVERS
+            response = bot.display_button("There is a pending order! Would you like to accept?", driver_chat_id)
+        
+        message_id = response["result"]["message_id"] + 1
     
         update_id = None
         order_accepted = None
 
         while time.time() - now <= 10:
-            updates = bot.get_updates(offset=update_id)
-            updates = updates["result"]
+            
+            updates = bot.get_updates(offset=update_id)["result"]
             
             if updates: 
                 for item in updates:
                     update_id = item["update_id"]
+                    
                     # ENSURES THAT THE MOST RECENT MESSAGE HAS BEEN RECEIVED
                     update_id = update_id + 1
 
@@ -245,10 +260,11 @@ def callback(channel, method, properties, body):
                   
     elif order_status.lower() == "completed":
         # RETRIEVE THE CUSTOMER FOR THAT PARTICULAR ORDER
-        cust_information = requests.post("http://localhost:88/username", json={"username": # CUSTOMER USERNAME })
-        cust_chat_id = cust_information["chat_id"]
-        
+        cust_information = requests.post(CRM_USR_FROM_USRNAME, json={"username": body['customerID']})
+        cust_chat_id = json.loads(cust_information)["chat_id"]
         bot.send_message("Great News! Your order has been delivered", cust_chat_id)
         bot.send_message("Thank you for your purchase!", cust_chat_id) 
         bot.rate_service("Please take a few moments to rate our service", cust_chat_id)
+        
+        
 consume()

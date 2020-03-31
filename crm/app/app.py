@@ -123,9 +123,9 @@ def username():
 def user_type():
     """ get all the user's information based on usertype """
     if request.is_json:
-        username = request.json.get("user_type")
-        if user_type:
-            users = User.query.filter_by(user_type=user_type).all()
+        uType = request.json.get("user_type")
+        if username:
+            users = User.query.filter_by(user_type=uType).all()
             if users:
                 return jsonify([user.json(0,2) for user in users])
             else:
@@ -158,7 +158,7 @@ def register_tele():
     """ registers a user's telegram chat id """
     if request.is_json:
         uid, teleId = request.json.get("uid"), request.json.get("tid")
-        if uid and teleId:
+        if uid:
             users = User.query.filter_by(username=uid).scalar()
             if not users:
                     return jsonify(EXIST_ERROR), 400
