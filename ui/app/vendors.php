@@ -78,9 +78,9 @@
 							$vendors = json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
 							
 							foreach ($vendors['vendors'] as $vendor) { ?>
-								<div class='col single-team'>";
+								<div class='col single-team'>
 									<div class='thumb'>
-										<a href='food.php?vendor_id=<?=$vendor['vendor_id']?>'><img class='img-fluid' src='http://host.docker.internal:85/static/<?=$vendor['vendor_image']?>'></a>";
+										<a href='food.php?vendor_id=<?=$vendor['vendor_id']?>'><img class='img-fluid' src='http://host.docker.internal:85/static/<?=$vendor['vendor_image']?>'></a>
 									</div>
 									<div class='meta-text mt-30 text-justify'>
 										<h4><?=$vendor['vendor_name']?></h4>
