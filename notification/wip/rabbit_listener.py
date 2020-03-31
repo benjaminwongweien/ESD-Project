@@ -82,9 +82,13 @@ while True:
         engine = db.create_engine(os.environ['URI'])
         connection = engine.connect()
         metadata = db.MetaData()
-        Register = db.Table("register", metadata,
-                            db.Column("chat_id", db.Integer(), nullable=False, autoincrement=False ,primary_key=True),
-                            db.Column("message_id", db.Integer(), nullable=False))
+        vendorMessenger = db.Table("vendor_messenger", metadata,
+                            db.Column("order_id", db.Integer(), nullable=False, autoincrement=False ,primary_key=True),
+                            db.Column("vendor_id", db.Integer(), nullable=False, primary_key=True),
+                            db.Column("order_status", db.String(), nullable=False),
+                            db.Column("timestamp", db.Float(), default=time.time, nullable=False),
+                            db.Column("messaging_timestamp", db.Float(), default=None, nullable=True))
+
         metadata.create_all(engine)
         print("Connection Succesful")
         break
@@ -133,6 +137,7 @@ def callback(channel, method, properties, body):
     
     order_id     = body['orderID']
     order_status = body['order_status']
+    vendor_id = body['vendorID']
 
     ###############################
     #   TELEGRAM BOT --> VENDOR   #
@@ -144,6 +149,10 @@ def callback(channel, method, properties, body):
         if success:
             channel.basic_ack(delivery_tag=method.delivery_tag)
             
+            query = db.insert(vendorMessenger).values(vendorMessenger.order_id = order_id, vendorMessenger.vendor_id=vendor_id, vendorMessenger.order_status = order_status)
+            
+            ResultProxy = connection.execute(query)
+            
         # NACK THE MESSAGE
         else:
             channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
@@ -154,7 +163,12 @@ def callback(channel, method, properties, body):
     ###############################
    
     elif order_status.lower() == "order ready":
-        pass
+        if success:
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            
+            query = db.update(vendorMessenger).values(vendorMessenger.order_status=order_status).where(vendorMessenger.vendor_id==vendorID and vendorMessenger.order_id == orderID)
+            
+            ResultProxy = connection.execute(query)
 
     ###############################
     #  TELEGRAM BOT --> CUSTOMER  #
