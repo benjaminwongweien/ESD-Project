@@ -65,6 +65,9 @@ while True:
                                                                       virtual_host = VIRTUAL_HOST,
                                                                       credentials  = credentials))
         channel = connection.channel()
+        print("Connection Successful!")
+        break
+
     except:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
@@ -76,8 +79,10 @@ while True:
 
 count = 0
 
+print("Attempting to connect to the Database...")
+
 while True:
-    print("Attempting to connect to the Database...")
+    
     try:
         engine = db.create_engine(os.environ['URI'])
         connection = engine.connect()
@@ -86,11 +91,11 @@ while True:
                             db.Column("order_id", db.String(80), nullable=False, autoincrement=False ,primary_key=True),
                             db.Column("vendor_id", db.Integer(), nullable=False, primary_key=True),
                             db.Column("order_status", db.String(80), nullable=False),
-                            db.Column("timestamp", db.Integer(), default=time.time, nullable=False),
+                            db.Column("timestamp", db.Integer(), default=time.time(), nullable=False),
                             db.Column("messaging_timestamp", db.Integer(), default=None, nullable=True))
-
+        
         metadata.create_all(engine)
-        print("Connection Succesful")
+        print("Connection Successful")
         break
     except:
         count += 1
@@ -145,11 +150,11 @@ def callback(channel, method, properties, body):
     ###############################
 
     if order_status.lower() == "payment success":
-              
+        success = True   
         if success:
             channel.basic_ack(delivery_tag=method.delivery_tag)
             
-            query = db.insert(vendorMessenger).values(vendorMessenger.order_id = order_id, vendorMessenger.vendor_id=vendor_id, vendorMessenger.order_status = order_status)
+            query = db.insert(vendorMessenger).values(order_id = order_id, vendor_id=vendor_id, order_status = order_status)
             
             ResultProxy = connection.execute(query)
             
@@ -166,7 +171,7 @@ def callback(channel, method, properties, body):
         if success:
             channel.basic_ack(delivery_tag=method.delivery_tag)
             
-            query = db.update(vendorMessenger).values(vendorMessenger.order_status=order_status).where(vendorMessenger.vendor_id==vendorID and vendorMessenger.order_id == orderID)
+            query = db.update(vendorMessenger).values(vendorMessenger.order_status==order_status).where(vendorMessenger.vendor_id==vendorID and vendorMessenger.order_id == orderID)
             
             ResultProxy = connection.execute(query)
         
