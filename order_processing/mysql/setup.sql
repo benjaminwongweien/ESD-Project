@@ -31,19 +31,26 @@ INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity
 -- INSERT NEWLY ORDERS THAT ARE PAID
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  1004, "2039473942", 1, 0, 17, 8, 10, "Order Received", "BLK322 WOODLANDS AVENUE"
+  1004, "2039473942", 1, "0", 17, 8, 10, "Order Received", "BLK322 WOODLANDS AVENUE"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  1006, "8347238428328", 5, 0, 4, 4, 8, "Order Received", "BLK459 LORANG CHUAN"
+  1006, "8347238428328", 5, "0", 4, 4, 8, "Order Received", "BLK459 LORANG CHUAN"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  1008, "9382094823", 3, 0, 12, 7, 10, "Order Received", "BLK772 HOUGANG AVE 3"
+  1008, "9382094823", 3, "0", 12, 7, 10, "Order Received", "BLK772 HOUGANG AVE 3"
 );
 
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "cjj", "9382094846", 4, 0, 15, 6, 9, "Order Received", "Raffles Institution Boarding"
+  "cjj", "9382094846", 4, "0", 15, 6, 9, "Order Received", "Raffles Institution Boarding"
 );
 
+INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
+  "bellelee51197@gmail.com", "9382094846", 4, "slypoon@gmail.com", 15, 6, 9, "Order Received", "Raffles Institution Boarding"
+);
+
+INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
+  "cjj", "9382094846", 4, "slypoon@gmail.com", 15, 6, 9, "Order Received", "Raffles Institution Boarding"
+);
