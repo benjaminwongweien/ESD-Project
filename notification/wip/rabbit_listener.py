@@ -83,11 +83,11 @@ while True:
         connection = engine.connect()
         metadata = db.MetaData()
         vendorMessenger = db.Table("vendor_messenger", metadata,
-                            db.Column("order_id", db.Integer(), nullable=False, autoincrement=False ,primary_key=True),
+                            db.Column("order_id", db.String(80), nullable=False, autoincrement=False ,primary_key=True),
                             db.Column("vendor_id", db.Integer(), nullable=False, primary_key=True),
-                            db.Column("order_status", db.String(), nullable=False),
-                            db.Column("timestamp", db.Float(), default=time.time, nullable=False),
-                            db.Column("messaging_timestamp", db.Float(), default=None, nullable=True))
+                            db.Column("order_status", db.String(80), nullable=False),
+                            db.Column("timestamp", db.Integer(), default=time.time, nullable=False),
+                            db.Column("messaging_timestamp", db.Integer(), default=None, nullable=True))
 
         metadata.create_all(engine)
         print("Connection Succesful")
