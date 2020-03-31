@@ -270,7 +270,6 @@ def register(vendor_id):
   else:
     return jsonify(FORMAT_ERROR), 400 
 
-
 @app.route("/vendor/add", methods=["POST"])
 def add():
   """ allows a vendor to add an item to the menu """
