@@ -13,6 +13,7 @@
 /* --- Error Handling Functions --- */
 
   function redirect_to_error($e,$location=FALSE) {
+    var_dump($_POST);
     if (!$location) {
       $url = "https://localhost/c_homepage.php";
     }
@@ -44,6 +45,7 @@
   else {
     if (
         empty($_POST['vendor_id'])        ||
+        empty($_POST['vendor_email'])     ||
         empty($_POST['food_id'])          ||
         empty($_POST['customer_id'])      ||
         empty($_POST['food_name'])        || 
@@ -147,7 +149,7 @@
       [
         'orderID'          => $id,
         'customerID'       => $_POST['customer_id'],
-        'vendorID'         => strval($_POST['vendor_id']),
+        'vendorID'         => $_POST['vendor_email'],
         'delivererID'      => strval(0),
         'foodID'           => strval($_POST['food_id']),
         'quantity'         => strval($_POST['quantity']),
