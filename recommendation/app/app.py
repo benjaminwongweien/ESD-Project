@@ -85,12 +85,12 @@ def vendor_pos():
 
 @app.route("/all", methods=["GET"])
 def get_all():
-    order_hist_request = requests.get(
+    order_hist_request = requests.get(  
         url=ORDER_URL
         # json={"customerID": username}
     )
     order_hist_data = order_hist_request.json()
-    return jsonify(order_hist_data), 200
+    return jsonify(str(order_hist_data)), 200
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
@@ -136,6 +136,12 @@ def recommendation():
     vendor_id = closest_vendor['vendor_id']
     food_list = [f for f in globals['food'] if f['vendor_id'] == vendor_id]
     return jsonify({'food_list': food_list}), 200
+
+
+
+if __name__ == '__main__':
+    app.run(port=5001)
+
 
     
 
