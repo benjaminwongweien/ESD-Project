@@ -10,6 +10,7 @@ from dotenv import load_dotenv, find_dotenv
 ##########################
 #     INITIALIZE ENV     #
 ##########################
+
 load_dotenv(find_dotenv())
 
 #########################
@@ -17,11 +18,6 @@ load_dotenv(find_dotenv())
 #########################
 
 API_KEY = os.environ['API_KEY']
-
-# Constants to produce (send) to ORDER PROCESSING
-PRODUCER_EXCHANGE    = os.environ['PRODUCER_EXCHANGE']
-PRODUCER_QUEUE       = os.environ['PRODUCER_QUEUE']
-PRODUCER_BINDING_KEY = os.environ['PRODUCER_BINDING_KEY']
 
 # Constants to consume (receive) from ORDER PROCESSING
 CONSUMER_EXCHANGE     = os.environ['CONSUMER_EXCHANGE']
@@ -87,12 +83,12 @@ while True:
         engine = db.create_engine(os.environ['URI'])
         connection = engine.connect()
         metadata = db.MetaData()
-        vendorMessenger = db.Table("vendor_messenger", metadata,
-                            db.Column("order_id", db.String(80), nullable=False, autoincrement=False ,primary_key=True),
-                            db.Column("vendor_id", db.Integer(), nullable=False, primary_key=True),
-                            db.Column("order_status", db.String(80), nullable=False),
-                            db.Column("timestamp", db.Integer(), default=time.time(), nullable=False),
-                            db.Column("messaging_timestamp", db.Integer(), default=None, nullable=True))
+        vendorMessenger   = db.Table ("vendor_messenger",    metadata,
+                            db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
+                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                            db.Column("order_status",        db.String(80), nullable=False                                        ),
+                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
+                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
         
         metadata.create_all(engine)
         print("Connection Successful")
@@ -107,22 +103,22 @@ while True:
 #############################
 
 def consume():
-    channel.exchange_declare(exchange      = CONSUMER_EXCHANGE, 
-                             durable       = True, 
-                             exchange_type = 'direct')
+    channel.exchange_declare(exchange            = CONSUMER_EXCHANGE, 
+                             durable             = True, 
+                             exchange_type       = 'direct'             )
 
-    channel.queue_declare(queue   = CONSUMER_QUEUE,
-                          durable = True)
+    channel.queue_declare(   queue               = CONSUMER_QUEUE,
+                             durable             = True                 )
 
-    channel.queue_bind(queue       = CONSUMER_QUEUE,
-                       exchange    = CONSUMER_EXCHANGE,  
-                       routing_key = CONSUMER_BINDING_KEY)
+    channel.queue_bind(      queue               = CONSUMER_QUEUE,
+                             exchange            = CONSUMER_EXCHANGE,  
+                             routing_key         = CONSUMER_BINDING_KEY )
     
-    channel.basic_qos(prefetch_count=1)
+    channel.basic_qos(       prefetch_count      = 1                    )
     
-    channel.basic_consume(queue               = CONSUMER_QUEUE,
-                          on_message_callback = callback,
-                          auto_ack            = False)
+    channel.basic_consume(   queue               = CONSUMER_QUEUE,
+                             on_message_callback = callback,
+                             auto_ack            = False                )
 
     channel.start_consuming()
 
@@ -131,18 +127,9 @@ def consume():
 ##############################
 
 def callback(channel, method, properties, body):
-    ''' ORDER PROCESSING --> TELEGRAM BOT
-
-        Types of Status:
-        1. Payment Success (Send to Vendor)
-        2. Order Ready (Send to delivery man)
-        3. Completed (Send to Customer)'''
     
     body = json.loads(body)
-    
-    order_id     = body['orderID']
-    order_status = body['order_status']
-    vendor_id = body['vendorID']
+    order_id, vendor_id, order_status = body['orderID'], body['vendorID'], body['order_status']
 
     ###############################
     #   TELEGRAM BOT --> VENDOR   #
@@ -150,17 +137,17 @@ def callback(channel, method, properties, body):
     ###############################
 
     if order_status.lower() == "payment success":
-        success = True   
-        if success:
-            channel.basic_ack(delivery_tag=method.delivery_tag)
-            
-            query = db.insert(vendorMessenger).values(order_id = order_id, vendor_id=vendor_id, order_status = order_status)
-            
+
+        try:
+            query = db.insert(vendorMessenger).values(order_id     = order_id,
+                                                      vendor_id    = vendor_id,
+                                                      order_status = order_status)
             ResultProxy = connection.execute(query)
-            
-        # NACK THE MESSAGE
-        else:
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+            channel.basic_ack(delivery_tag = method.delivery_tag)
+        except:
+            # NACK THE MESSAGE
+            channel.basic_nack(delivery_tag = method.delivery_tag, 
+                               requeue      = True)            
 
     ###############################
     #   TELEGRAM BOT --> DELIVER  #
@@ -168,15 +155,16 @@ def callback(channel, method, properties, body):
     ###############################
    
     elif order_status.lower() == "order ready":
-        if success:
-            channel.basic_ack(delivery_tag=method.delivery_tag)
-            
-            query = db.update(vendorMessenger).values(vendorMessenger.order_status==order_status).where(vendorMessenger.vendor_id==vendorID and vendorMessenger.order_id == orderID)
-            
-            ResultProxy = connection.execute(query)
         
-        else:
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+        try:
+            query = db.update(vendorMessenger).values(order_status = order_status).where(vendorMessenger.vendor_id == vendor_id, 
+                                                                                       vendorMessenger.order_id  == order_id)
+            ResultProxy = connection.execute(query)
+            channel.basic_ack(delivery_tag = method.delivery_tag)
+        except:
+            # NACK THE MESSAGE
+            channel.basic_nack(delivery_tag = method.delivery_tag, 
+                               requeue      = True)
             
     ###############################
     #  TELEGRAM BOT --> CUSTOMER  #
@@ -184,12 +172,15 @@ def callback(channel, method, properties, body):
     ###############################
                   
     elif order_status.lower() == "completed":
+        
         # RETRIEVE THE CUSTOMER FOR THAT PARTICULAR ORDER
-        cust_information = requests.post(CRM_USR_FROM_USRNAME, json={"username": body['customerID']})
+        cust_information = requests.post(CRM_USR_FROM_USRNAME, 
+                                         json = {"username": body['customerID']})
+        
         cust_chat_id = json.loads(cust_information)["chat_id"]
-        bot.send_message("Great News! Your order has been delivered", cust_chat_id)
-        bot.send_message("Thank you for your purchase!", cust_chat_id) 
+        bot.send_message("Great News! Your order has been delivered"    , cust_chat_id)
+        bot.send_message("Thank you for your purchase!"                 , cust_chat_id) 
         bot.rate_service("Please take a few moments to rate our service", cust_chat_id)
         
-        
+# START          
 consume()
