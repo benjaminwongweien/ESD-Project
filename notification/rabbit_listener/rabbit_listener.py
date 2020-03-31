@@ -57,9 +57,9 @@ while True:
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(host        = HOST,
-                                                                      port         = PORT,
-                                                                      virtual_host = VIRTUAL_HOST,
-                                                                      credentials  = credentials))
+                                                                       port         = PORT,
+                                                                       virtual_host = VIRTUAL_HOST,
+                                                                       credentials  = credentials))
         channel = connection.channel()
         print("Connection Successful!")
         break

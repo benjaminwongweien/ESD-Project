@@ -16,7 +16,6 @@ CRM_CHATID_GET   = os.environ['CRM_CHATID_GET']
 
 bot     = telegram_chatbot(API_KEY)
 
-
 update_id = None
 tries     = 0
 first     = True
@@ -133,6 +132,7 @@ while True:
         print(f"Connection Failed, retrying in 3s, tries: {tries}")
         time.sleep(3)
 
+print("Registration Listener has started with no Errors.")
 while True:
     scheduler()
 

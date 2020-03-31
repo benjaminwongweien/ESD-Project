@@ -112,6 +112,7 @@
 	
 <!--  -->
 	<script>
+		console.log(document.cookie);
 		function accessCookie(cookieName){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
@@ -153,7 +154,7 @@
 		    var email_cookie = accessCookie(document.cookie);
 			var email = email_cookie.slice(6);
 			// console.log(email);
-			var id = "abc"
+			var id = null;
 
             var user_type = $("input:radio[name=user_type]:checked").val();
 			var serviceURL = "http://localhost:88/register";
