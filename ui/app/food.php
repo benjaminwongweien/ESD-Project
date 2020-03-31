@@ -55,13 +55,28 @@
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
 						<?php
-							$vendors= json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
-							$all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
+							$postdata = json_encode(array(
+									'vendor_id' => $_GET["vendor_id"]
+								)
+							);
 
-							foreach ($vendors['vendors'] as $vendor) {
-								if( $_GET["vendor_id"] == $vendor['vendor_id']) {?>
+							$opts = array('http' =>
+								array(
+									'method'  => 'POST',
+									'header'  => 'Content-Type: application/json',
+									'content' => $postdata
+								)
+							);
+							
+							$context  = stream_context_create($opts);
+							$all_food= json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);
+							// $vendors = json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
+							// $all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
+
+							// foreach ($all_food['vendors'] as $all_food) {
+								// if( $_GET["vendor_id"] == $vendor['vendor_id']) {?>
 									<h4 class='text-white text-uppercase'>Wide Network of Choice</h4>
-									<h1><?=$vendor['vendor_name']?></h1>
+									<h1><?=$all_food['vendor_name']?></h1>
 									<p class='text-white'>Food delivery near you from a curated choice of local restaurants across Singapore.</p>
 						</div>
 					</div>
@@ -77,8 +92,7 @@
 					<div class="container">					
 						<div class="row justify-content-center d-flex align-items-left">
 						<?php
-									foreach ($all_food['food'] as $food) {
-										if( $_GET["vendor_id"] == $food['vendor_id']){ ?>
+									foreach ($all_food['food'] as $food) {?>
 											<div class='col-md-3 single-team'>
 											<form action='http://host.docker.internal:86/payment.php' method='POST'>
 												<div class='thumb'>
@@ -101,7 +115,7 @@
 														<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 														<!-- Need to change -->
 														<input type='hidden' value='haojunisfantastic' name='customer_id'>
-														<input type='hidden' value='<?=$_GET['vendor_id']?>' name='vendor_id'>
+														<input type='hidden' value='<?=$food['vendor_email']?>' name='vendor_id'>
 														<input type='hidden' value='<?=$food['food_id']?>' name='food_id'>
 														<input type='hidden' value='<?=$food['food_name']?>' name='food_name'>
 														<input type='hidden' value='<?=$food['food_description']?>' name='food_description'>
@@ -111,15 +125,9 @@
 												</form>
 												</div>
 											</div>
-
-										<?php
-										}
-									}?>
 									<br/><br/><br/><br/><br/>
 								<?php
-								}
 							}?>
-							
 						</div>
 					</div>	
 				</section>

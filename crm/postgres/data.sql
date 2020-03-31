@@ -27,7 +27,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public."user" (
     username character varying(80) NOT NULL,
     user_type character varying(80) NOT NULL,
-    chat_id character varying(80)
+    chat_id integer
 );
 
 
