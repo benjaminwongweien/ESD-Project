@@ -7,12 +7,28 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+##########################
+#     INITIALIZE ENV     #
+##########################
+
 load_dotenv(find_dotenv())
+
+#########################
+#       CONSTANTS       #
+#########################
 
 API_KEY            = os.environ['API_KEY'] 
 CRM_USERTYPE_GET   = os.environ['CRM_USERTYPE_GET']
 
+#############################
+#     TELEGRAM BOT INIT     #
+#############################
+
 bot = telegram_chatbot(API_KEY)
+
+#############################
+#      SCHEDULER INIT       #
+#############################
 
 s   = sched.scheduler(time.time, time.sleep)
 
@@ -21,7 +37,7 @@ def scheduler():
     s.run()
 
 def driver_publish():
-    query = db.select([DriverOrder])
+    query       = db.select([DriverOrder])
     ResultProxy = connection.execute(query)   
     
     for order in ResultProxy.fetchall():
@@ -43,10 +59,14 @@ def driver_publish():
                 else:
                     bot.display_button("You have pending orders. Please accept the order to proceed", driver_chat_id)
                 
-            query = db.update(DriverOrder).values(messaging_timestamp=time.time()).where(DriverOrder.columns.order_id==order_id)
+            query       = db.update(DriverOrder).values(messaging_timestamp=time.time()).where(DriverOrder.columns.order_id==order_id)
             ResultProxy = connection.execute(query)
 
 tries = 0
+
+#############################
+#    DATABASE CONNECTION    #
+#############################   
 
 while True:
     print("Attempting to connect to the database")

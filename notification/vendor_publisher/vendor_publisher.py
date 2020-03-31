@@ -7,13 +7,29 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+##########################
+#     INITIALIZE ENV     #
+##########################
+
 load_dotenv(find_dotenv())
 
-API_KEY          = os.environ['API_KEY'] 
-CRM_USERNAME_GET = os.environ['CRM_USERNAME_GET']
-MENU_GET_EMAIL = "http://localhost:85/get_email"
+#########################
+#       CONSTANTS       #
+#########################
+
+API_KEY           = os.environ['API_KEY'] 
+CRM_USERNAME_GET  = os.environ['CRM_USERNAME_GET']
+MENU_GET_EMAIL    = os.environ['MENU_GET_EMAIL']
+
+#############################
+#     TELEGRAM BOT INIT     #
+#############################
 
 bot = telegram_chatbot(API_KEY)
+
+#############################
+#      SCHEDULER INIT       #
+#############################
 
 s   = sched.scheduler(time.time, time.sleep)
 
@@ -22,7 +38,7 @@ def scheduler():
     s.run()
 
 def vendor_publish():
-    query = db.select([VendorMessenger]).group_by(VendorMessenger.columns.vendor_id)
+    query       = db.select([VendorMessenger]).group_by(VendorMessenger.columns.vendor_id)
     ResultProxy = connection.execute(query)   
     
     for vendor in ResultProxy.fetchall():
@@ -32,7 +48,7 @@ def vendor_publish():
         if messaging_timestamp == None or time.time() - messaging_timestamp >= 10:
 
             response = requests.post(CRM_USERNAME_GET, json={"username": vendor_email})
-            chat_id = json.loads(response.text).get("chat_id")
+            chat_id  = json.loads(response.text).get("chat_id")
 
             if chat_id != None:
                 if messaging_timestamp == None:
@@ -40,8 +56,12 @@ def vendor_publish():
                 else:
                     bot.display_button("You have pending orders. Please accept the order to proceed", chat_id)
                 
-                query = db.update(VendorMessenger).values(messaging_timestamp=time.time()).where(VendorMessenger.columns.order_id==order_id)
+                query       = db.update(VendorMessenger).values(messaging_timestamp=time.time()).where(VendorMessenger.columns.order_id==order_id)
                 ResultProxy = connection.execute(query)
+
+#############################
+#    DATABASE CONNECTION    #
+#############################
 
 tries = 0
 
@@ -56,7 +76,7 @@ while True:
                             db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                             db.Column("order_status",        db.String(80), nullable=False                                        ),
                             db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ))
         metadata.create_all(engine)
         print("Connection Succesful")
         break

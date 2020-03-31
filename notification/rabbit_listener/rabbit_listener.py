@@ -32,8 +32,8 @@ PORT            = os.environ['PORT']
 VIRTUAL_HOST    = os.environ['VIRTUAL_HOST']
 
 # URLS
-CRM_USR_FROM_USRNAME = "http://localhost:88/username"
-CRM_USR_FROM_USRTYPE = "http://localhost:88/usertype"
+CRM_USR_FROM_USRNAME = os.environ['CRM_USR_FROM_USRNAME']
+CRM_USR_FROM_USRTYPE = os.environ['CRM_USR_FROM_USRTYPE']
 
 # HEXADECIMAL CHAT CONSTANTS
 LINE_BREAK = "%0A"
@@ -56,11 +56,13 @@ while True:
         print("Attempting to connect to RabbitMQ Broker...")
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
 
+
         connection = pika.BlockingConnection(pika.ConnectionParameters(host        = HOST,
                                                                        port         = PORT,
                                                                        virtual_host = VIRTUAL_HOST,
                                                                        credentials  = credentials))
         channel = connection.channel()
+
         print("Connection Successful!")
         break
 
@@ -80,9 +82,9 @@ print("Attempting to connect to the Database...")
 while True:
     
     try:
-        engine = db.create_engine(os.environ['URI'])
+        engine     = db.create_engine(os.environ['URI'])
         connection = engine.connect()
-        metadata = db.MetaData()
+        metadata   = db.MetaData()
         vendorMessenger   = db.Table ("vendor_messenger",    metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                             db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),

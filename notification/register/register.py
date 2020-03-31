@@ -7,19 +7,36 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+##########################
+#     INITIALIZE ENV     #
+##########################
+
 load_dotenv(find_dotenv())
+
+#########################
+#       CONSTANTS       #
+#########################
 
 API_KEY          = os.environ['API_KEY'] 
 CRM_USERNAME_GET = os.environ['CRM_USERNAME_GET']
 CRM_REGISTER     = os.environ['CRM_REGISTER']
 CRM_CHATID_GET   = os.environ['CRM_CHATID_GET']
 
-bot     = telegram_chatbot(API_KEY)
+#############################
+#     TELEGRAM BOT INIT     #
+#############################
+
+bot       = telegram_chatbot(API_KEY)
 
 update_id = None
 tries     = 0
 first     = True
-s = sched.scheduler(time.time, time.sleep)
+
+#############################
+#      SCHEDULER INIT       #
+#############################
+
+s         = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
     s.enter(3,1,register, ())
@@ -34,9 +51,9 @@ def register():
     
     if first:
         if updates:
-            first = False
-            update_id = updates[-1]["update_id"] + 1
-            updates = bot.get_updates(offset=update_id)["result"]
+            first      = False
+            update_id  = updates[-1]["update_id"] + 1
+            updates    = bot.get_updates(offset=update_id)["result"]
 
     for item in updates:
         
@@ -52,16 +69,17 @@ def register():
             
         if reply_message_id:
             # CHECK IF HE HAS ASKED TO REGISTER IN THE DATABASE WITH HIS REPLY MESSAGE ID (1)
-            query = db.select([Register]).where(Register.columns.message_id==reply_message_id)
+            query       = db.select([Register]).where(Register.columns.message_id==reply_message_id)
             ResultProxy = connection.execute(query)
-            ResultSet = ResultProxy.fetchall()
+            ResultSet   = ResultProxy.fetchall()
             if ResultSet:
                 # CHECK IF USER EXISTS IN CRM
                 response = requests.post(CRM_USERNAME_GET, json={"username": message})
                 response = json.loads(response.text)
                 # (2 fail) REGISTER WITH US ON EASYDELIVERY FIRST!
                 if response.get("status"):
-                    bot.send_message(msg="Invalid username used to register, resume the registration process by pressing /start", chat_id=sender)
+                    bot.send_message(msg="Invalid username used to register, resume the registration process by pressing /start", 
+                                    chat_id=sender)
                 else:
                     # CHECKS IF USER HAS AN ENTRY IS IN DATAVASE
                     response = requests.post(CRM_CHATID_GET, json={"tid": sender})
@@ -76,8 +94,8 @@ def register():
                     
                     # REPLY TO USER SUBSCRIPTION SUCCESSFUL
                     bot.send_message(msg="Registration Successful!", chat_id=sender)
-                    query = db.delete(Register).where(Register.columns.chat_id==sender)
-                    ResultProxy = connection.execute(query)
+                    query        = db.delete(Register).where(Register.columns.chat_id==sender)
+                    ResultProxy  = connection.execute(query)
                 
             # (1 fail) REPLY YOU HAVE REGISTERED BEFORE PLEASE START PROCESS BY WRITING /START
             else:
@@ -86,9 +104,9 @@ def register():
         
         elif message == "/start":
             # CHECK IF REGISTRATION REQUEST WAS MADE BEFORE
-            query = db.select([Register]).where(Register.columns.chat_id==sender)
+            query       = db.select([Register]).where(Register.columns.chat_id==sender)
             ResultProxy = connection.execute(query)
-            ResultSet = ResultProxy.fetchall()
+            ResultSet   = ResultProxy.fetchall()
             if ResultSet:
                 bot_response = bot.message_reply("You have already attempted to register, please reply to this message to continue.", sender)
             else:
@@ -115,12 +133,16 @@ def register():
         if updates:
             update_id = item["update_id"] + 1
 
+#############################
+#    DATABASE CONNECTION    #
+#############################
+
 while True:
     print("Attempting to connect to the database")
     try:
-        engine = db.create_engine(os.environ['URI'])
+        engine     = db.create_engine(os.environ['URI'])
         connection = engine.connect()
-        metadata = db.MetaData()
+        metadata   = db.MetaData()
         Register = db.Table("register", metadata,
                             db.Column("chat_id", db.Integer(), nullable=False, autoincrement=False ,primary_key=True),
                             db.Column("message_id", db.Integer(), nullable=False))
