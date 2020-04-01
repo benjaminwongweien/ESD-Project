@@ -103,44 +103,45 @@ def recommendation():
     else:
         order_hist_request = requests.get(url=ORDER_URL)
         order_hist_data = order_hist_request.json()
-        address = [o['delivery_address']
-                   for o in order_hist_data if o['customerID'] == username][0]
+        address = [o['delivery_address'] for o in order_hist_data if o['customerID'] == username]
 
-        # order_hist_data hardcoded:
-        # order_hist_data = [
-        #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
-        #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'},
-        #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
-        #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'}
-        # ]
+        if address:
+            address = address[0]            
 
-        # address_list = [o['address'] for o in order_hist_data]
-        # top_address = max(set(address_list), key=address_list.count)
-        gmap_params = {
-            'address': address,
-            'key': API_KEY
-        }
+            # order_hist_data hardcoded:
+            # order_hist_data = [
+            #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
+            #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'},
+            #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
+            #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'}
+            # ]
 
-        # request from google API
-        gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
-        gmap_data = gmap_request.json()
-        user_position = gmap_data['results'][0]['geometry']['location']
+            # address_list = [o['address'] for o in order_hist_data]
+            # top_address = max(set(address_list), key=address_list.count)
+            gmap_params = {
+                'address': address,
+                'key': API_KEY
+            }
 
-        closest_dist = 999
-        for vendor in globals['vendors']:
-            dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
-                    (user_position['lng'] - vendor['position']['lng']) ** 2) ** 0.5
-            if dist < closest_dist:
-                closest_dist = dist
-                closest_vendor = vendor
+            # request from google API
+            gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
+            gmap_data = gmap_request.json()
+            user_position = gmap_data['results'][0]['geometry']['location']
+
+            closest_dist = 999
+            for vendor in globals['vendors']:
+                dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
+                        (user_position['lng'] - vendor['position']['lng']) ** 2) ** 0.5
+                if dist < closest_dist:
+                    closest_dist = dist
+                    closest_vendor = vendor
+        else:
+            closest_vendor = random.choice(globals['vendors'])
+                
     vendor_id = closest_vendor['vendor_id']
     food_list = [f for f in globals['food'] if f['vendor_id'] == vendor_id]
     return jsonify({'food_list': food_list}), 200
 
-
-
-if __name__ == '__main__':
-    app.run(port=5001)
 
 
     
