@@ -32,7 +32,9 @@ public class OrderReceiver {
         String orderID = order.getOrderID();
         Order data = orderController.findOrderByorderID(orderID);
         data.setOrder_status(order.getOrder_status());
+        System.out.println("Before Updating: " + data.getDelivererID());
         data.setDelivererID(order.getDelivererID());
+        System.out.println("After Updating:" + data.getDelivererID());
         orderController.update(data);
     }
 
