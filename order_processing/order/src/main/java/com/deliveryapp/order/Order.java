@@ -51,9 +51,10 @@ public class Order {
         this.delivery_address = delivery_address;
     }
 
-    public Order(String orderID, String order_status) {
+    public Order(String orderID, String deliverID String order_status) {
         this.orderID = orderID;
         this.order_status = order_status;
+        this.delivererID = deliverID
     }
 
     public String getCustomerID() {
@@ -95,5 +96,9 @@ public class Order {
 
     public void setOrder_status(String order_status) {
         this.order_status = order_status;
+    }
+
+    public void setDelivererID(String deliverID) {
+        this.DelivererID = deliverID;
     }
 }
