@@ -4,8 +4,9 @@ WORKDIR /usr/app/
 
 COPY . .    
 
-RUN gradle wrapper --debug
+# RUN gradle wrapper --debug
 
-RUN ./gradlew clean build  --debug
+# RUN ./gradlew clean build  --debug
 
-CMD ["./wait-for-it.sh", "-t", "0", "host.docker.internal:5673", "--", "./wait-for-it.sh", "-t", "0", "order_db:3306", "--", "java","-jar", "build/libs/order-0.0.2-SNAPSHOT.jar"]
+# CMD ["./wait-for-it.sh", "-t", "0", "host.docker.internal:5673", "--", "./wait-for-it.sh", "-t", "0", "order_db:3306", "--", "java","-jar", "build/libs/order-0.0.2-SNAPSHOT.jar"]
+CMD ["java","-jar", "build/libs/order-0.0.2-SNAPSHOT.jar"]
