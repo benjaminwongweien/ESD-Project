@@ -51,13 +51,15 @@ def register():
     
     if updates:
         update_id  = updates[-1]["update_id"] + 1
-        updates = bot.get_updates(offset=update_id).get("result",[])
 
         for item in updates:
             
-            message    = item["message"]["text"]       # MESSAGE TEXT
-            message_id = item["message"]["message_id"] # MESSAGE ID
-            sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
+            try:
+                message    = item["message"]["text"]       # MESSAGE TEXT
+                message_id = item["message"]["message_id"] # MESSAGE ID
+                sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
+            except:
+                message, message_id, sender = None, None, None
             
             try:
                 # MESSAGE ID OF A REPLY MESSAGE
@@ -65,7 +67,7 @@ def register():
             except:
                 reply_message_id = None
                 
-            if reply_message_id:
+            if all([message,message_id,sender,reply_message_id]):
                 # CHECK IF HE HAS ASKED TO REGISTER IN THE DATABASE WITH HIS REPLY MESSAGE ID (1)
                 query       = db.select([Register]).where(Register.columns.message_id==reply_message_id)
                 ResultProxy = connection.execute(query)
@@ -151,6 +153,11 @@ while True:
         time.sleep(3)
 
 print("Registration Listener has started with no Errors.")
+
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("An unexpected error occured, retrying in 3 seconds")
+        time.sleep(3)
 

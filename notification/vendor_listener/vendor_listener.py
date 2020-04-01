@@ -175,36 +175,42 @@ def vendor_listen():
     
         for item in updates:
             
-            print(item)
+            try:
+                message    = item["message"]["text"]       # MESSAGE TEXT
+                message_id = item["message"]["message_id"] # MESSAGE ID
+                sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
+            except:
+                message, message_id, sender = None, None, None
             
-            message    = item["message"]["text"]       # MESSAGE TEXT
-            message_id = item["message"]["message_id"] # MESSAGE ID
-            sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)]
-            
-            # CHECK IF MESSAGE IS ACCEPT ORDER
-            if message == "Accept Order":
-                
-                query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
-                ResultProxy = connection.execute(query)
-                
-                output = ResultProxy.fetchall()
-                
-                if output:
-                    bot.send_message("You have accepted the Order.", sender)
+            if all([message, message_id, sender]):
+                # CHECK IF MESSAGE IS ACCEPT ORDER
+                if message == "Accept Order":
                     
-                    query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
-
+                    query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
                     ResultProxy = connection.execute(query)
                     
-                    produce(json.dumps({"orderID"      : output[0][0],
-                                        "delivererID"  : "0",
-                                        "order_status" : "order ready"}))
+                    output = ResultProxy.fetchall()
+                    
+                    if output:
+                        bot.send_message("You have accepted the Order.", sender)
+                        
+                        query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
+
+                        ResultProxy = connection.execute(query)
+                        
+                        produce(json.dumps({"orderID"      : output[0][0],
+                                            "delivererID"  : "0",
+                                            "order_status" : "order ready"}))
                     
 ###########################
 #          START          #
 ###########################
        
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("An unexpected error occured, retrying in 3 seconds")
+        time.sleep(3)
 
 connection.close()

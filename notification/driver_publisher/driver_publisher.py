@@ -127,5 +127,9 @@ def driver_publish():
 ###########################
 
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("An unexpected error occured, retrying in 3 seconds")
+        time.sleep(3)
 
