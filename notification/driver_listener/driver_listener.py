@@ -42,7 +42,7 @@ API_KEY = os.environ['API_KEY']
 #    RABBITMQ CONNECTION    #
 #############################
 
-time.sleep(15)
+time.sleep(30)
 
 count = 0
 
@@ -108,7 +108,8 @@ def produce(msg):
     channel.basic_publish(exchange    = PRODUCER_EXCHANGE,
                           routing_key = PRODUCER_BINDING_KEY,
                           body        = msg,
-                          properties  = pika.BasicProperties(delivery_mode=2))
+                          properties  = pika.BasicProperties(delivery_mode = 2, 
+                                                             content_type  = "application/json"))
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -123,7 +124,7 @@ bot = telegram_chatbot(API_KEY)
 s = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,vendor_listen, ())
+    s.enter(10,1,vendor_listen, ())
     s.run()
 
 ###########################
@@ -203,9 +204,11 @@ def vendor_listen():
                 # QUERY CRM TO OBTAIN DRIVER USERNAME
                 response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
                 
+                print(response.get("username"))
+                
                 # RABBITMQ TOWARDS ORDER PROCESSING
                 produce(json.dumps({"orderID"      : output[0],
-                                    "driverID"     : response.get("username"),
+                                    "delivererID"  : response.get("username"),
                                     "order_status" : "completed"}))
                 
 ###########################

@@ -41,7 +41,7 @@ API_KEY = os.environ['API_KEY']
 #    RABBITMQ CONNECTION    #
 #############################
 
-time.sleep(15)
+time.sleep(25)
 
 count = 0
 
@@ -113,7 +113,8 @@ def produce(msg):
     channel.basic_publish(exchange    = PRODUCER_EXCHANGE,
                           routing_key = PRODUCER_BINDING_KEY,
                           body        = msg,
-                          properties  = pika.BasicProperties(delivery_mode=2))
+                          properties  = pika.BasicProperties(delivery_mode = 2,
+                                                             content_type  = 'application/json'))
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -128,7 +129,7 @@ bot = telegram_chatbot(API_KEY)
 s   = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,vendor_listen, ())
+    s.enter(10,1,vendor_listen, ())
     s.run()
 
 ###########################
@@ -181,6 +182,8 @@ def vendor_listen():
         # CHECK IF MESSAGE IS ACCEPT ORDER
         if message == "Accept Order":
             
+            print(message_id)
+            
             query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
             ResultProxy = connection.execute(query)
             
@@ -192,6 +195,7 @@ def vendor_listen():
                 ResultProxy = connection.execute(query)
                 
                 produce(json.dumps({"orderID"      : output[0][0],
+                                    "delivererID"  : "0",
                                     "order_status" : "order ready"}))
                 
 ###########################

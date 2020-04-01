@@ -36,12 +36,12 @@ first     = True
 #      SCHEDULER INIT       #
 #############################
 
-time.sleep(15)
+time.sleep(25)
 
 s = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,register, ())
+    s.enter(10,1,register, ())
     s.run()
 
 def register():

@@ -95,6 +95,7 @@
     json_encode(
       [
         'orderID'      => $_GET['session_id'],
+        'delivererID'  => "0",
         'order_status' => 'Payment Success',
       ]
     )

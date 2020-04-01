@@ -48,7 +48,7 @@ bot = telegram_chatbot(API_KEY)
 #    RABBITMQ CONNECTION    #
 #############################
 
-time.sleep(15)
+time.sleep(25)
 
 count = 0
 
@@ -142,9 +142,9 @@ def consume():
 def callback(channel, method, properties, body):
     
     body = json.loads(body)
-    order_id, vendor_id, order_status = body['orderID'], body['vendorID'], body['order_status']
+    order_id, vendor_id, order_status, deliverer_id = body['orderID'], body['vendorID'], body['order_status'], body['delivererID']
     
-    print(f"Received Order with Order ID:{order_id},\nVendor ID:{vendor_id},\nOrder Status: {order_status}")
+    print(f"Received Order with Order ID:{order_id},\nVendor ID:{vendor_id},\nOrder Status: {order_status}\nDeliverer ID: {deliverer_id}")
     
     ###############################
     #   TELEGRAM BOT --> VENDOR   #
@@ -197,6 +197,7 @@ def callback(channel, method, properties, body):
         bot.send_message("Great News! Your order has been delivered"    , cust_chat_id)
         bot.send_message("Thank you for your purchase!"                 , cust_chat_id) 
         bot.rate_service("Please take a few moments to rate our service", cust_chat_id)
+        channel.basic_ack(delivery_tag = method.delivery_tag)
         
 # START          
 consume()

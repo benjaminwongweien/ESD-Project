@@ -47,12 +47,12 @@ ALTER TABLE ONLY public."user"
 
 COPY public."user" (username, user_type, chat_id) FROM stdin;
 benjaminwongweien@gmail.com	user	\N
-thundermonkey@thunder.com	user	\N
-faithkoh1997@gmail.com	vendor	\N
-slypoon100000@gmail.com	driver	\N
-driver1@driver1.com	driver	\N
-vendor1@vendor1.com	vendor	\N
-vendor2@vendor2.com	vendor	\N
+bellelee51197@gmail.com	user	\N
+slypoon@gmail.com	vendor	\N
+sun-louis@hotmail.com	driver	\N
+belle.lee.2018@smu.edu.sg	driver	\N
+wewong.2018@sis.smu.edu.sg	user	\N
+wewong.2018@smu.edu.sg	user	\N
 \.
 
 
