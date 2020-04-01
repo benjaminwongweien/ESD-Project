@@ -18,10 +18,10 @@ from flask import Flask, jsonify, request
 
 globals    = {} # list of addresses for all vendors before first request
 API_KEY    = "AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4"
-VENDOR_URL = "http://localhost:85/all_vendor"
-FOOD_URL   = "http://localhost:85/all_food"
+VENDOR_URL = "http://host.docker.internal:85/all_vendor"
+FOOD_URL   = "http://host.docker.internal:85/all_food"
 GMAP_URL   = "https://maps.googleapis.com/maps/api/geocode/json?"
-ORDER_URL  = "http://localhost:8080/order/all"
+ORDER_URL  = "http://host.docker.internal:8080/order/all"
 
 # dummy_address = {'lat': 1.2, 'lng': 103}  # --- check
 # dummy_history = []                        # --- check
