@@ -36,7 +36,9 @@ first     = True
 #      SCHEDULER INIT       #
 #############################
 
-s         = sched.scheduler(time.time, time.sleep)
+time.sleep(15)
+
+s = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
     s.enter(3,1,register, ())

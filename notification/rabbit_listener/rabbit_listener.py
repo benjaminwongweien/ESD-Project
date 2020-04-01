@@ -48,6 +48,8 @@ bot = telegram_chatbot(API_KEY)
 #    RABBITMQ CONNECTION    #
 #############################
 
+time.sleep(15)
+
 count = 0
 
 while True:
@@ -114,22 +116,22 @@ while True:
 #############################
 
 def consume():
-    channel.exchange_declare(exchange            = CONSUMER_EXCHANGE, 
-                             durable             = True, 
-                             exchange_type       = 'direct'             )
+    channel.exchange_declare(exchange      = CONSUMER_EXCHANGE, 
+                             durable       = True, 
+                             exchange_type = 'direct')
 
-    channel.queue_declare(   queue               = CONSUMER_QUEUE,
-                             durable             = True                 )
+    channel.queue_declare(queue   = CONSUMER_QUEUE,
+                          durable = True)
 
-    channel.queue_bind(      queue               = CONSUMER_QUEUE,
-                             exchange            = CONSUMER_EXCHANGE,  
-                             routing_key         = CONSUMER_BINDING_KEY )
+    channel.queue_bind(queue       = CONSUMER_QUEUE,
+                       exchange    = CONSUMER_EXCHANGE,  
+                       routing_key = CONSUMER_BINDING_KEY)
     
-    channel.basic_qos(       prefetch_count      = 1                    )
+    channel.basic_qos(prefetch_count = 1)
     
-    channel.basic_consume(   queue               = CONSUMER_QUEUE,
-                             on_message_callback = callback,
-                             auto_ack            = False                )
+    channel.basic_consume(queue               = CONSUMER_QUEUE,
+                          on_message_callback = callback,
+                          auto_ack            = False)
 
     channel.start_consuming()
 
@@ -141,7 +143,9 @@ def callback(channel, method, properties, body):
     
     body = json.loads(body)
     order_id, vendor_id, order_status = body['orderID'], body['vendorID'], body['order_status']
-    print(order_id,vendor_id,order_status)
+    
+    print(f"Received Order with Order ID:{order_id},\nVendor ID:{vendor_id},\nOrder Status: {order_status}")
+    
     ###############################
     #   TELEGRAM BOT --> VENDOR   #
     #    PAYMENT IS SUCCESSFUL    #
@@ -189,7 +193,7 @@ def callback(channel, method, properties, body):
         cust_information = requests.post(CRM_USR_FROM_USRNAME, 
                                          json = {"username": body['customerID']})
         
-        cust_chat_id = json.loads(cust_information)["chat_id"]
+        cust_chat_id = json.loads(cust_information.text)["chat_id"]
         bot.send_message("Great News! Your order has been delivered"    , cust_chat_id)
         bot.send_message("Thank you for your purchase!"                 , cust_chat_id) 
         bot.rate_service("Please take a few moments to rate our service", cust_chat_id)

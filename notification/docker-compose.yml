@@ -1,0 +1,133 @@
+#
+# Docker-Compose - Menu Microservice
+#
+
+# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @team   - G3T4
+
+version: '3.7'
+
+services:
+
+    rabbit_listener:
+        build:
+            context: ./rabbit_listener
+            dockerfile: DOCKERFILE_RABBIT_LISTENER
+        container_name: rabbit_listener
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        # environment: 
+        #     - ""
+        # volumes:
+        #     - 
+        command: ["python", "rabbit_listener.py"]
+        depends_on: 
+            - bot_db
+
+    register:
+        build:
+            context: ./register
+            dockerfile: DOCKERFILE_REGISTER
+        container_name: register
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        # environment: 
+        #     - ""
+        # volumes:
+        #     - 
+        command: ["python", "register.py"]
+        depends_on: 
+            - bot_db
+
+    vendor_publisher:
+        build:
+            context: ./vendor_publisher
+            dockerfile: DOCKERFILE_VENDOR_PUBLISHER
+        container_name: vendor_publisher
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        # environment: 
+        #     - ""
+        # volumes:
+        #     - 
+        command: ["python", "vendor_publisher.py"]
+        depends_on: 
+            - bot_db
+
+    vendor_listener:
+        build:
+            context: ./vendor_listener
+            dockerfile: DOCKERFILE_VENDOR_LISTENER
+        container_name: vendor_listener
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        # environment: 
+        #     - ""
+        # volumes:
+        #     - 
+        command: ["python", "vendor_listener.py"]
+        depends_on: 
+            - bot_db
+
+    driver_publisher:
+        build:
+            context: ./driver_publisher
+            dockerfile: DOCKERFILE_DRIVER_PUBLISHER
+        container_name: driver_publisher
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        # environment: 
+        #     - ""
+        # volumes:
+        #     - 
+        command: ["python", "driver_publisher.py"]
+        depends_on: 
+            - bot_db
+
+    driver_listener:
+        build:
+            context: ./driver_listener
+            dockerfile: DOCKERFILE_DRIVER_LISTENER
+        container_name: driver_listener
+        # ports:
+        #     - "8000:8000"
+        networks:
+            - network
+        # environment: 
+        #     - ""
+        # volumes:
+        #     - 
+        command: ["python", "driver_listener.py"]
+        depends_on: 
+            - bot_db
+
+    bot_db:
+        image: mysql
+        ports:
+            - "3311:3306"
+        networks:
+            - network
+        environment:
+            MYSQL_DATABASE: bot
+            MYSQL_ROOT_PASSWORD: botdbpassword
+            MYSQL_USER: botuser
+            MYSQL_PASSWORD: botuserpassword
+        # volumes:
+        #     - ./mysql:/docker-entrypoint-initdb.d/
+        command: --sql_mode=""
+        # depends_on: 
+        #     - -
+
+networks:
+    network: 
+        driver: "bridge"

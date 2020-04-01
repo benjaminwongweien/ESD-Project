@@ -18,8 +18,6 @@ load_dotenv(find_dotenv())
 #       CONSTANTS       #
 #########################
 
-API_KEY = os.environ['API_KEY']
-
 # Constants to consume (receive) from ORDER PROCESSING
 PRODUCER_EXCHANGE     = os.environ['PRODUCER_EXCHANGE']
 PRODUCER_QUEUE        = os.environ['PRODUCER_QUEUE']
@@ -38,32 +36,35 @@ CRM_USR_FROM_USRTYPE = os.environ['CRM_USR_FROM_USRTYPE']
 
 # BOT API KEY
 API_KEY = os.environ['API_KEY'] 
-
+        
 #############################
 #    RABBITMQ CONNECTION    #
 #############################
 
+time.sleep(15)
+
 count = 0
+
+print("Attempting to connect to RabbitMQ Broker...")
 
 while True:
 
     try:
-        print("Attempting to connect to RabbitMQ Broker...")
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host        = HOST,
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
                                                                        port         = PORT,
                                                                        virtual_host = VIRTUAL_HOST,
                                                                        credentials  = credentials))
         channel = connection.channel()
-        print("Connection Successful!")
+        print("Connection Successful")
         break
 
     except:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
         time.sleep(3)
-        
+
 #############################
 #    DATABASE CONNECTION    #
 #############################     
@@ -98,23 +99,21 @@ while True:
 #     RABBITMQ PRODUCE     #
 ############################
 def produce(msg):
-    channel.exchange_declare(exchange            = PRODUCER_EXCHANGE, 
-                             durable             = True, 
-                             exchange_type       = 'direct'             )
+    channel.exchange_declare(exchange = PRODUCER_EXCHANGE, 
+                             durable  = True, 
+                             exchange_type = 'direct')
 
-    channel.queue_declare(   queue               = PRODUCER_QUEUE,
-                             durable             = True                 )
+    channel.queue_declare(queue   = PRODUCER_QUEUE,
+                          durable = True)
 
-    channel.queue_bind(      queue               = PRODUCER_QUEUE,
-                             exchange            = PRODUCER_EXCHANGE,  
-                             routing_key         = PRODUCER_BINDING_KEY )
+    channel.queue_bind(queue       = PRODUCER_QUEUE,
+                       exchange    = PRODUCER_EXCHANGE,  
+                       routing_key = PRODUCER_BINDING_KEY )
     
-    channel.basic_qos(       prefetch_count      = 1                    )
-    
-    channel.basic_publish(   exchange            = PRODUCER_EXCHANGE,
-                             routing_key         = PRODUCER_BINDING_KEY,
-                             body                = msg,
-                             properties          = pika.BasicProperties(delivery_mode=2))
+    channel.basic_publish(exchange    = PRODUCER_EXCHANGE,
+                          routing_key = PRODUCER_BINDING_KEY,
+                          body        = msg,
+                          properties  = pika.BasicProperties(delivery_mode=2))
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -132,18 +131,21 @@ def scheduler():
     s.enter(3,1,vendor_listen, ())
     s.run()
 
+###########################
+#         GLOBALS         #
+###########################
+
+update_id = None
+
 ############################
 #         LISTENER         #
 ############################
 
-# globals
-first = True
-update_id = None
-
 def vendor_listen():
     
-    while True:
+    global update_id
     
+    while True:
         try:
             engine = db.create_engine(os.environ['URI'])
             connection = engine.connect()
@@ -160,12 +162,15 @@ def vendor_listen():
             break
         except:
             count += 1
-            print(f"Connection Lost... Attempting to Reconnect in 3s...")
+            print(f"Connection Lost, Attempting to Reconnect in 3s...")
             time.sleep(3)
 
+    # RECEIVE UPDATES FROM THE TELEGRAM BOT
     updates = bot.get_updates(offset=update_id).get("result",[])
     
-    print(updates)
+    # RETRIEVE THE LATEST UPDATE
+    if updates:
+        update_id = updates[-1]["update_id"] + 1    
     
     for item in updates:
         
@@ -189,7 +194,10 @@ def vendor_listen():
                 produce(json.dumps({"orderID"      : output[0][0],
                                     "order_status" : "order ready"}))
                 
-# START        
+###########################
+#          START          #
+###########################
+       
 while True:
     scheduler()
 

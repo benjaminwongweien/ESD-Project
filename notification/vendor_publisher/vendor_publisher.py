@@ -18,8 +18,38 @@ load_dotenv(find_dotenv())
 #########################
 
 API_KEY           = os.environ['API_KEY'] 
-CRM_USERNAME_GET  = os.environ['CRM_USERNAME_GET']
-MENU_GET_EMAIL    = os.environ['MENU_GET_EMAIL']
+CRM_USR_FROM_USRNAME  = os.environ['CRM_USR_FROM_USRNAME']
+
+#############################
+#    DATABASE CONNECTION    #
+#############################
+
+time.sleep(15)
+
+print("Attempting to connect to the database")
+
+count = 0
+
+while True:
+    
+    try:
+        engine     = db.create_engine(os.environ['URI'])
+        connection = engine.connect()
+        metadata   = db.MetaData()
+        VendorMessenger   = db.Table ("vendor_messenger",    metadata,
+                            db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
+                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                            db.Column("order_status",        db.String(80), nullable=False                                        ),
+                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
+                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
+                            db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
+        metadata.create_all(engine)
+        print("Connection Succesful")
+        break
+    except:
+        count += 1
+        print(f"Connection Failed, retrying in 3s, tries: {count}")
+        time.sleep(3)
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -45,7 +75,7 @@ def vendor_publish():
             connection = engine.connect()
             metadata   = db.MetaData()
             VendorMessenger   = db.Table ("vendor_messenger",    metadata,
-                                db.Column("order_id",            db.Integer(),  nullable=False, autoincrement=False , primary_key=True),
+                                db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                                 db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                                 db.Column("order_status",        db.String(80), nullable=False                                        ),
                                 db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
@@ -54,22 +84,23 @@ def vendor_publish():
             metadata.create_all(engine)
             break
         except:
-            tries += 1
             print(f"Connection Lost, retrying in 3s...")
             time.sleep(3)
     
-    query       = db.select([VendorMessenger]).group_by(VendorMessenger.columns.vendor_id)
+    query       = db.select([VendorMessenger.columns.order_id,
+                             VendorMessenger.columns.vendor_id,
+                             db.func.min(VendorMessenger.columns.messaging_timestamp)]).group_by(VendorMessenger.columns.vendor_id)
     ResultProxy = connection.execute(query)   
     
     output = ResultProxy.fetchall()
     
     for vendor in output:
-        print(vendor)
-        vendor_id, order_id, messaging_timestamp = vendor[1], vendor[0], vendor[-2]
+
+        vendor_id, order_id, messaging_timestamp = vendor[1], vendor[0], vendor[-1]
 
         if messaging_timestamp == None or time.time() - messaging_timestamp >= 10:
 
-            response = requests.post(CRM_USERNAME_GET, json={"username": vendor_id})
+            response = requests.post(CRM_USR_FROM_USRNAME, json={"username": vendor_id})
             chat_id  = json.loads(response.text).get("chat_id")
 
             if chat_id != None:
@@ -80,33 +111,6 @@ def vendor_publish():
                 
                 query       = db.update(VendorMessenger).values(messaging_timestamp=time.time(), message_id=chat_id).where(VendorMessenger.columns.order_id==order_id)
                 ResultProxy = connection.execute(query)
-
-#############################
-#    DATABASE CONNECTION    #
-#############################
-
-tries = 0
-
-while True:
-    print("Attempting to connect to the database")
-    try:
-        engine     = db.create_engine(os.environ['URI'])
-        connection = engine.connect()
-        metadata   = db.MetaData()
-        VendorMessenger   = db.Table ("vendor_messenger",    metadata,
-                            db.Column("order_id",            db.Integer(),  nullable=False, autoincrement=False , primary_key=True),
-                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
-                            db.Column("order_status",        db.String(80), nullable=False                                        ),
-                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
-                            db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
-        metadata.create_all(engine)
-        print("Connection Succesful")
-        break
-    except:
-        tries += 1
-        print(f"Connection Failed, retrying in 3s, tries: {tries}")
-        time.sleep(3)
 
 while True:
     scheduler()

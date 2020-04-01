@@ -18,8 +18,6 @@ load_dotenv(find_dotenv())
 #       CONSTANTS       #
 #########################
 
-API_KEY = os.environ['API_KEY']
-
 # Constants to consume (receive) from ORDER PROCESSING
 PRODUCER_EXCHANGE     = os.environ['PRODUCER_EXCHANGE']
 PRODUCER_QUEUE        = os.environ['PRODUCER_QUEUE']
@@ -44,22 +42,22 @@ API_KEY = os.environ['API_KEY']
 #    RABBITMQ CONNECTION    #
 #############################
 
+time.sleep(15)
+
 count = 0
 
+print("Attempting to connect to RabbitMQ Broker...")
+
 while True:
-
     try:
-        print("Attempting to connect to RabbitMQ Broker...")
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
-
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host        = HOST,
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
                                                                        port         = PORT,
                                                                        virtual_host = VIRTUAL_HOST,
                                                                        credentials  = credentials))
         channel = connection.channel()
-        print("Connection Successful!")
+        print("Connection Successful")
         break
-
     except:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
@@ -78,7 +76,7 @@ while True:
         engine            = db.create_engine(os.environ['URI'])
         connection        = engine.connect()
         metadata          = db.MetaData()
-        DriverOrder       = db.Table ("driver_order",        metadata,
+        DriverOrder       = db.Table ("deliver_messenger",   metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                             db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                             db.Column("order_status",        db.String(80), nullable=False                                        ),
@@ -96,23 +94,21 @@ while True:
 #     RABBITMQ PRODUCE     #
 ############################
 def produce(msg):
-    channel.exchange_declare(exchange            = PRODUCER_EXCHANGE, 
-                             durable             = True, 
-                             exchange_type       = 'direct'             )
+    channel.exchange_declare(exchange      = PRODUCER_EXCHANGE, 
+                             durable       = True, 
+                             exchange_type = 'direct' )
 
-    channel.queue_declare(   queue               = PRODUCER_QUEUE,
-                             durable             = True                 )
+    channel.queue_declare(queue   = PRODUCER_QUEUE,
+                          durable = True)
 
-    channel.queue_bind(      queue               = PRODUCER_QUEUE,
-                             exchange            = PRODUCER_EXCHANGE,  
-                             routing_key         = PRODUCER_BINDING_KEY )
+    channel.queue_bind(queue       = PRODUCER_QUEUE,
+                       exchange    = PRODUCER_EXCHANGE,  
+                       routing_key = PRODUCER_BINDING_KEY)
     
-    channel.basic_qos(       prefetch_count      = 1                    )
-    
-    channel.basic_publish(   exchange            = PRODUCER_EXCHANGE,
-                             routing_key         = PRODUCER_BINDING_KEY,
-                             body                = msg,
-                             properties          = pika.BasicProperties(delivery_mode=2))
+    channel.basic_publish(exchange    = PRODUCER_EXCHANGE,
+                          routing_key = PRODUCER_BINDING_KEY,
+                          body        = msg,
+                          properties  = pika.BasicProperties(delivery_mode=2))
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -124,29 +120,33 @@ bot = telegram_chatbot(API_KEY)
 #      SCHEDULER INIT      #
 ############################
 
-s   = sched.scheduler(time.time, time.sleep)
+s = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
     s.enter(3,1,vendor_listen, ())
     s.run()
 
+###########################
+#         GLOBALS         #
+###########################
+
+update_id = None
+
 ############################
 #         LISTENER         #
 ############################
-
-# globals
-update_id = None
 
 def vendor_listen():
     
     global update_id
     
+    # RECONNECT TO THE DATABASE
     while True:
         try:
             engine            = db.create_engine(os.environ['URI'])
             connection        = engine.connect()
             metadata          = db.MetaData()
-            DriverOrder       = db.Table ("deliver_messenger",  metadata,
+            DriverOrder       = db.Table ("deliver_messenger",   metadata,
                                 db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                                 db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
                                 db.Column("order_status",        db.String(80), nullable=False                                        ),
@@ -154,17 +154,16 @@ def vendor_listen():
                                 db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
             metadata.create_all(engine)
             break
-        
         except:
-            print(f"Connection Failed, retrying in 3s...")
+            print(f"Connection Lost, retrying in 3s...")
             time.sleep(3)
 
+    # RECEIVE UPDATES FROM THE TELEGRAM BOT
     updates = bot.get_updates(offset=update_id).get("result",[])
 
+    # RETRIEVE THE LATEST UPDATE
     if updates:
         update_id = updates[-1]["update_id"] + 1 
-    
-    print(updates)
     
     for item in updates:
         
@@ -180,11 +179,10 @@ def vendor_listen():
             
             output = ResultProxy.fetchall()
             
+            # IF THERE IS A PENDING ORDER TO DELIVER IN THE DATABASE
             if output:
                 
                 output = output[0]
-                
-                print(output)
                 
                 # SEND MESSAGE TO THE DRIVER WHO ACCEPTED
                 bot.send_message("You have accepted the Delivery Order.", sender)
@@ -205,14 +203,15 @@ def vendor_listen():
                 # QUERY CRM TO OBTAIN DRIVER USERNAME
                 response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
                 
-                print(response)
-                
                 # RABBITMQ TOWARDS ORDER PROCESSING
                 produce(json.dumps({"orderID"      : output[0],
-                                    "driverID"     : response["username"],
+                                    "driverID"     : response.get("username"),
                                     "order_status" : "completed"}))
                 
-# START        
+###########################
+#          START          #
+###########################
+      
 while True:
     scheduler()
 
