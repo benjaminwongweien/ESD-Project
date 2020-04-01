@@ -26,7 +26,7 @@ public class OrderReceiver {
     @RabbitListener(bindings = @QueueBinding(
         value = @Queue(value = "update_order_queue", durable = "true"),
         exchange = @Exchange(value = "receive_order_exchange", ignoreDeclarationExceptions = "false"),
-        key = "update_order_key.key")
+        key = "update_order_key")
     )
     public void receiveUpdate(@Payload Order order) {
         String orderID = order.getOrderID();
