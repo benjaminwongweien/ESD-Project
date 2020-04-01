@@ -173,31 +173,33 @@ def vendor_listen():
     if updates:
         update_id = updates[-1]["update_id"] + 1    
     
-    for item in updates:
-        
-        message    = item["message"]["text"]       # MESSAGE TEXT
-        message_id = item["message"]["message_id"] # MESSAGE ID
-        sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
-        
-        # CHECK IF MESSAGE IS ACCEPT ORDER
-        if message == "Accept Order":
+        for item in updates:
             
-            print(message_id)
+            print(item)
             
-            query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
-            ResultProxy = connection.execute(query)
+            message    = item["message"]["text"]       # MESSAGE TEXT
+            message_id = item["message"]["message_id"] # MESSAGE ID
+            sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)]
             
-            if output := ResultProxy.fetchall():
-                bot.send_message("You have accepted the Order.", sender)
+            # CHECK IF MESSAGE IS ACCEPT ORDER
+            if message == "Accept Order":
                 
-                query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
-
+                query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
                 ResultProxy = connection.execute(query)
                 
-                produce(json.dumps({"orderID"      : output[0][0],
-                                    "delivererID"  : "0",
-                                    "order_status" : "order ready"}))
+                output = ResultProxy.fetchall()
                 
+                if output:
+                    bot.send_message("You have accepted the Order.", sender)
+                    
+                    query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
+
+                    ResultProxy = connection.execute(query)
+                    
+                    produce(json.dumps({"orderID"      : output[0][0],
+                                        "delivererID"  : "0",
+                                        "order_status" : "order ready"}))
+                    
 ###########################
 #          START          #
 ###########################
