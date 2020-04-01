@@ -193,10 +193,6 @@ def vendor_listen():
                         bot.send_message("You have accepted the Delivery Order.", sender)
                         time.sleep(1)
                         
-                        # DELETE THE DATABASE ENTRY
-                        query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
-                        ResultProxy = connection.execute(query)
-                        
                         # QUERY CRM FOR ALL THE DRIVERS
                         response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
                         
@@ -214,6 +210,10 @@ def vendor_listen():
                         produce(json.dumps({"orderID"      : output[0],
                                             "delivererID"  : response.get("username"),
                                             "order_status" : "completed"}))
+
+                        # DELETE THE DATABASE ENTRY
+                        query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
+                        ResultProxy = connection.execute(query)
                 
 ###########################
 #          START          #

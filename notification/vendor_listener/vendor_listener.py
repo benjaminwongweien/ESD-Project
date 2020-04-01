@@ -195,13 +195,12 @@ def vendor_listen():
                         bot.send_message("You have accepted the Order.", sender)
                         time.sleep(1)
                         
-                        query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
-
-                        ResultProxy = connection.execute(query)
-                        
                         produce(json.dumps({"orderID"      : output[0][0],
                                             "delivererID"  : "0",
                                             "order_status" : "order ready"}))
+                        
+                        query       = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
+                        ResultProxy = connection.execute(query)
                         
                         time.sleep(3)
                     
@@ -210,6 +209,10 @@ def vendor_listen():
 ###########################
        
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("Unexpected failure, retrying in 3s")
+        time.sleep(3)
 
 connection.close()
