@@ -41,7 +41,7 @@ API_KEY = os.environ['API_KEY']
 #    RABBITMQ CONNECTION    #
 #############################
 
-time.sleep(25)
+time.sleep(27)
 
 count = 0
 
@@ -193,6 +193,7 @@ def vendor_listen():
                     
                     if output:
                         bot.send_message("You have accepted the Order.", sender)
+                        time.sleep(1)
                         
                         query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
 
@@ -201,16 +202,14 @@ def vendor_listen():
                         produce(json.dumps({"orderID"      : output[0][0],
                                             "delivererID"  : "0",
                                             "order_status" : "order ready"}))
+                        
+                        time.sleep(3)
                     
 ###########################
 #          START          #
 ###########################
        
 while True:
-    try:
-        scheduler()
-    except:
-        print("An unexpected error occured, retrying in 3 seconds")
-        time.sleep(3)
+    scheduler()
 
 connection.close()

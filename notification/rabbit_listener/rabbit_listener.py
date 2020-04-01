@@ -197,6 +197,7 @@ def callback(channel, method, properties, body):
         bot.send_message("Great News! Your order has been delivered"    , cust_chat_id)
         bot.send_message("Thank you for your purchase!"                 , cust_chat_id) 
         bot.rate_service("Please take a few moments to rate our service", cust_chat_id)
+        time.sleep(1)
         channel.basic_ack(delivery_tag = method.delivery_tag)
         
 # START          

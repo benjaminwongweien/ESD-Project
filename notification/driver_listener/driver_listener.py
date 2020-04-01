@@ -191,6 +191,7 @@ def vendor_listen():
                         
                         # SEND MESSAGE TO THE DRIVER WHO ACCEPTED
                         bot.send_message("You have accepted the Delivery Order.", sender)
+                        time.sleep(1)
                         
                         # DELETE THE DATABASE ENTRY
                         query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
@@ -203,12 +204,11 @@ def vendor_listen():
                         for driver in response:
                             driver_chat_id = driver.get("chat_id")  
                             if driver_chat_id != sender:
-                                bot.send_message("The order has been accepted by another driver", driver_chat_id)             
+                                bot.send_message("The order has been accepted by another driver", driver_chat_id)    
+                                time.sleep(1)         
                         
                         # QUERY CRM TO OBTAIN DRIVER USERNAME
                         response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
-                        
-                        print(response.get("username"))
                         
                         # RABBITMQ TOWARDS ORDER PROCESSING
                         produce(json.dumps({"orderID"      : output[0],

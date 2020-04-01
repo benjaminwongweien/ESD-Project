@@ -106,8 +106,10 @@ def vendor_publish():
             if chat_id != None:
                 if messaging_timestamp == None:
                     bot.display_button("You have received a new order! Will you accept?", "Accept Order", chat_id)
+                    time.sleep(1)
                 else:
                     bot.display_button("You have pending orders. Please accept the order to proceed", "Accept Order", chat_id)
+                    time.sleep(1)
                 
                 query       = db.update(VendorMessenger).values(messaging_timestamp=time.time(), message_id=chat_id).where(VendorMessenger.columns.order_id==order_id)
                 ResultProxy = connection.execute(query)

@@ -83,6 +83,7 @@ def register():
                         if response.get("status"):
                             bot.send_message(msg="Invalid username used to register, resume the registration process by pressing /start", 
                                             chat_id=sender)
+                            time.sleep(1)
                         else:
                             # CHECKS IF USER HAS AN ENTRY IS IN DATAVASE
                             response = requests.post(CRM_CHATID_GET, json={"tid": sender})
@@ -97,6 +98,7 @@ def register():
                             
                             # REPLY TO USER SUBSCRIPTION SUCCESSFUL
                             bot.send_message(msg="Registration Successful!", chat_id=sender)
+                            time.sleep(1)
                             query        = db.delete(Register).where(Register.columns.chat_id==sender)
                             ResultProxy  = connection.execute(query)
                         
@@ -112,6 +114,7 @@ def register():
                     ResultSet   = ResultProxy.fetchall()
                     if ResultSet:
                         bot_response = bot.message_reply("You have already attempted to register, please reply to this message to continue.", sender)
+                        time.sleep(1)
                     else:
                         # CHECK IF USER's CHAT ID IS IN DATABASE
                         response = requests.post(CRM_CHATID_GET, json={"tid": sender})
@@ -119,9 +122,11 @@ def register():
                                     
                         if response.get("status"):
                             bot_response = bot.message_reply("Thank you for subscribing to EaSy Delivery! If you are a new user, please register by replying to this message.", sender)
+                            time.sleep(1)
                         else:
                             # IF NOT IN DATABASE
                             bot_response = bot.message_reply("This telegram id is already registered. To reassociate your telegram account, please reply to this message with your new username.", sender)
+                            time.sleep(1)
                     
                     reply_to_message_id = bot_response["result"]["message_id"]
                     
