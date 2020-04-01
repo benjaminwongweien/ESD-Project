@@ -21,7 +21,8 @@ API_KEY    = "AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4"
 VENDOR_URL = "http://host.docker.internal:85/all_vendor"
 FOOD_URL   = "http://host.docker.internal:85/all_food"
 GMAP_URL   = "https://maps.googleapis.com/maps/api/geocode/json?"
-ORDER_URL  = "http://host.docker.internal:8080/order/all"
+ORDER_URL  = "http://host.docker.internal:8080/order/history/customer"
+ORDER_URL_ALL = "http://host.docker.internal:8080/order/all"
 
 # dummy_address = {'lat': 1.2, 'lng': 103}  # --- check
 # dummy_history = []                        # --- check
@@ -86,13 +87,13 @@ def vendor_pos():
 @app.route("/all", methods=["GET"])
 def get_all():
     order_hist_request = requests.get(  
-        url=ORDER_URL
+        url=ORDER_URL_ALL
         # json={"customerID": username}
     )
     order_hist_data = order_hist_request.json()
     return jsonify(str(order_hist_data)), 200
 
-@app.route("/recommendation", methods=["GET"])
+@app.route("/recommendation", methods=["POST"])
 def recommendation():
     # uncomment when order api is working
     # get the username from the UI
@@ -101,12 +102,16 @@ def recommendation():
     if username == None:
         closest_vendor = random.choice(globals['vendors'])
     else:
-        order_hist_request = requests.get(url=ORDER_URL)
-        order_hist_data = order_hist_request.json()
-        address = [o['delivery_address'] for o in order_hist_data if o['customerID'] == username]
+        info = {
+            "customerID" : username
+        }
+        r = requests.post(ORDER_URL, json=info, timeout = 1)
+        print(r.text)
+        order_hist_data = r.json()
+        address = [o['delivery_address'] for o in order_hist_data]
 
         if address:
-            address = address[0]            
+            address = address[-1]            
 
             # order_hist_data hardcoded:
             # order_hist_data = [
