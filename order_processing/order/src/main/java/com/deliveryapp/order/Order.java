@@ -54,7 +54,7 @@ public class Order {
     public Order(String orderID, String deliverID String order_status) {
         this.orderID = orderID;
         this.order_status = order_status;
-        this.delivererID = deliverID
+        this.delivererID = deliverID;
     }
 
     public String getCustomerID() {
@@ -99,6 +99,6 @@ public class Order {
     }
 
     public void setDelivererID(String deliverID) {
-        this.DelivererID = deliverID;
+        this.delivererID = deliverID;
     }
 }
