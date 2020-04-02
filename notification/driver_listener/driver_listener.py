@@ -231,7 +231,7 @@ def vendor_listen():
                                 connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
                                                                                                port         = PORT,
                                                                                                virtual_host = VIRTUAL_HOST,
-                                                                                               credentials  = credentials))
+                                                                                             credentials  = credentials))
                                 channel = connection.channel()
                                 print("Connection Successful")
                                 break
