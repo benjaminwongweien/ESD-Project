@@ -137,6 +137,7 @@ def scheduler():
 ###########################
 
 update_id = None
+orderID = None
 
 ############################
 #         LISTENER         #
@@ -145,6 +146,7 @@ update_id = None
 def vendor_listen():
     
     global update_id
+    global orderID
     
     while True:
         try:
@@ -195,6 +197,8 @@ def vendor_listen():
                         bot.send_message("You have accepted the Order.", sender)
                         time.sleep(1)
                         
+                        orderID = output[0][0]
+                        
                         produce(json.dumps({"orderID"      : output[0][0],
                                             "delivererID"  : "0",
                                             "order_status" : "order ready"}))
@@ -211,8 +215,38 @@ def vendor_listen():
 while True:
     try:
         scheduler()
+    except pika.exceptions.StreamLostError:
+        print("Network Error")
+        time.sleep(3)
+        
+        print("Attempting to connect to RabbitMQ Broker...")
+
+        while True:
+
+            try:
+                credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
+
+                connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                                                                            port         = PORT,
+                                                                            virtual_host = VIRTUAL_HOST,
+                                                                            credentials  = credentials))
+                channel = connection.channel()
+                print("Connection Successful")
+                break
+
+            except:
+                count += 1
+                print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
+                time.sleep(3)
+
+            if orderID:
+                print("Re-Sending Lost Message...")
+                produce(json.dumps({"orderID"      : orderID,
+                                    "order_status" : "order ready"})) 
+                orderID = None
+
     except:
-        print("Unexpected failure, retrying in 3s")
+        print("Unexpected Error... Restarting in 3s")
         time.sleep(3)
 
 connection.close()
