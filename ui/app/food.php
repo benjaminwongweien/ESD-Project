@@ -101,13 +101,6 @@
 												<div class='meta-text mt-30 text-justify'>
 													<h4><?=$food['food_name']?></h4>	
 													<p><?=$food['food_description']?></p>
-													<?php
-													if( $food['availability'] == true){
-														echo "<p>Availability: <b>Yes</b></p>";
-													}else{
-														echo "<p>Availability: <b>No</b></p>";
-													}
-													?>
 													<p>Price: $ <?=$food['food_price']?></p>
 													<label>Delivery Address: </label>&nbsp;&nbsp;
 													<textarea name='delivery_address' rows='2' cols='18'></textarea><br><br>
