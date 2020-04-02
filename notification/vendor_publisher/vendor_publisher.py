@@ -43,7 +43,7 @@ while True:
     
     try:
         engine     = db.create_engine(os.environ['URI'])
-        connection = engine.connect()
+        db_connection = engine.connect()
         metadata   = db.MetaData()
         VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
@@ -84,7 +84,7 @@ def vendor_publish():
     while True:
         try:
             engine     = db.create_engine(os.environ['URI'])
-            connection = engine.connect()
+            db_connection = engine.connect()
             metadata   = db.MetaData()
             VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                                 db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
@@ -104,7 +104,7 @@ def vendor_publish():
                              VendorMessenger.columns.vendor_id,
                              VendorMessenger.columns.food_id,
                              db.func.min(VendorMessenger.columns.messaging_timestamp)]).group_by(VendorMessenger.columns.vendor_id)
-    ResultProxy = connection.execute(query)    
+    ResultProxy = db_connection.execute(query)    
     output = ResultProxy.fetchall()
     
     for vendor in output:
@@ -147,7 +147,7 @@ def vendor_publish():
                 print("Updating the Database with the new Timestamp")  
                 query       = db.update(VendorMessenger).values(messaging_timestamp=time.time(), 
                                                                 message_id=chat_id).where(VendorMessenger.columns.order_id==order_id)
-                ResultProxy = connection.execute(query)
+                ResultProxy = db_connection.execute(query)
                 print("Update Successful...")
 # START
 while True:

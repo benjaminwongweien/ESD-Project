@@ -225,6 +225,21 @@ def vendor_listen():
                         delivererID = response.get("username")
                         print(f"Successfully obtained DelivererID: {delivererID}")
                         
+                        while True:
+                            try:
+                                credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
+                                connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                                                                                               port         = PORT,
+                                                                                               virtual_host = VIRTUAL_HOST,
+                                                                                               credentials  = credentials))
+                                channel = connection.channel()
+                                print("Connection Successful")
+                                break
+                            except:
+                                count += 1
+                                print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
+                                time.sleep(3)
+                        
                         print("Notifying Order Processing of new Status...")
                         # RABBITMQ TOWARDS ORDER PROCESSING
                         produce(json.dumps({"orderID"      : orderID,

@@ -113,6 +113,7 @@ services:
 
     bot_db:
         image: mysql
+        container_name: bot_db
         ports:
             - "3311:3306"
         networks:

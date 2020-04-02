@@ -61,11 +61,11 @@ while True:
 
     try:
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host        = HOST,
+        rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host        = HOST,
                                                                        port         = PORT,
                                                                        virtual_host = VIRTUAL_HOST,
                                                                        credentials  = credentials))
-        channel = connection.channel()
+        channel = rabbit_connection.channel()
         print("Connection Successful")
         break
     except:
@@ -84,7 +84,7 @@ print("Attempting to connect to the Database...")
 while True:
     try:
         engine     = db.create_engine(os.environ['URI'])
-        connection = engine.connect()
+        db_connection = engine.connect()
         metadata   = db.MetaData()
         
         VendorMessenger   = db.Table ("vendor_messenger",    metadata,
@@ -168,19 +168,51 @@ def callback(channel, method, properties, body):
           Delivery Address: {delivery_address}
           """)
     
+    while True:
+        try:
+            engine     = db.create_engine(os.environ['URI'])
+            db_connection = engine.connect()
+            metadata   = db.MetaData()
+            
+            VendorMessenger   = db.Table ("vendor_messenger",    metadata,
+                                db.Column("order_id",            db.String(80), nullable=False, autoincrement=False, primary_key=True ),
+                                db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                                db.Column("food_id",             db.Integer(),  nullable=False                                        ),
+                                db.Column("order_status",        db.String(80), nullable=False                                        ),
+                                db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
+                                db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
+                                db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
+            
+            DeliverMessenger  = db.Table ("deliver_messenger",    metadata,
+                                db.Column("order_id",            db.String(80),   nullable=False, autoincrement=False, primary_key=True ),
+                                db.Column("vendor_id",           db.String(80),   nullable=False, primary_key=True                      ),
+                                db.Column("order_status",        db.String(80),   nullable=False                                        ),
+                                db.Column("delivery_address",    db.String(1000), nullable=False                                        ),
+                                db.Column("timestamp",           db.Integer(),    nullable=False, default=time.time()                   ),
+                                db.Column("messaging_timestamp", db.Integer(),    nullable=True,  default=None                          ))
+            metadata.create_all(engine)
+            print("Connection Successful")
+            break
+        except:
+            count += 1
+            print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
+            time.sleep(3)
+    
+    
+    
     ###############################
     #   TELEGRAM BOT --> VENDOR   #
     #    PAYMENT IS SUCCESSFUL    #
     ###############################
 
     if order_status.lower() == "payment success":
-        print("Adding Entry OrderID: {order_id} into the Database...")
+        print(f"Adding Entry OrderID: {order_id} into the Database...")
         try:
             query = db.insert(VendorMessenger).values(order_id     = order_id,
                                                       vendor_id    = vendor_id,
                                                       food_id      = food_id,
                                                       order_status = order_status)
-            ResultProxy = connection.execute(query)
+            ResultProxy = db_connection.execute(query)
             channel.basic_ack(delivery_tag = method.delivery_tag)
             print("RabbitMQ Message Acknowledged...")    
         except:
@@ -201,7 +233,7 @@ def callback(channel, method, properties, body):
                                                        vendor_id        = vendor_id,
                                                        order_status     = order_status,
                                                        delivery_address = delivery_address)
-            ResultProxy = connection.execute(query)
+            ResultProxy = db_connection.execute(query)
             channel.basic_ack(delivery_tag = method.delivery_tag)
             print("RabbitMQ Message Acknowledged...")
         except:

@@ -53,11 +53,11 @@ while True:
 
     try:
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
-                                                                       port         = PORT,
-                                                                       virtual_host = VIRTUAL_HOST,
-                                                                       credentials  = credentials))
-        channel = connection.channel()
+        rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                                                                              port         = PORT,
+                                                                             virtual_host = VIRTUAL_HOST,
+                                                                             credentials  = credentials))
+        channel = rabbit_connection.channel()
         print("Connection Successful")
         break
 
@@ -78,7 +78,7 @@ while True:
     
     try:
         engine = db.create_engine(os.environ['URI'])
-        connection = engine.connect()
+        db_connection = engine.connect()
         metadata = db.MetaData()
         VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
@@ -155,7 +155,7 @@ def vendor_listen():
     while True:
         try:
             engine = db.create_engine(os.environ['URI'])
-            connection = engine.connect()
+            db_connection = engine.connect()
             metadata = db.MetaData()
             VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                                 db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
@@ -195,7 +195,7 @@ def vendor_listen():
                     print(f"Message Accept Order Found from sender {sender}")
                     print(f"Querying the database to find if the Vendor has pending orders...")
                     query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
-                    ResultProxy = connection.execute(query)
+                    ResultProxy = db_connection.execute(query)
                     output = ResultProxy.fetchall()
                     
                     if output:
@@ -208,6 +208,20 @@ def vendor_listen():
                         time.sleep(1)
                         print("Message successfully sent.")
                         
+                        while True:
+                            try:
+                                credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
+                                rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                                                                                               port         = PORT,
+                                                                                               virtual_host = VIRTUAL_HOST,
+                                                                                               credentials  = credentials))
+                                channel = rabbit_connection.channel()
+                                print("Connection Successful")
+                                break
+                            except:
+                                count += 1
+                                print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
+                                time.sleep(3)
 
                         print("Notifying Order Processing of new Status...")
                         produce(json.dumps({"orderID"      : order_id,
@@ -216,7 +230,7 @@ def vendor_listen():
                         print("Successfully sent the message through the broker...")
                         print("Deleting old entry from the database...")
                         query       = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
-                        ResultProxy = connection.execute(query)
+                        ResultProxy = db_connection.execute(query)
                         print("Successfully deleted the old entry from the database.")
                     
 ###########################
@@ -224,6 +238,7 @@ def vendor_listen():
 ###########################
        
 while True:
+    scheduler()
     try:
         scheduler()
     except pika.exceptions.StreamLostError:
@@ -236,11 +251,11 @@ while True:
             try:
                 credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
 
-                connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
                                                                             port         = PORT,
                                                                             virtual_host = VIRTUAL_HOST,
                                                                             credentials  = credentials))
-                channel = connection.channel()
+                channel = rabbit_connection.channel()
                 print("Re-connection Successful")
                 break
             except:
@@ -257,4 +272,4 @@ while True:
         print("Unexpected Error... Restarting in 3s")
         time.sleep(3)
 
-connection.close()
+rabbit_connection.close()
