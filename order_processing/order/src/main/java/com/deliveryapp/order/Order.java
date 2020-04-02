@@ -5,8 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "orders")
+@Entity // Entity Class fpr Order microservice
+@Table(name = "orders") // points class to Table in MySQL
 public class Order {
     
     private String customerID;
@@ -25,11 +25,12 @@ public class Order {
     @Column(name="delivery_address")
     private String delivery_address;
 
+    // Empty Constructor
     public Order() {
         
     }
 
-
+    // Used for Order Creation
     public Order(String customerID, String orderID, String vendorID, String delivererID, 
         String foodID, int quantity, float price, String order_status, String delivery_address) {
         
@@ -51,11 +52,18 @@ public class Order {
         this.delivery_address = delivery_address;
     }
 
+    // Used for updating Order Status during the acceptance by Vendor and Deliverer
     public Order(String orderID, String deliverID, String order_status) {
         this.orderID = orderID;
         this.order_status = order_status;
         this.delivererID = deliverID;
     }
+/*   -----------------------
+    |                       |
+    |    GETTER METHODS     |
+    |                       |
+     -----------------------
+*/ 
 
     public String getCustomerID() {
         return customerID;
@@ -93,6 +101,14 @@ public class Order {
     public float getPrice() {
         return price;
     }
+
+    /* 
+         ---------------------------
+        |                           |
+        |       SETTER METHOD       |
+        |                           |
+        ----------------------------
+    */
 
     public void setOrder_status(String order_status) {
         this.order_status = order_status;
