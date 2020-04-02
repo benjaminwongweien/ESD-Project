@@ -27,6 +27,23 @@
 			<link rel="stylesheet" href="homepage_util/css/magnific-popup.css">
 			<link rel="stylesheet" href="homepage_util/css/bootstrap.css">
 			<link rel="stylesheet" href="homepage_util/css/main.css">
+			<?php
+				$postdata = json_encode(array(
+						'customerID' => $_COOKIE["email"]
+					)
+				);
+
+				$opts = array('http' =>
+					array(
+						'method'  => 'POST',
+						'header'  => 'Content-Type: application/json',
+						'content' => $postdata
+					)
+				);
+				
+				$context  = stream_context_create($opts);
+				$customer_list= json_decode(file_get_contents("http://host.docker.internal:8080/order/history/customer", false, $context), TRUE);
+			?>
 		</head>
 		<body>
 		  <header id="header" id="home">
@@ -41,7 +58,7 @@
 				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
-							  <li><a href="./orders.php">Orders</a></li>
+							  <li><a href="./orders.php">Order History</a></li>
 							  <?php echo $_COOKIE['logout_button'] ?>
 				            </ul>
 				          </li>
@@ -54,7 +71,7 @@
 				<div class="container">
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
-							<h4 class="text-white text-uppercase">Wide Network of Choices</h4>
+							<h4 class="meta-text mt-30 text-center">View History</h4>
 							<h1>
 								Orders
 							</h1>
@@ -69,88 +86,103 @@
 		
 			<!-- About Generic Start -->
 			<div class="main-wrapper">
-
 				<!-- Start team Area -->
 				<section class="team-area pt-100">
 					<div class="container">					
-						<div class="row justify-content-center d-flex align-items-left">
-						<?php
-								// $vendors= json_decode(file_get_contents("http://192.168.99.100:85/all_vendor"), TRUE);
-								$all_food = json_decode(file_get_contents("http://localhost:85/all_food"), TRUE);
-	
-								foreach ($all_food['food'] as $food) {
-									if( $food['vendor_id'] == 1 and $food['food_id'] == 3){
-										echo "<div class='col-md-3 single-team'>";
-											echo "<form action='http://localhost:86/payment.php' method='POST'>";
-											echo "<div class='thumb'>";
-												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
-											echo "</div>";
-											echo "<div class='meta-text mt-30 text-justify'>";
-												echo "<h4>Order No.: #123-123</h4>";
-												echo "<p><b>Item:</b> {$food['food_name']}</p>";
-												echo "<p><b>Qty:</b> 2x</p>";
-												$price = $food['food_price'] * 2;
-												echo "<p><b>Amount:</b> \$ {$price}</p>";
-												echo "<p><b>Delivery Status:</b> Delivering....</p>";
-												echo "<br/><br/><br/><br/><br/>";
-											echo "</form>";
-											echo "</div>";
-										echo "</div>";
-									}
+						<div class="row justify-content-left d-flex align-items-left">
+							<h4 class="text-white text-uppercase">Your orders</h4>
+							<?php
+							foreach($customer_list as $customer){
+								$vendorID = $customer['vendorID'];
+								$delivererID = $customer['delivererID'];
+								$vendorID = $customer['vendorID'];
+								$foodID = $customer['foodID'];
+								$status = $customer['order_status'];
+								$quantity = $customer['quantity'];
+								$price = $customer['price'];
+								$deliveryAddress = $customer['delivery_address'];
 
-									if( $food['vendor_id'] == 1 and $food['food_id'] == 4){
-										echo "<div class='col-md-3 single-team'>";
-											echo "<form action='http://localhost:86/payment.php' method='POST'>";
-											echo "<div class='thumb'>";
-												echo "<img class='img-fluid' src='http://localhost:85/static/{$food['food_image']}'>";
-											echo "</div>";
-											echo "<div class='meta-text mt-30 text-justify'>";
-												echo "<h4>Order No.: #123-124</h4>";
-												echo "<p><b>Item:</b> {$food['food_name']}</p>";
-												echo "<p><b>Qty:</b> 1x</p>";
-												echo "<p><b>Amount:</b> \$ {$food['food_price']}</p>";
-												echo "<p><b>Delivery Status:</b> Delivering....</p>";
-												echo "<br/><br/><br/><br/><br/>";
-											echo "</form>";
-											echo "</div>";
-										echo "</div>";
-									}
-								}
-						?>
-					
+								// Post, get deliverer information
+								$postdata = json_encode(array(
+									'username' => $delivererID
+									)
+								);
+				
+								$opts = array('http' =>
+									array(
+										'method'  => 'POST',
+										'header'  => 'Content-Type: application/json',
+										'content' => $postdata
+									)
+								);
+								
+								$context  = stream_context_create($opts);
+								$deliverer_info = json_decode(file_get_contents("http://host.docker.internal:88/username", false, $context), TRUE);
+								
+								// Post, get vendor and food information
+								$postdata = json_encode(array(
+									'vendor_id' => $vendorID,
+									'food_id' => $foodID
+									)
+								);
+				
+								$opts = array('http' =>
+									array(
+										'method'  => 'POST',
+										'header'  => 'Content-Type: application/json',
+										'content' => $postdata
+									)
+								);
+								
+								$context  = stream_context_create($opts);
+								$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food", false, $context), TRUE);
+								
+								if ($customer['customerID'] == $_COOKIE['email']){
+									?>
+									<table border="1">
+										<tr >
+											<th colspan="2"><h4 class='meta-text mt-30 text-center'>Order ID: <?=$customer['orderID']?></h4></th>
+										</tr>
+										<tr>
+											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
+										</tr>
+										<tr>
+											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Food Name: <?=$food_info['food']['food_name']?></h4></td>
+										</tr>
+										<tr>
+											<td><h4 class='meta-text mt-30 text-center'>Quantity: <?=$quantity?></h4></td>
+											<td><h4 class='meta-text mt-30 text-center'>Price: <?=$price?></h4></td>
+										</tr>
+										<tr>
+											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Total: <?=number_format(($price * $quantity), 2)?></h4></td>
+										</tr>
+										<tr>
+											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Deliverer: <?=$deliverer_info['username']?></h4></td>
+										</tr>
+										<tr>
+											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Delivery Address: <?=$deliveryAddress?></h4></td>
+										</tr>
+										
+									</table>
+
+									<?php
+									}								
+							}
+							?>
+							
 						</div>
 					</div>	
 				</section>
 			</div>
-				<!-- End team Area -->
-				
-			<!-- Start Generic Area -->
-			<!-- <section class="about-generic-area section-gap">
-				<div class="container border-top-generic">
-					<h3 class="about-title mb-30">Elaboration about Generic Page</h3>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="img-text">
-								<img src="img/a.jpg" alt="" class="img-fluid float-left mr-20 mb-20">
-								<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-							</div>
-						</div>
-						<div class="col-lg-12">
-							<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-						</div>
-						<div class="col-lg-12">
-							<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-						</div>
-						<div class="col-md-12">
-							<div class="img-text">
-								<img src="img/a2.jpg" alt="" class="img-fluid float-left mr-20 mb-20">
-								<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-							</div>
-						</div>
-					</div>
+				<!-- End team Area -->	
+
+			<div class="main-wrapper">
+			<!-- Start team Area -->
+			<section class="team-area pt-100">
+				<div class="container">	
 				</div>
-			</section> -->
-			<!-- End Generic Start -->		
+			</section>
+			</div>
 
 			<!-- start footer Area -->		
 			<footer class="footer-area section-gap">

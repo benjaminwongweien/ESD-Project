@@ -102,24 +102,52 @@
 					</div>			
 					<?php
 						// var_dump($driver_list[0]);
-						foreach ($driver_list as $info){ 
-							$vendor = $info['vendorID'];
-							$order_food_id = $info['foodID'];
-								$postdata = json_encode(array(
-										'vendor_id' => $vendor
-										)
-								);
-					
-								$opts = array('http' =>
-									array(
-										'method'  => 'POST',
-										'header'  => 'Content-Type: application/json',
-										'content' => $postdata
-									)
-								);
-									
-								$context  = stream_context_create($opts);
-								$all_food= json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);
+						foreach ($driver_list as $delivery){ 
+							$vendorID = $delivery['vendorID'];
+							$orderID = $delivery['orderID'];
+							$foodID = $delivery['foodID'];
+							$orderID = $delivery['orderID'];
+							$orderQty = $delivery['quantity'];
+							$status = $delivery['order_status'];
+							$customerID = $delivery['customerID'];
+							$deliveryAddress = $delivery['delivery_address'];
+
+							// Post, get vendor and food information
+							$postdata = json_encode(array(
+								'vendor_id' => $vendorID,
+								'food_id' => $foodID
+								)
+							);
+			
+							$opts = array('http' =>
+								array(
+									'method'  => 'POST',
+									'header'  => 'Content-Type: application/json',
+									'content' => $postdata
+								)
+							);
+							
+							$context  = stream_context_create($opts);
+							$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food", false, $context), TRUE);
+							
+							// Post, get vendor information
+							$postdata = json_encode(array(
+								'vendor_id' => $vendorID
+								)
+							);
+			
+							$opts = array('http' =>
+								array(
+									'method'  => 'POST',
+									'header'  => 'Content-Type: application/json',
+									'content' => $postdata
+								)
+							);
+							
+							$context  = stream_context_create($opts);
+							$vendor_info = json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);
+							
+							$vendorAddress = $vendor_info['vendor_location'];
 							?>
 							
 							<div class="row">
@@ -127,37 +155,38 @@
 									<div class="thumb">
 										<!-- <img class="img-fluid"  src="homepage_util/img/vendor-domino.png" alt=""> -->
 									</div>
-									<h4 class="text-uppercase pt-20 pb-20">From Driver, get qty: <?=$info['price']?></h4>
-									<h4 class="text-uppercase pt-20 pb-20">From Vendor, get vendor location: <?=$all_food['vendor_location']?></h4>
-									<?php
-										foreach($all_food['food'] as $f){
-											$food_id = $f['food_id'];
-											// var_dump($food_)
-											if ($order_food_id == $food_id){
-												?>
-												<h4 class='meta-text mt-30 text-center'>From Food, get food id: <?=$f['food_id']?></h4>
-												<h4 class='meta-text mt-30 text-center'>From Food, get food description: <?=$f['food_description']?></h4>
-												<h4 class='meta-text mt-30 text-center'>From Food, get food image: 
-													<img class='img-fluid' src='http://host.docker.internal:85/static/<?=$f['food_image']?>' /> 
-												</h4>
-												<div class='thumb'>
-													<img class='img-fluid' src='http://host.docker.internal:85/static/<?=$f['food_image']?>'>
-												</div>
-												
-												<?php
-												break;
-											}
-											?>
-										<?php
-										}
-									?>
+										<table border="1">
+											<tr >
+												<th colspan="2"><h4 class='meta-text mt-30 text-center'>Order ID: <?=$orderID?></h4></th>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Pick-up Address: <?=$vendorAddress?></h4></td>
+											</tr>
+											<tr>
+												<td><h4 class='meta-text mt-30 text-center'>Food Name: <?=$food_info['food']['food_name']?></h4></td>
+												<td><h4 class='meta-text mt-30 text-center'>Quantity: <?=$orderQty?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Customer: <?=$customerID?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Delivery Address: <?=$deliveryAddress?></h4></td>
+											</tr>
+											
+										</table>
 								</div>
 							</div>
-					<?php							
-						}
-					?>
-					
-						
+							<br>
+
+							<?php
+							}
+						?>
+			</section>
+
+
 
 			<!-- start footer Area -->		
 			<footer class="footer-area section-gap">
@@ -178,45 +207,16 @@
 									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
 								</p> -->
 								<p class="number">
-									012-6532-568-9746
+									63-74-350
 								</p>
 							</div>
 						</div>	
-						
-						<div class="col-lg-5  col-md-6 col-sm-6">
-							<div class="single-footer-widget">
-								<h4 class="text-white">Newsletter</h4>
-								<p>You can trust us. we only send  offers, not a single spam.</p>
-								<div class="d-flex flex-row" id="mc_embed_signup">
-
-
-									  <form class="navbar-form" novalidate="true" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01" method="get">
-									    <div class="input-group add-on">
-									      	<input class="form-control" name="EMAIL" placeholder="Email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required="" type="email">
-											<div style="position: absolute; left: -5000px;">
-												<input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="" type="text">
-											</div>
-									      <!--- <div class="input-group-btn">
-									        <button class="genric-btn"><span class="lnr lnr-arrow-right"></span></button>
-									      </div> -->
-									    </div>
-									      <div class="info mt-20"></div>									    
-									  </form>
-
-								</div>
-							</div>
-						</div>				
+										
 					</div>
 					<div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap">
-						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             <p class="footer-text m-0">EaSy Delivery &copy; <script>document.write(new Date().getFullYear());</script>. All rights reserved | Powered by <a href="https://colorlib.com" target="_blank">Colorlib</a> <i class="fa fa-heart-o" aria-hidden="true"></i></p>
             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						<div class="footer-social d-flex align-items-center">
-							<a href="#"><i class="fa fa-facebook"></i></a>
-							<a href="#"><i class="fa fa-twitter"></i></a>
-							<a href="#"><i class="fa fa-dribbble"></i></a>
-							<a href="#"><i class="fa fa-behance"></i></a>
-						</div>
 					</div>
 				</div>
 			</footer>	

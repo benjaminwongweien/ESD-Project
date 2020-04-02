@@ -39,6 +39,7 @@
 
 			</script>
 
+
 		</head>
 		<body>
 
@@ -84,6 +85,43 @@
 			</section>
 			<!-- End banner Area -->	
 
+			<!-- Start related Area -->
+			<section class="related-area section-gap">
+				<div class="container">
+					<div class="row d-flex justify-content-center">
+						<div class="menu-content pb-60 col-lg-8">
+							<div class="title text-center">
+								<h1 class="mb-10">Our Featured Food Menus</h1>
+								<p>Who are in extremely love with eco friendly system.</p>
+							</div>
+						</div>
+					</div>						
+					<div class="row justify-content-center">
+						<div class="active-realated-carusel">
+							<?php
+								$rec_food = json_decode(file_get_contents("http://host.docker.internal:89/recommendation?username={$_COOKIE['username']}"), TRUE);
+								foreach ($rec_food['food_list'] as $food) {
+									echo "
+										<div class='row align-items-center'>
+											<div class='col-lg-6 rel-left'>
+												<h3>{$food['food_name']}</h3>
+												<p class='pt-30 pb-30'>{$food['food_description']}</p>
+												<p>Price: \${$food['food_price']}</p>
+												<a href='https://localhost/food.php?vendor_id={$food['vendor_id']}' class='genric-btn info-border circle'>Buy Now</a>
+											</div>
+											<div class='thumb' style='padding-left: 200px'>
+												<img class='img-fluid' style='border-radius: 15px; width:200px; height:200px' src='http://host.docker.internal:85/static/{$food['food_image']}' alt=''>
+											</div>
+										</div>";
+								}
+							?>					
+												
+						</div>
+					</div>
+				</div>	
+			</section>
+			<!-- End related Area -->	
+
 			<!-- Start top-dish Area -->
 			<section class="top-dish-area section-gap" id="dish">
 				<div class="container">
@@ -125,44 +163,7 @@
 						</div>										
 					</div>
 				</div>	
-			</section>
-
-			<!-- Start related Area -->
-			<section class="related-area section-gap">
-				<div class="container">
-					<div class="row d-flex justify-content-center">
-						<div class="menu-content pb-60 col-lg-8">
-							<div class="title text-center">
-								<h1 class="mb-10">Our Featured Food Menus</h1>
-								<p>Who are in extremely love with eco friendly system.</p>
-							</div>
-						</div>
-					</div>						
-					<div class="row justify-content-center">
-						<div class="active-realated-carusel">
-							<?php
-								$rec_food = json_decode(file_get_contents("http://host.docker.internal:89/recommendation?username={$_COOKIE['username']}"), TRUE);
-								foreach ($rec_food['food_list'] as $food) {
-									echo "
-										<div class='row align-items-center'>
-											<div class='col-lg-6 rel-left'>
-												<h3>{$food['food_name']}</h3>
-												<p class='pt-30 pb-30'>{$food['food_description']}</p>
-												<p>Price: \${$food['food_price']}</p>
-												<a href='https://localhost/food.php?vendor_id={$food['vendor_id']}' class='genric-btn info-border circle'>Buy Now</a>
-											</div>
-											<div class='thumb' style='padding-left: 200px'>
-												<img class='img-fluid' style='border-radius: 15px; width:200px; height:200px' src='http://host.docker.internal:85/static/{$food['food_image']}' alt=''>
-											</div>
-										</div>";
-								}
-							?>					
-												
-						</div>
-					</div>
-				</div>	
-			</section>
-			<!-- End related Area -->				
+			</section>			
 
 			<!-- start footer Area -->		
 			<footer class="footer-area section-gap">
@@ -183,45 +184,16 @@
 									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
 								</p> -->
 								<p class="number">
-									012-6532-568-9746
+									63-74-350
 								</p>
 							</div>
 						</div>	
-						
-						<div class="col-lg-5  col-md-6 col-sm-6">
-							<div class="single-footer-widget">
-								<h4 class="text-white">Newsletter</h4>
-								<p>You can trust us. we only send  offers, not a single spam.</p>
-								<div class="d-flex flex-row" id="mc_embed_signup">
-
-
-									  <form class="navbar-form" novalidate="true" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01" method="get">
-									    <div class="input-group add-on">
-									      	<input class="form-control" name="EMAIL" placeholder="Email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required="" type="email">
-											<div style="position: absolute; left: -5000px;">
-												<input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="" type="text">
-											</div>
-									      <!--- <div class="input-group-btn">
-									        <button class="genric-btn"><span class="lnr lnr-arrow-right"></span></button>
-									      </div> -->
-									    </div>
-									      <div class="info mt-20"></div>									    
-									  </form>
-
-								</div>
-							</div>
-						</div>				
+										
 					</div>
 					<div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap">
-						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             <p class="footer-text m-0">EaSy Delivery &copy; <script>document.write(new Date().getFullYear());</script>. All rights reserved | Powered by <a href="https://colorlib.com" target="_blank">Colorlib</a> <i class="fa fa-heart-o" aria-hidden="true"></i></p>
             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						<div class="footer-social d-flex align-items-center">
-							<a href="#"><i class="fa fa-facebook"></i></a>
-							<a href="#"><i class="fa fa-twitter"></i></a>
-							<a href="#"><i class="fa fa-dribbble"></i></a>
-							<a href="#"><i class="fa fa-behance"></i></a>
-						</div>
 					</div>
 				</div>
 			</footer>	

@@ -44,13 +44,13 @@ INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity
 
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "cjj", "9382094847", 4, "0", 15, 6, 9, "Order Received", "Raffles Institution Boarding"
+  "cjj", "9382094847", 4, "0", 16, 6, 8.85, "Order Received", "Raffles Institution Boarding"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "bellelee51197@gmail.com", "9382094848", 4, "slypoon@gmail.com", 16, 6, 9, "Order Received", "Raffles Institution Boarding"
+  "bellelee51197@gmail.com", "9382094848", 4, "slypoon@gmail.com", 16, 6, 8.85, "Order Received", "Raffles Institution Boarding"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "cjj", "9382094849", 4, "slypoon@gmail.com", 16, 6, 9, "Order Received", "Raffles Institution Boarding"
+  "cjj", "9382094849", 4, "slypoon@gmail.com", 16, 6, 8.85, "Order Received", "Raffles Institution Boarding"
 );
