@@ -16,7 +16,11 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
   - RabbiMQ AMQP Messaging Broker
   - Payment Microservise using Stripe API   
   - Notfication Microservice using Telegram API
-  - Order Process Microservice built on Spring Boot
+  - Order Process Microservice built on Spring Boot Framework, which includes but not limited to:
+    - Actuator module: Monitoring and managing health of Microservice
+    - JPA: For Database Interaction with MySQL and Spring using Java
+    - Tomcat: Open-Source Implementation of the Java Servlet, JavaServer Pages, Java Expression Language and WebSocket technologies
+    - Gradle: Open-Source build automation system that builds on upon Apache Ant and Apche Maven
   - Web UI with Google and Facebook Login Enabled
   - Recommendation Microservice using Google Maps API
 
@@ -29,7 +33,7 @@ EaSy Delivery uses a number of open source projects to work properly:
 * [Stripe](https://stripe.com/en-sg) - Online payment processing for internet businesses.
 * [RabbitMQ](https://www.rabbitmq.com/) - One of the most popular open source message brokers.
 * [Bootstrap](https://getbootstrap.com/) - The most popular HTML, CSS, and JS library in the world.
-* [Spring Boot](https://spring.io/projects/spring-boot) - Create  stand-alone, production-grade Spring based Applications that you can "just run".
+* [Spring Boot](https://spring.io/projects/spring-boot) - Open Source Java Framework that can be used to create Microservice. It helps Java Developers to develop a stand-alone and production grade spring application to just run
 
 ### Installation
 
@@ -68,7 +72,6 @@ This will compose the required EaSy Delivery images and pull in the necessary de
 
 ### Todos
 
- - Finish API Gateway 
  - System Integration Tests
 
 License
