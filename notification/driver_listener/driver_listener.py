@@ -131,7 +131,9 @@ def scheduler():
 #         GLOBALS         #
 ###########################
 
-update_id = None
+orderID     = None
+delivererID = None
+update_id   = None
 
 ############################
 #         LISTENER         #
@@ -140,6 +142,8 @@ update_id = None
 def vendor_listen():
     
     global update_id
+    global orderID
+    global delivererID
     
     # RECONNECT TO THE DATABASE
     while True:
@@ -206,6 +210,9 @@ def vendor_listen():
                         # QUERY CRM TO OBTAIN DRIVER USERNAME
                         response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
                         
+                        orderID = output[0]
+                        delivererID = response.get("username")
+                        
                         # RABBITMQ TOWARDS ORDER PROCESSING
                         produce(json.dumps({"orderID"      : output[0],
                                             "delivererID"  : response.get("username"),
@@ -222,8 +229,38 @@ def vendor_listen():
 while True:
     try:
         scheduler()
+    except pika.exceptions.StreamLostError:
+        print("Network Error")
+        time.sleep(3)
+        
+        print("Attempting to connect to RabbitMQ Broker...")
+
+        while True:
+
+            try:
+                credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
+
+                connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                                                                               port         = PORT,
+                                                                               virtual_host = VIRTUAL_HOST,
+                                                                               credentials  = credentials))
+                channel = connection.channel()
+                print("Connection Successful")
+                break
+
+            except:
+                count += 1
+                print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
+                time.sleep(3)
+                
+            if orderID and delivererID:
+                print("Re-Sending Lost Message...")
+                produce(json.dumps({"orderID"      : orderID,
+                                    "delivererID"  : delivererID,
+                                    "order_status" : "completed"}))      
+                orderID, delivererID = None, None           
     except:
-        print("An unexpected error occured, retrying in 3 seconds")
+        print("Unexpected Error... Restarting in 3s")
         time.sleep(3)
 
 connection.close()

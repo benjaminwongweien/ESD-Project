@@ -117,7 +117,7 @@
         <html>
         <head>
             <meta charset='utf-8'>
-            <title>Payment Cancelled...</title>
+            <title>Payment Successful</title>
             <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=yes'>
             <meta http-equiv='refresh' content='10;URL=https://localhost/c_homepage.php'>
         </head>
