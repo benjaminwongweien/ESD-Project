@@ -42,7 +42,7 @@ print("Attempting to connect to the Database...")
 while True:
     try:
         engine            = db.create_engine(os.environ['URI'])
-        connection        = engine.connect()
+        db_connection     = engine.connect()
         metadata          = db.MetaData()
         DriverOrder   = db.Table ("deliver_messenger",    metadata,
                         db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
@@ -85,7 +85,7 @@ def driver_publish():
     while True:
         try:
             engine            = db.create_engine(os.environ['URI'])
-            connection        = engine.connect()
+            db_connection     = engine.connect()
             metadata          = db.MetaData()
             DriverOrder       = db.Table ("deliver_messenger",    metadata,
                                 db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
@@ -102,7 +102,7 @@ def driver_publish():
 
     # OBTAIN PENDING ORDER FROM THE DATABASE
     query       = db.select([DriverOrder]).limit(1)
-    ResultProxy = connection.execute(query)   
+    ResultProxy = db_connection.execute(query)   
     
     # IF THERE IS AN ORDER (ELSE EMPTY LIST)
     if order := ResultProxy.fetchall()[0]: 
@@ -147,7 +147,7 @@ def driver_publish():
             
             print("Updating the Database with the new Timestamp")
             query       = db.update(DriverOrder).values(messaging_timestamp=time.time()).where(DriverOrder.columns.order_id==order_id)
-            ResultProxy = connection.execute(query)
+            ResultProxy = db_connection.execute(query)
             print("Update Successful...")
 
 ###########################

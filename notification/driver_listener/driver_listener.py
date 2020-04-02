@@ -53,11 +53,11 @@ print("Attempting to connect to RabbitMQ Broker...")
 while True:
     try:
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
-                                                                       port         = PORT,
-                                                                       virtual_host = VIRTUAL_HOST,
-                                                                       credentials  = credentials))
-        channel = connection.channel()
+        rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                                                                              port         = PORT,
+                                                                              virtual_host = VIRTUAL_HOST,
+                                                                              credentials  = credentials))
+        channel = rabbit_connection.channel()
         print("Connection Successful")
         break
     except:
@@ -76,7 +76,7 @@ print("Attempting to connect to the Database...")
 while True:
     try:
         engine            = db.create_engine(os.environ['URI'])
-        connection        = engine.connect()
+        db_connection     = engine.connect()
         metadata          = db.MetaData()
         DriverOrder   = db.Table ("deliver_messenger",    metadata,
                         db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
@@ -154,7 +154,7 @@ def vendor_listen():
     while True:
         try:
             engine            = db.create_engine(os.environ['URI'])
-            connection        = engine.connect()
+            db_connection     = engine.connect()
             metadata          = db.MetaData()
             DriverOrder   = db.Table ("deliver_messenger",    metadata,
                             db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
@@ -192,7 +192,7 @@ def vendor_listen():
                     print(f"Message Accept Found from sender {sender}")
                     print(f"Querying the database to find if there are orders to be delivered...")
                     query = db.select([DriverOrder]).limit(1)
-                    ResultProxy = connection.execute(query)
+                    ResultProxy = db_connection.execute(query)
                     output = ResultProxy.fetchall()
                     
                     # IF THERE IS A PENDING ORDER TO DELIVER IN THE DATABASE
@@ -234,7 +234,7 @@ def vendor_listen():
                         print("Deleting old entry from the database...")
                         # DELETE THE DATABASE ENTRY
                         query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
-                        ResultProxy = connection.execute(query)
+                        ResultProxy = db_connection.execute(query)
                         print("Successfully deleted the old entry from the database.")
                 
 ###########################
@@ -254,11 +254,11 @@ while True:
             try:
                 credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
 
-                connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
+                rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
                                                                                port         = PORT,
                                                                                virtual_host = VIRTUAL_HOST,
                                                                                credentials  = credentials))
-                channel = connection.channel()
+                channel = rabbit_connection.channel()
                 print("Re-connection Successful")
                 break
 
@@ -277,4 +277,4 @@ while True:
         print("Unexpected Error... Restarting in 3s")
         time.sleep(3)
 
-connection.close()
+rabbit_connection.close()
