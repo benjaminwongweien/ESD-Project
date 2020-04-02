@@ -19,6 +19,7 @@ load_dotenv(find_dotenv())
 
 # URLS
 CRM_USR_FROM_USRTYPE = os.environ['CRM_USR_FROM_USRTYPE']
+MENU_GET_VENDOR_LOCATION = "https://host.docker.internal:85/"
 
 # BOT API KEY
 API_KEY = os.environ['API_KEY'] 
@@ -38,12 +39,13 @@ while True:
         engine            = db.create_engine(os.environ['URI'])
         connection        = engine.connect()
         metadata          = db.MetaData()
-        DriverOrder       = db.Table ("deliver_messenger",        metadata,
-                            db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
-                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
-                            db.Column("order_status",        db.String(80), nullable=False                                        ),
-                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+        DriverOrder   = db.Table ("deliver_messenger",    metadata,
+                        db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
+                        db.Column("vendor_id",           db.String(80),    nullable=False, primary_key=True                      ),
+                        db.Column("order_status",        db.String(80),    nullable=False                                        ),
+                        db.Column("delivery_address",    db.String(1000), nullable=False                                         ),
+                        db.Column("timestamp",           db.Integer(),     nullable=False, default=time.time()                   ),
+                        db.Column("messaging_timestamp", db.Integer(),     nullable=True,  default=None                          ))
         metadata.create_all(engine)
         print("Connection Succesful")
         break
@@ -79,12 +81,13 @@ def driver_publish():
             engine            = db.create_engine(os.environ['URI'])
             connection        = engine.connect()
             metadata          = db.MetaData()
-            DriverOrder       = db.Table ("deliver_messenger",  metadata,
-                                db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
-                                db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
-                                db.Column("order_status",        db.String(80), nullable=False                                        ),
-                                db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                                db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+            DriverOrder       = db.Table ("deliver_messenger",    metadata,
+                                db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
+                                db.Column("vendor_id",           db.String(80),    nullable=False, primary_key=True                      ),
+                                db.Column("order_status",        db.String(80),    nullable=False                                        ),
+                                db.Column("delivery_address",    db.String(1000), nullable=False                                         ),
+                                db.Column("timestamp",           db.Integer(),     nullable=False, default=time.time()                   ),
+                                db.Column("messaging_timestamp", db.Integer(),     nullable=True,  default=None                          ))
             metadata.create_all(engine)
             break
         except:
@@ -105,6 +108,7 @@ def driver_publish():
         if messaging_timestamp == None or time.time() - messaging_timestamp >= 12:
 
             response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
+            delivery_address = 
             
             for driver in response:
                 driver_chat_id = driver.get("chat_id")
@@ -113,7 +117,8 @@ def driver_publish():
                 if driver_chat_id != None:
                     if messaging_timestamp == None:
                         print("Order to be delivered has been found sending...")
-                        bot.display_button("You have received a new order! Will you accept?", driver_chat_id)
+                        bot.display_button("You have received a new order! Will you accept?{}Please collect the order at {}{} Please deliver the order to {}".format("%0A",,"%0A",)
+                                           , driver_chat_id)
                     
                     else:
                         print("Overdue order to be delivered has been found sending...")

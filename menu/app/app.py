@@ -437,6 +437,24 @@ def upload_vendor(vendor_id):
 def purchase():
   """ search for a food's information """
   if request.is_json:
+    food_id = request.get("food_id")
+    if food_id:
+      food = Food.query.filter_by(food_id=food_id).first()
+      if food:
+        output = {"status": "success"}
+        output.update({"food": food.json(2)})
+        return jsonify(output), 200 
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
+    else:
+      return jsonify(INCOMPLETE_ERROR), 400
+  else:
+    return jsonify(FORMAT_ERROR), 400
+  
+@app.route("/location", methods=["POST"])
+def purchase():
+  """ search for a food's information """
+  if request.is_json:
     food_id = request.get("vendor_email")
     if food_id:
       food = Food.query.filter_by(food_id=food_id).first()
