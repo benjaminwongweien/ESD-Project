@@ -76,12 +76,13 @@ while True:
         engine            = db.create_engine(os.environ['URI'])
         connection        = engine.connect()
         metadata          = db.MetaData()
-        DriverOrder       = db.Table ("deliver_messenger",   metadata,
-                            db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
-                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
-                            db.Column("order_status",        db.String(80), nullable=False                                        ),
-                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+        DriverOrder   = db.Table ("deliver_messenger",    metadata,
+                        db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
+                        db.Column("vendor_id",           db.String(80),    nullable=False, primary_key=True                      ),
+                        db.Column("order_status",        db.String(80),    nullable=False                                        ),
+                        db.Column("delivery_address",    db.String(1000), nullable=False                                         ),
+                        db.Column("timestamp",           db.Integer(),     nullable=False, default=time.time()                   ),
+                        db.Column("messaging_timestamp", db.Integer(),     nullable=True,  default=None                          ))
         metadata.create_all(engine)
         print("Connection Succesful")
         break
@@ -151,12 +152,13 @@ def vendor_listen():
             engine            = db.create_engine(os.environ['URI'])
             connection        = engine.connect()
             metadata          = db.MetaData()
-            DriverOrder       = db.Table ("deliver_messenger",   metadata,
-                                db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
-                                db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
-                                db.Column("order_status",        db.String(80), nullable=False                                        ),
-                                db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                                db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                         ))
+            DriverOrder   = db.Table ("deliver_messenger",    metadata,
+                            db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
+                            db.Column("vendor_id",           db.String(80),    nullable=False, primary_key=True                      ),
+                            db.Column("order_status",        db.String(80),    nullable=False                                        ),
+                            db.Column("delivery_address",    db.String(1000),  nullable=False                                         ),
+                            db.Column("timestamp",           db.Integer(),     nullable=False, default=time.time()                   ),
+                            db.Column("messaging_timestamp", db.Integer(),     nullable=True,  default=None                          ))
             metadata.create_all(engine)
             break
         except:

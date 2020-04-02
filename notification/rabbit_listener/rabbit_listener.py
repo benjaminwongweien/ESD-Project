@@ -97,11 +97,12 @@ while True:
                             db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
         
         DeliverMessenger  = db.Table ("deliver_messenger",    metadata,
-                            db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
-                            db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
-                            db.Column("order_status",        db.String(80), nullable=False                                        ),
-                            db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
-                            db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ))
+                            db.Column("order_id",            db.String(80),    nullable=False, autoincrement=False , primary_key=True),
+                            db.Column("vendor_id",           db.String(80),    nullable=False, primary_key=True                      ),
+                            db.Column("order_status",        db.String(80),    nullable=False                                        ),
+                            db.Column("delivery_address",    db.String(1000), nullable=False                                        ),
+                            db.Column("timestamp",           db.Integer(),     nullable=False, default=time.time()                   ),
+                            db.Column("messaging_timestamp", db.Integer(),     nullable=True,  default=None                          ))
         
         metadata.create_all(engine)
         print("Connection Successful")
@@ -143,6 +144,7 @@ def callback(channel, method, properties, body):
     
     body = json.loads(body)
     order_id, vendor_id, order_status, deliverer_id = body['orderID'], body['vendorID'], body['order_status'], body['delivererID']
+    delivery_address = body["delivery_address"]
     
     print(f"Received Order with Order ID:{order_id},\nVendor ID:{vendor_id},\nOrder Status: {order_status}\nDeliverer ID: {deliverer_id}")
     
@@ -174,7 +176,8 @@ def callback(channel, method, properties, body):
         try:
             query = db.insert(DeliverMessenger).values(order_id     = order_id,
                                                        vendor_id    = vendor_id,
-                                                       order_status = order_status)
+                                                       order_status = order_status
+                                                       delivery_address = delivery_address)
             ResultProxy = connection.execute(query)
             channel.basic_ack(delivery_tag = method.delivery_tag)
         except:
