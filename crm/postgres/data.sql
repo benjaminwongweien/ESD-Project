@@ -47,7 +47,7 @@ ALTER TABLE ONLY public."user"
 
 COPY public."user" (username, user_type, chat_id) FROM stdin;
 wewong.2018@smu.edu.sg	user	\N
-bellelee51197@gmail.com	user	\N
+bellelee51197@gmail.com	driver	\N
 slypoon@gmail.com	vendor	\N
 sun-louis@hotmail.com	user	\N
 belle.lee.2018@smu.edu.sg	driver	\N

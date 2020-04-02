@@ -105,14 +105,15 @@ def driver_publish():
     ResultProxy = db_connection.execute(query)   
     
     # IF THERE IS AN ORDER (ELSE EMPTY LIST)
-    if order := ResultProxy.fetchall()[0]: 
+    if order := ResultProxy.fetchall(): 
+        
+        order = order[0]
         
         order_id            = order[0]
         messaging_timestamp = order[-1]
         delivery_location   = order[3]
 
         
-
         # REPUBLISH AFTER 10 SECONDS
         if messaging_timestamp == None or time.time() - messaging_timestamp >= 12:
             
