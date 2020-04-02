@@ -9,7 +9,7 @@ CREATE TABLE orders (
   delivererID VARCHAR(100) NOT NULL,
   foodID VARCHAR(100) NOT NULL,
   quantity INT NOT NULL,
-  price INT NOT NULL,
+  price FLOAT NOT NULL,
   -- checkoutID VARCHAR(100) NOT NULL,
   order_status VARCHAR(100),
   delivery_address VARCHAR(1000) NOT NULL,
