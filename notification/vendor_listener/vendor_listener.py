@@ -8,6 +8,8 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+print("Starting Vendor Listener...")
+
 ##########################
 #     INITIALIZE ENV     #
 ##########################
@@ -17,6 +19,9 @@ load_dotenv(find_dotenv())
 #########################
 #       CONSTANTS       #
 #########################
+
+# BOT API KEY
+API_KEY = os.environ['API_KEY'] 
 
 # Constants to consume (receive) from ORDER PROCESSING
 PRODUCER_EXCHANGE     = os.environ['PRODUCER_EXCHANGE']
@@ -33,9 +38,6 @@ VIRTUAL_HOST    = os.environ['VIRTUAL_HOST']
 # URLS
 CRM_USR_FROM_USRNAME = os.environ['CRM_USR_FROM_USRNAME']
 CRM_USR_FROM_USRTYPE = os.environ['CRM_USR_FROM_USRTYPE']
-
-# BOT API KEY
-API_KEY = os.environ['API_KEY'] 
         
 #############################
 #    RABBITMQ CONNECTION    #
@@ -51,7 +53,6 @@ while True:
 
     try:
         credentials = pika.PlainCredentials(RABBIT_USERNAME, RABBIT_PASSWORD)
-
         connection = pika.BlockingConnection(pika.ConnectionParameters(host         = HOST,
                                                                        port         = PORT,
                                                                        virtual_host = VIRTUAL_HOST,
@@ -82,6 +83,7 @@ while True:
         VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                             db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                             db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                            db.Column("food_id",              db.Integer(), nullable=False                                       ),
                             db.Column("order_status",        db.String(80), nullable=False                                        ),
                             db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
                             db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
@@ -94,6 +96,8 @@ while True:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
+
+print("Vendor Listener has successfull started with no errors.")
 
 ############################
 #     RABBITMQ PRODUCE     #
@@ -137,7 +141,7 @@ def scheduler():
 ###########################
 
 update_id = None
-orderID = None
+order_id  = None
 
 ############################
 #         LISTENER         #
@@ -146,7 +150,7 @@ orderID = None
 def vendor_listen():
     
     global update_id
-    global orderID
+    global order_id
     
     while True:
         try:
@@ -156,16 +160,16 @@ def vendor_listen():
             VendorMessenger   = db.Table ("vendor_messenger",    metadata,
                                 db.Column("order_id",            db.String(80), nullable=False, autoincrement=False , primary_key=True),
                                 db.Column("vendor_id",           db.String(80), nullable=False, primary_key=True                      ),
+                                db.Column("food_id",             db.Integer(), nullable=False                                         ),
                                 db.Column("order_status",        db.String(80), nullable=False                                        ),
                                 db.Column("timestamp",           db.Integer(),  nullable=False, default=time.time()                   ),
                                 db.Column("messaging_timestamp", db.Integer(),  nullable=True,  default=None                          ),
                                 db.Column("message_id",          db.Integer(),  nullable=True,  default=None                          ))
-            
             metadata.create_all(engine)
             break
         except:
             count += 1
-            print(f"Connection Lost, Attempting to Reconnect in 3s...")
+            print("Connection Lost, Attempting to Reconnect in 3s...")
             time.sleep(3)
 
     # RECEIVE UPDATES FROM THE TELEGRAM BOT
@@ -188,25 +192,32 @@ def vendor_listen():
                 # CHECK IF MESSAGE IS ACCEPT ORDER
                 if message == "Accept Order":
                     
+                    print(f"Message Accept Order Found from sender {sender}")
+                    print(f"Querying the database to find if the Vendor has pending orders...")
                     query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
                     ResultProxy = connection.execute(query)
-                    
                     output = ResultProxy.fetchall()
                     
                     if output:
+                        
+                        order_id = output[0][0]
+                        
+                        print("Pending Order Found... Accepting...")
+                        print("Sending Confirmation Message back to the Vendor...")
                         bot.send_message("You have accepted the Order.", sender)
                         time.sleep(1)
+                        print("Message successfully sent.")
                         
-                        orderID = output[0][0]
-                        
-                        produce(json.dumps({"orderID"      : output[0][0],
+
+                        print("Notifying Order Processing of new Status...")
+                        produce(json.dumps({"orderID"      : order_id,
                                             "delivererID"  : "0",
                                             "order_status" : "order ready"}))
-                        
+                        print("Successfully sent the message through the broker...")
+                        print("Deleting old entry from the database...")
                         query       = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
                         ResultProxy = connection.execute(query)
-                        
-                        time.sleep(3)
+                        print("Successfully deleted the old entry from the database.")
                     
 ###########################
 #          START          #
@@ -218,9 +229,8 @@ while True:
     except pika.exceptions.StreamLostError:
         print("Network Error")
         time.sleep(3)
-        
-        print("Attempting to connect to RabbitMQ Broker...")
-
+    
+        print("Attempting to re-connect to RabbitMQ Broker...")
         while True:
 
             try:
@@ -231,20 +241,18 @@ while True:
                                                                             virtual_host = VIRTUAL_HOST,
                                                                             credentials  = credentials))
                 channel = connection.channel()
-                print("Connection Successful")
+                print("Re-connection Successful")
                 break
-
             except:
                 count += 1
                 print(f"Connection Failed... Attempting to Reconnect in 3s... Number of tries: {count}")
                 time.sleep(3)
 
-            if orderID:
+            if order_id:
                 print("Re-Sending Lost Message...")
-                produce(json.dumps({"orderID"      : orderID,
+                produce(json.dumps({"orderID"      : order_id,
                                     "order_status" : "order ready"})) 
-                orderID = None
-
+                order_id = None
     except:
         print("Unexpected Error... Restarting in 3s")
         time.sleep(3)

@@ -46,13 +46,13 @@ ALTER TABLE ONLY public."user"
 --
 
 COPY public."user" (username, user_type, chat_id) FROM stdin;
-benjaminwongweien@gmail.com	user	\N
+wewong.2018@smu.edu.sg	user	\N
 bellelee51197@gmail.com	user	\N
 slypoon@gmail.com	vendor	\N
 sun-louis@hotmail.com	user	\N
 belle.lee.2018@smu.edu.sg	driver	\N
 wewong.2018@sis.smu.edu.sg	user	\N
-wewong.2018@smu.edu.sg	driver	\N
+wewong.2018@smu.edu.ssg	driver	\N
 driver@gmail.com	driver	\N
 \.
 

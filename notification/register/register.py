@@ -7,6 +7,8 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+print("Starting Register...")
+
 ##########################
 #     INITIALIZE ENV     #
 ##########################
@@ -26,10 +28,9 @@ CRM_CHATID_GET   = os.environ['CRM_CHATID_GET']
 #     TELEGRAM BOT INIT     #
 #############################
 
-bot       = telegram_chatbot(API_KEY)
+bot = telegram_chatbot(API_KEY)
 
 update_id = None
-tries     = 0
 
 #############################
 #      SCHEDULER INIT       #
@@ -71,6 +72,7 @@ def register():
                 # CHECK IF HE HAS ASKED TO REGISTER IN THE DATABASE WITH HIS REPLY MESSAGE ID (1)
                 
                 if reply_message_id:
+                    print("Found a Register Reply")
                     query       = db.select([Register]).where(Register.columns.message_id==reply_message_id)
                     ResultProxy = connection.execute(query)
                     ResultSet   = ResultProxy.fetchall()
@@ -108,6 +110,7 @@ def register():
 
             
                 elif message == "/start":
+                    print("Found a Register Request")
                     # CHECK IF REGISTRATION REQUEST WAS MADE BEFORE
                     query       = db.select([Register]).where(Register.columns.chat_id==sender)
                     ResultProxy = connection.execute(query)
@@ -130,20 +133,25 @@ def register():
                     
                     reply_to_message_id = bot_response["result"]["message_id"]
                     
+                    print("Updating Register Database...")
                     if ResultSet:
                         query = db.update(Register).values(message_id=reply_to_message_id).where(Register.columns.chat_id==sender)
                     else:
                         query = db.insert(Register).values(chat_id=sender, message_id=reply_to_message_id)
                         
                     ResultProxy = connection.execute(query)
+                    print("Successfully updated Register Database.")
 
 
 #############################
 #    DATABASE CONNECTION    #
 #############################
 
+print("Attempting to connect to the database...")
+
+count = 0
+
 while True:
-    print("Attempting to connect to the database")
     try:
         engine     = db.create_engine(os.environ['URI'])
         connection = engine.connect()
@@ -155,11 +163,11 @@ while True:
         print("Connection Succesful")
         break
     except:
-        tries += 1
-        print(f"Connection Failed, retrying in 3s, tries: {tries}")
+        count += 1
+        print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
 
-print("Registration Listener has started with no Errors.")
+print("Register has started with no Errors.")
 
 while True:
     try:
