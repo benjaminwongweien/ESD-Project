@@ -1,7 +1,7 @@
 """
 Recommendation Microservice
 
-@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman, Low Louis
 @team   - G3T4
 """
 
@@ -50,10 +50,12 @@ def before_first_request_func():
             'address': location,
             'key'    : API_KEY
         }
+        
         gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
         gmap_data = gmap_request.json()
         position = gmap_data['results'][0]['geometry']['location']
         vendors[i]['position'] = position
+        
     globals['vendors'] = vendors
 
     # prepare food
@@ -90,6 +92,7 @@ def get_all():
         url=ORDER_URL_ALL
         # json={"customerID": username}
     )
+    
     order_hist_data = order_hist_request.json()
     return jsonify(str(order_hist_data)), 200
 
@@ -100,8 +103,10 @@ def recommendation():
     # username = request.args.get('username')
     username = "cjj"
     closest_vendor = {}
+    
     if username == None:
         closest_vendor = random.choice(globals['vendors'])
+        
     else:
         info = {
             "customerID" : username
@@ -123,6 +128,7 @@ def recommendation():
 
             # address_list = [o['address'] for o in order_hist_data]
             # top_address = max(set(address_list), key=address_list.count)
+            
             gmap_params = {
                 'address': address,
                 'key': API_KEY
@@ -134,12 +140,15 @@ def recommendation():
             user_position = gmap_data['results'][0]['geometry']['location']
 
             closest_dist = 999
+            
             for vendor in globals['vendors']:
                 dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
                         (user_position['lng'] - vendor['position']['lng']) ** 2) ** 0.5
+                
                 if dist < closest_dist:
                     closest_dist = dist
                     closest_vendor = vendor
+        
         else:
             closest_vendor = random.choice(globals['vendors'])
             

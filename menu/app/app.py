@@ -4,6 +4,7 @@ Menu Microservice
 @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman, Low Louis
 @team   - G3T4
 """
+
 import os
 import os.path
 import json
@@ -100,6 +101,7 @@ app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/c
 #        DEBUG        #
 #######################
 
+### Error Handling ###
 @app.errorhandler(400)
 @app.errorhandler(404)
 @app.errorhandler(405)
@@ -111,9 +113,21 @@ def error(e):
   return jsonify({"status": "error",
                   "error" : e.description}), e.code
 
+######################
+#       ROUTES       #
+######################
+
+#####################################      GET ENDPOINT     ###########################################
+
 @app.route("/dump", methods=["GET"])
 def dump():
-  """ Dumps all the Table Information -> Debug Purposes """
+      
+  """ 
+  
+  Dumps all the Table Information -> Debug Purposes 
+  
+  """
+  
   vendors = Vendor.query.all()
   foods   = Food.query.all()
   return jsonify({"vendor": [vendor.json(0,1,2,3,4,5) for vendor in vendors],
@@ -121,7 +135,13 @@ def dump():
 
 @app.route("/all_vendor", methods=["GET"])
 def all_vendors():
-  """ Obtains JSON of all Vendors """
+      
+  """ 
+  
+  Returns JSON of all Vendors 
+  
+  """
+  
   output = dict()
   output['status'] = 0
   output['vendors'] = [vendor.json(0,1,2,3,4,5) for vendor in Vendor.query.all()]
@@ -129,7 +149,13 @@ def all_vendors():
 
 @app.route("/all_food", methods=["GET"])
 def all_food():
-  """ Obtains JSON of all Available Food """
+      
+  """
+  
+  Returns JSON of all Available Food 
+  
+  """
+  
   output = dict()
   output['status'] = 0
   output['food'] = [food.json(0,1,2,3,4,5,6,7,8) for food in Food.query.all()]
@@ -141,7 +167,9 @@ def all_food():
 
 @app.route("/menu", methods=["GET"])
 def menu():
-  """ Obtains the FULL Menu
+      
+  """ 
+    Obtains the FULL Menu
   
     Structure:
     
@@ -166,53 +194,97 @@ def menu():
           ]
         }
       ]
-    } """
+    } 
+    
+  """
     
   output = dict()
   vendor_list = []
+  
   for vendor in Vendor.query.all():
     foods = Food.query.filter_by(vendor_id=vendor.vendor_id, availability=True, listed=True)
     vendor_json = vendor.json(0,1,3,4,5)
     vendor_json['foods'] = [food.json(1,2,3,4,5,6) for food in foods]
     vendor_list.append(vendor_json)
+    
   output['status'] = "success"
   output['vendors'] = vendor_list
+  
   return jsonify(output), 200
-    
+
+@app.route("/images/<path:file_name>", methods=["GET"])
+def staticfiles(file_name):
+      
+  """ 
+  
+  Returns an image in static folder 
+  
+  """
+  if os.path.exists(os.path.join("./static",file_name)):
+    return send_from_directory("./static", file_name)
+  
+  else:
+    return jsonify(NON_EXIST_ERROR), 400
+
+######################################      POST ENDPOINTS      ######################################
+
 @app.route("/search/vendor", methods=["POST"])
 def shopfront():
-  """ search for a vendor's shopfront """
+      
+  """ 
+  
+  Search for a vendor's shopfront
+  
+  """
+  
   if request.is_json:
+        
     if vendor_id := request.json.get('vendor_id'): 
+      
       vendor = Vendor.query.filter_by(vendor_id=vendor_id).first()
       foods  = Food.query.filter_by(vendor_id=vendor_id,availability=True,listed=True).all()
+      
       if vendor and foods:
+            
         output = {"status": "success"}
         output.update(dict(vendor.directory()))
         output.update({"food": [food.json(1,2,3,4,5,6) for food in foods]})
         return jsonify(output), 200 
+      
       else:
         return jsonify(NON_EXIST_ERROR), 400
+      
     else:
       return jsonify(INCOMPLETE_ERROR), 400
+    
   else:
     return jsonify(FORMAT_ERROR), 400
 
+
 @app.route("/search/food", methods=["POST"])
 def purchase():
-  """ search for a vendor's food information """
+  """ 
+  
+  Search for a vendor's food information 
+  
+  """
   if request.is_json:
     vendor_id, food_id = request.json.get('vendor_id'), request.json.get('food_id')
+    
     if vendor_id and food_id:
       food = Food.query.filter_by(vendor_id=vendor_id,food_id=food_id,availability=True,listed=True).first()
+      
       if food:
         output = {"status": "success"}
         output.update({"food": food.json(0,1,2,3,4,5,6)})
         return jsonify(output), 200 
+      
       else:
         return jsonify(NON_EXIST_ERROR), 400
+      
     else:
       return jsonify(INCOMPLETE_ERROR), 400
+    
   else:
     return jsonify(FORMAT_ERROR), 400
     
@@ -221,65 +293,102 @@ def purchase():
 #######################
 @app.route("/register_info", methods=["POST"])
 def register_info():
-  """ registeres a new vendor with a menu """
+      
+  """ 
+  
+  Registeres a new vendor with a menu 
+  
+  """
+  
   if request.is_json:
     vendor_name        = request.json.get('vendor_name')
     vendor_email       = request.json.get('vendor_email')
     vendor_description = request.json.get('vendor_description')
     vendor_location    = request.json.get('vendor_location')
+    
     if all([vendor_name,vendor_email,vendor_description,vendor_location]):
+      
       try:
+        
         db.session.add(Vendor(vendor_name,vendor_email,vendor_description,vendor_location,vendor_image="vendor/default"))
         db.session.commit()
         vendor = Vendor.query.filter_by(vendor_email=vendor_email).first()
+        
         return jsonify({"status": 0,
                         "data":
                           {"vendor_id": vendor.vendor_id}
                         }), 200
+      
       except:
         return jsonify(DATABASE_ERROR), 503
+      
     else:
       return jsonify(INCOMPLETE_ERROR), 400
+    
   else:
     return jsonify(FORMAT_ERROR), 400  
 
 @app.route("/update_info/<string:vendor_id>", methods=["PUT"])
 def register(vendor_id):
-  """ updates new vendor information """
+      
+  """ 
+  
+  Updates new vendor information 
+  
+  """
+  
   if request.is_json:
+        
     vendor_name        = request.json.get('vendor_name')
     vendor_description = request.json.get('vendor_description')
     vendor_location    = request.json.get('vendor_location')
-    if all([vendor_name,vendor_description,vendor_location]):     
+    
+    if all([vendor_name,vendor_description,vendor_location]):    
+       
       if all([len(var) <= 80 for var in [vendor_name,vendor_location]]): 
+        
         try:
           vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({"vendor_name": vendor_name,
                                                                       "vendor_description": vendor_description,
                                                                       "vendor_location": vendor_location})
           if vendor:
+            
             db.session.commit()
             return jsonify(UPLOAD_SUCCESS), 200
+          
           else:
             return jsonify(NON_EXIST_ERROR), 400
+        
         except:
           return jsonify(DATABASE_ERROR), 503
+      
       else:
         return jsonify(BAD_REQUEST), 400
+    
     else:
       return jsonify(INCOMPLETE_ERROR), 400
+  
   else:
     return jsonify(FORMAT_ERROR), 400 
 
 @app.route("/vendor/add", methods=["POST"])
 def add():
-  """ allows a vendor to add an item to the menu """
+  """ 
+  
+  Allows a vendor to add an item to the menu 
+  
+  """
   if request.is_json:
+    
     vendor_id        = request.json.get('vendor_id')
     food_name        = request.json.get('food_name')
     food_description = request.json.get('food_description')
     food_price       = request.json.get('food_price')
+    
     if all([vendor_id,food_name,food_description,food_price]):
+      
       if is_float(food_price) and len(food_name) <= 80:
+        
         try:
           db.session.add(Food(vendor_id,food_name,food_description,food_price))
           db.session.commit()
@@ -289,25 +398,91 @@ def add():
                             { "vendor_id": vendor_id,
                               "food_id"  : food.food_id}
                           }), 200
+        
         except:
           return jsonify(DATABASE_ERROR), 503
+      
       else:
         return jsonify(BAD_REQUEST), 400        
+    
     else:
       return jsonify(INCOMPLETE_ERROR), 400
+  
   else:
     return jsonify(FORMAT_ERROR), 400
+
+@app.route("/upload/<string:vendor_id>/<string:food_id>", methods=["POST"])
+def upload_menu(vendor_id,food_id):
+      
+  """ 
+  
+  Upload a food image in static folder 
+  
+  """
+  
+  if "image" not in request.files:
+    return jsonify(INCOMPLETE_ERROR), 400
+  
+  file = request.files["image"]
+  food = Food.query.filter_by(food_id=food_id).update({f"food_image": "food/{vendor_id}/{food_id}"})
+  
+  if not food:
+    return jsonify(NON_EXIST_ERROR), 400
+  
+  else:
+    db.session.commit()
+    file.filename = food_id
+    path = os.path.join("./static/food", vendor_id)
+    if not os.path.exists(path):
+      os.makedirs(path)
+    file.save(os.path.join(path, file.filename))
+    return jsonify(UPLOAD_SUCCESS), 200
     
+@app.route("/upload/<string:vendor_id>", methods=["POST"])
+def upload_vendor(vendor_id):
+  
+  """ 
+  
+  Upload a vendor_image in static folder 
+  
+  """
+  
+  print("Received the",vendor_id)
+  
+  if "image" not in request.files:
+    return jsonify(INCOMPLETE_ERROR), 400
+  
+  file = request.files["image"]
+  vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({f"vendor_image": "vendor/{vendor_id}"})
+  
+  if not vendor:
+    return jsonify(NON_EXIST_ERROR), 400
+  
+  else:
+    db.session.commit()
+    file.filename = vendor_id
+    file.save(os.path.join("./static/vendor", file.filename))
+    return jsonify(UPLOAD_SUCCESS), 200
+
+######################################      PUT ENDPOINT      ########################################
 @app.route("/vendor/update", methods=["PUT"])
 def update():
-  """ allows a vendor to update an item on the menu """
+      
+  """ 
+  
+  Allows a vendor to update an item on the menu 
+  
+  """
+  
   if request.is_json:
     vendor_id        = request.json.get('vendor_id')
     food_id          = request.json.get('food_id')
     food_name        = request.json.get('food_name')
     food_description = request.json.get('food_description')
     food_price       = request.json.get('food_price')
+    
     if all([vendor_id,food_id,food_name,food_name,food_description,food_price]):
+      
       if is_float(food_price) and len(food_name) <= 80:
         try:
           food = Food.query.filter_by(vendor_id = vendor_id,
@@ -330,13 +505,85 @@ def update():
       return jsonify(INCOMPLETE_ERROR), 400
   else:
     return jsonify(FORMAT_ERROR), 400
+
+@app.route("/vendor/take_off", methods=["PUT"])
+def take_off():
+      
+  """ 
+  
+  Allows a vendor to take an item off the menu 
+  
+  """
+  
+  if request.is_json:
+    vendor_id = request.is_json('vendor_id')
+    food_id   = request.is_json('food_id')
     
+    if vendor_id and food_id:
+      food = Food.query.filter_by(vendor_id = vendor_id,
+                                  food_id   = food_id,
+                                  listed    = True).update({"availability": False})
+      
+      if food:
+        db.session.commit()
+        return jsonify(UPLOAD_SUCCESS), 200
+      
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
+      
+    else:
+      return jsonify(INCOMPLETE_ERROR), 200 
+    
+  else:
+      return jsonify(FORMAT_ERROR), 400
+
+@app.route("/vendor/put_up", methods=["PUT"])
+def put_up():
+  
+  """ 
+  
+  Allows a Vendor to take an item off the menu 
+  
+  """
+  
+  if request.is_json:
+    vendor_id = request.is_json('vendor_id')
+    food_id   = request.is_json('food_id')
+    
+    if vendor_id and food_id:
+      food = Food.query.filter_by(vendor_id = vendor_id,
+                                  food_id   = food_id,
+                                  listed    = True).update({"availability": True})
+      
+      if food:
+        db.session.commit()
+        return jsonify(UPLOAD_SUCCESS), 200
+      
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
+      
+    else:
+      return jsonify(INCOMPLETE_ERROR), 400
+    
+  else:
+    return jsonify(FORMAT_ERROR), 400
+
+###################################    DELETE METHOD     #############################################    
+
 @app.route("/vendor/delete", methods=["DELETE"])
 def delete():
-  """ Allows a Vendor to delete an item from the menu """
+      
+  """ 
+  
+  Allows a Vendor to delete an item from the menu 
+  
+  """
+  
   if request.is_json:
+        
     vendor_id = request.json.get('vendor_id')
     food_id   = request.json.get('food_id')
+    
     if vendor_id and food_id:
       food = Food.query.filter_by(vendor_id = vendor_id,
                                   food_id   = food_id).update({"availability": False,
@@ -344,95 +591,16 @@ def delete():
       if food:
         db.session.commit()
         return jsonify(UPLOAD_SUCCESS), 200 
+      
       else:
         return jsonify(NON_EXIST_ERROR), 400
+      
     else:
       return jsonify(INCOMPLETE_ERROR), 400
-  else:
-    return jsonify(FORMAT_ERROR), 400
-
-@app.route("/vendor/take_off", methods=["PUT"])
-def take_off():
-  """ allows a vendor to take an item off the menu """
-  if request.is_json:
-    vendor_id = request.is_json('vendor_id')
-    food_id   = request.is_json('food_id')
-    if vendor_id and food_id:
-      food = Food.query.filter_by(vendor_id = vendor_id,
-                                  food_id   = food_id,
-                                  listed    = True).update({"availability": False})
-      if food:
-        db.session.commit()
-        return jsonify(UPLOAD_SUCCESS), 200
-      else:
-        return jsonify(NON_EXIST_ERROR), 400
-    else:
-      return jsonify(INCOMPLETE_ERROR), 200 
-  else:
-      return jsonify(FORMAT_ERROR), 400
-
-@app.route("/vendor/put_up", methods=["PUT"])
-def put_up():
-  """ Allows a Vendor to take an item off the menu """
-  if request.is_json:
-    vendor_id = request.is_json('vendor_id')
-    food_id   = request.is_json('food_id')
-    if vendor_id and food_id:
-      food = Food.query.filter_by(vendor_id = vendor_id,
-                                  food_id   = food_id,
-                                  listed    = True).update({"availability": True})
-      if food:
-        db.session.commit()
-        return jsonify(UPLOAD_SUCCESS), 200
-      else:
-        return jsonify(NON_EXIST_ERROR), 400
-    else:
-      return jsonify(INCOMPLETE_ERROR), 400
-  else:
-    return jsonify(FORMAT_ERROR), 400
-
-@app.route("/images/<path:file_name>", methods=["GET"])
-def staticfiles(file_name):
-  """ Returns an image in static folder """
-  if os.path.exists(os.path.join("./static",file_name)):
-    return send_from_directory("./static", file_name)
-  else:
-    return jsonify(NON_EXIST_ERROR), 400
-
-@app.route("/upload/<string:vendor_id>/<string:food_id>", methods=["POST"])
-def upload_menu(vendor_id,food_id):
-  """ Upload a food image in static folder """
-  if "image" not in request.files:
-    return jsonify(INCOMPLETE_ERROR), 400
-  file = request.files["image"]
-  food = Food.query.filter_by(food_id=food_id).update({f"food_image": "food/{vendor_id}/{food_id}"})
-  if not food:
-    return jsonify(NON_EXIST_ERROR), 400
-  else:
-    db.session.commit()
-    file.filename = food_id
-    path = os.path.join("./static/food", vendor_id)
-    if not os.path.exists(path):
-      os.makedirs(path)
-    file.save(os.path.join(path, file.filename))
-    return jsonify(UPLOAD_SUCCESS), 200
     
-@app.route("/upload/<string:vendor_id>", methods=["POST"])
-def upload_vendor(vendor_id):
-  """ Upload a vendor_image in static folder """
-  print("Received the",vendor_id)
-  if "image" not in request.files:
-    return jsonify(INCOMPLETE_ERROR), 400
-  file = request.files["image"]
-  vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({f"vendor_image": "vendor/{vendor_id}"})
-  if not vendor:
-    return jsonify(NON_EXIST_ERROR), 400
   else:
-    db.session.commit()
-    file.filename = vendor_id
-    file.save(os.path.join("./static/vendor", file.filename))
-    return jsonify(UPLOAD_SUCCESS), 200
-  
+    return jsonify(FORMAT_ERROR), 400
+
 @app.route("/get_food", methods=["POST"])
 def purchase():
   """ search for a food's information """

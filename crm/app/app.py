@@ -1,8 +1,10 @@
 """
+
 CRM Microservice
 
-@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+@author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman, Low Louis
 @team   - G3T4
+
 """
 
 import os
@@ -51,7 +53,11 @@ EXIST_ERROR      =  {"status": 4,
 #####################
 
 def create_app(uri):
-    """ Creates and starts the App with all the required settings """
+    """ 
+    
+    Creates and starts the App with all the required settings 
+    
+    """
     app = Flask(__name__)
     CORS(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -63,14 +69,10 @@ def create_app(uri):
 #      INIT APP      #
 ######################
 
-# app = create_app("mysql+mysqlconnector://root:@127.0.0.1:3306/menu")
 app = create_app(os.environ["URI"])
 app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/
 
-######################
-#       ROUTES       #
-######################
-
+### Error Handling ###
 @app.errorhandler(400)
 @app.errorhandler(404)
 @app.errorhandler(405)
@@ -81,15 +83,34 @@ app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/c
 def error(e):
     return jsonify({"status": "error", "error": e.description}), e.code
 
+######################
+#       ROUTES       #
+######################
+
 @app.route("/dump", methods=["GET"])
 def dump():
-  """ Dumps all the Table Information -> Debug Purposes """
-  users = User.query.all()
-  return jsonify({"user": [user.json(0,1,2) for user in users]})
+    
+    """ 
+  
+    GET Endpoint :
+        Dumps all the Table Information -> Debug Purposes 
+  
+    """
+  
+    users = User.query.all()
+    return jsonify({"user": [user.json(0,1,2) for user in users]})
+
 
 @app.route("/chatid", methods=["POST"])
 def chat_id():
-    """ get the user's info based on the chat id -> telegram bot """
+    
+    """
+     
+    POST Endpoint :
+        Get the user's info based on the chat id -> telegram bot 
+    
+    """
+    
     if request.is_json:
         chat_id = request.json.get("tid")
         if chat_id:
@@ -105,7 +126,13 @@ def chat_id():
 
 @app.route("/username", methods=["POST"])
 def username():
-    """ get the user's info based on the username """
+    
+    """ 
+    
+    POST Endpoint :
+        Get the user's info based on the username 
+    
+    """
     if request.is_json:
         username = request.json.get("username")
         if username:
@@ -119,9 +146,17 @@ def username():
     else:
         return jsonify(FORMAT_ERROR), 400
 
+
 @app.route("/usertype", methods=["POST"])
 def user_type():
-    """ get all the user's information based on usertype """
+    
+    """ 
+    
+    POST Endpoint:
+        Get all the user's information based on usertype 
+    
+    """
+    
     if request.is_json:
         uType = request.json.get("user_type")
         if username:
@@ -135,9 +170,17 @@ def user_type():
     else:
         return jsonify(FORMAT_ERROR), 400
 
+
 @app.route("/register", methods=["POST"])
 def register():
-    """ registers a user """
+    
+    """ 
+    
+    POST Endpoint :
+        Registers a user
+    
+    """
+    
     if request.is_json:
         uid, uType = request.json.get("uid"), request.json.get("type")
         if uid and uType:
@@ -155,7 +198,14 @@ def register():
 
 @app.route("/register_tele", methods=["POST"])
 def register_tele():
-    """ registers a user's telegram chat id """
+    
+    """ 
+    
+    POST Endpoint :
+        Updates a user's telegram chat id to username
+    
+    """
+    
     if request.is_json:
         uid, teleId = request.json.get("uid"), request.json.get("tid")
         if uid:
