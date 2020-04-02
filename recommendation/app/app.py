@@ -93,11 +93,12 @@ def get_all():
     order_hist_data = order_hist_request.json()
     return jsonify(str(order_hist_data)), 200
 
-@app.route("/recommendation", methods=["POST"])
+@app.route("/recommendation", methods=["GET"])
 def recommendation():
     # uncomment when order api is working
     # get the username from the UI
-    username = request.args.get('username')
+    # username = request.args.get('username')
+    username = "cjj"
     closest_vendor = {}
     if username == None:
         closest_vendor = random.choice(globals['vendors'])
@@ -105,13 +106,12 @@ def recommendation():
         info = {
             "customerID" : username
         }
-        r = requests.post(ORDER_URL, json=info, timeout = 1)
+        r = requests.post(ORDER_URL, json=info, timeout=1)
         print(r.text)
-        order_hist_data = r.json()
-        address = [o['delivery_address'] for o in order_hist_data]
-
+        address = r.json()
+        
         if address:
-            address = address[-1]            
+            address = address[-1]["delivery_address"]            
 
             # order_hist_data hardcoded:
             # order_hist_data = [
@@ -142,7 +142,7 @@ def recommendation():
                     closest_vendor = vendor
         else:
             closest_vendor = random.choice(globals['vendors'])
-                
+            
     vendor_id = closest_vendor['vendor_id']
     food_list = [f for f in globals['food'] if f['vendor_id'] == vendor_id]
     return jsonify({'food_list': food_list}), 200
