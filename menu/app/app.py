@@ -605,7 +605,7 @@ def delete():
 def food_name():
   """ search for a food's information """
   if request.is_json:
-    food_id = request.get("food_id")
+    food_id = request.json.get("food_id")
     if food_id:
       food = Food.query.filter_by(food_id=food_id).first()
       if food:
@@ -623,12 +623,12 @@ def food_name():
 def vendor_location():
   """ search for a food's information """
   if request.is_json:
-    vendor_email = request.get("vendor_email")
+    vendor_email = request.json.get("vendor_email")
     if vendor_email:
-      food = Vendor.query.filter_by(vendor_email=vendor_email).first()
-      if food:
+      vendor = Vendor.query.filter_by(vendor_email=vendor_email).first()
+      if vendor:
         output = {"status": "success"}
-        output.update({"vendor_location": food.json(4)})
+        output.update({"vendor_location": vendor.json(4)})
         return jsonify(output), 200 
       else:
         return jsonify(NON_EXIST_ERROR), 400

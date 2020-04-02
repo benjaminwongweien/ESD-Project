@@ -7,6 +7,8 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+print("Starting Driver Publisher...")
+
 ##########################
 #     INITIALIZE ENV     #
 ##########################
@@ -17,12 +19,15 @@ load_dotenv(find_dotenv())
 #       CONSTANTS       #
 #########################
 
-# URLS
-CRM_USR_FROM_USRTYPE = os.environ['CRM_USR_FROM_USRTYPE']
-MENU_GET_VENDOR_LOCATION = "https://host.docker.internal:85/"
-
 # BOT API KEY
 API_KEY = os.environ['API_KEY'] 
+
+# URLS
+CRM_USR_FROM_USRTYPE     = os.environ['CRM_USR_FROM_USRTYPE']
+MENU_GET_VENDOR_LOCATION = os.environ['MENU_GET_VENDOR_LOCATION']
+
+# HEXADECIMAL CHAT CONSTANTS
+LINE_BREAK = "%0A"
 
 #############################
 #    DATABASE CONNECTION    #
@@ -32,7 +37,7 @@ time.sleep(25)
 
 count = 0
 
-print("Attempting to connect to the database...")
+print("Attempting to connect to the Database...")
 
 while True:
     try:
@@ -51,9 +56,11 @@ while True:
         break
     except:
         count += 1
-        print(f"Connection Failed, retrying in 3s, tries: {count}")
+        print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
-        
+
+print("Driver Publisher has successfull started with no errors.")
+
 #############################
 #     TELEGRAM BOT INIT     #
 #############################
@@ -75,7 +82,6 @@ def scheduler():
 #############################
 
 def driver_publish():
-    
     while True:
         try:
             engine            = db.create_engine(os.environ['URI'])
@@ -91,41 +97,58 @@ def driver_publish():
             metadata.create_all(engine)
             break
         except:
-            print(f"Connection Lost, retrying in 3s...")
+            print("Connection Lost, Attempting to Reconnect in 3s...")
             time.sleep(3)
 
     # OBTAIN PENDING ORDER FROM THE DATABASE
     query       = db.select([DriverOrder]).limit(1)
     ResultProxy = connection.execute(query)   
-    order       = ResultProxy.fetchall()
     
     # IF THERE IS AN ORDER (ELSE EMPTY LIST)
-    if order: 
-        order = order[0]
-        order_id, messaging_timestamp = order[0], order[-1]
+    if order := ResultProxy.fetchall()[0]: 
+        
+        order_id            = order[0]
+        messaging_timestamp = order[-1]
+        delivery_location   = order[3]
+
+        
 
         # REPUBLISH AFTER 10 SECONDS
         if messaging_timestamp == None or time.time() - messaging_timestamp >= 12:
-
+            
+            print(f"""
+                Found an pending delivery, Details: 
+                Order ID          : {order_id}
+                Delivery Location : {delivery_location}
+                """)
+            
+            print("Obtaining Deliverery Collection from Menu...")
+            vendor_location = json.loads(requests.post(MENU_GET_VENDOR_LOCATION, json={"vendor_email": order[1]}).text)
+            vendor_location = vendor_location.get("vendor_location",{})
+            vendor_location = vendor_location.get("vendor_location")
+            print(f"Successfully obtained Vendor Location {vendor_location}")
+            
+            print("Obtaining Deliverer ChatIDs from CRM...")
             response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
-            delivery_address = 
+            print(f"Successfully obtained Deliver ChatIDs")
             
             for driver in response:
                 driver_chat_id = driver.get("chat_id")
                 
-                
                 if driver_chat_id != None:
                     if messaging_timestamp == None:
+                        
                         print("Order to be delivered has been found sending...")
-                        bot.display_button("You have received a new order! Will you accept?{}Please collect the order at {}{} Please deliver the order to {}".format("%0A",,"%0A",)
-                                           , driver_chat_id)
+                        bot.display_button(f"You have received a new order! Will you accept?{LINE_BREAK}Please collect the order at: {vendor_location}{LINE_BREAK}Please deliver the order to{delivery_location}", driver_chat_id)
                     
                     else:
                         print("Overdue order to be delivered has been found sending...")
-                        bot.display_button("You have pending orders. Please accept the order to proceed", driver_chat_id)
-                
+                        bot.display_button(f"You have an outstanding order. Will you accept?{LINE_BREAK}Please collect the order at: {vendor_location}{LINE_BREAK}Please deliver the order to{delivery_location}", driver_chat_id)
+            
+            print("Updating the Database with the new Timestamp")
             query       = db.update(DriverOrder).values(messaging_timestamp=time.time()).where(DriverOrder.columns.order_id==order_id)
             ResultProxy = connection.execute(query)
+            print("Update Successful...")
 
 ###########################
 #          START          #

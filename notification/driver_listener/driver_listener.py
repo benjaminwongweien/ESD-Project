@@ -8,6 +8,8 @@ import sqlalchemy as db
 from bot import telegram_chatbot
 from dotenv import load_dotenv, find_dotenv
 
+print("Starting Driver Listener...")
+
 ##########################
 #     INITIALIZE ENV     #
 ##########################
@@ -88,8 +90,10 @@ while True:
         break
     except:
         count += 1
-        print(f"Connection Failed, retrying in 3s, tries: {count}")
+        print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
+
+print("Driver Listener has successfull started with no errors.")
 
 ############################
 #     RABBITMQ PRODUCE     #
@@ -162,7 +166,7 @@ def vendor_listen():
             metadata.create_all(engine)
             break
         except:
-            print(f"Connection Lost, retrying in 3s...")
+            print("Connection Lost, Attempting to Reconnect in 3s...")
             time.sleep(3)
 
     # RECEIVE UPDATES FROM THE TELEGRAM BOT
@@ -184,17 +188,21 @@ def vendor_listen():
             if all([message, message_id, sender]):
             # CHECK IF MESSAGE IS ACCEPT ORDER
                 if message == "Accept":
-                    
+
+                    print(f"Message Accept Found from sender {sender}")
+                    print(f"Querying the database to find if there are orders to be delivered...")
                     query = db.select([DriverOrder]).limit(1)
                     ResultProxy = connection.execute(query)
-                    
                     output = ResultProxy.fetchall()
                     
                     # IF THERE IS A PENDING ORDER TO DELIVER IN THE DATABASE
                     if output:
                         
+                        print("Order to be delivered found... Accepting...")
                         output = output[0]
+                        orderID = output[0]
                         
+                        print(f"Notifying the sender {sender} that he has accepted the order")
                         # SEND MESSAGE TO THE DRIVER WHO ACCEPTED
                         bot.send_message("You have accepted the Delivery Order.", sender)
                         time.sleep(1)
@@ -202,6 +210,7 @@ def vendor_listen():
                         # QUERY CRM FOR ALL THE DRIVERS
                         response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
                         
+                        print("Notifying the other drivers that the order has been taken")
                         # NOTIFY EACH DRIVER IT HAS BEEN TAKEN BY OTHERS
                         for driver in response:
                             driver_chat_id = driver.get("chat_id")  
@@ -209,20 +218,24 @@ def vendor_listen():
                                 bot.send_message("The order has been accepted by another driver", driver_chat_id)    
                                 time.sleep(1)         
                         
+                        
+                        print("Obtaining DelivererID from CRM...")
                         # QUERY CRM TO OBTAIN DRIVER USERNAME
                         response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
-                        
-                        orderID = output[0]
                         delivererID = response.get("username")
+                        print(f"Successfully obtained DelivererID: {delivererID}")
                         
+                        print("Notifying Order Processing of new Status...")
                         # RABBITMQ TOWARDS ORDER PROCESSING
-                        produce(json.dumps({"orderID"      : output[0],
+                        produce(json.dumps({"orderID"      : orderID,
                                             "delivererID"  : response.get("username"),
                                             "order_status" : "completed"}))
-
+                        print("Successfully sent the message through the broker...")
+                        print("Deleting old entry from the database...")
                         # DELETE THE DATABASE ENTRY
                         query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
                         ResultProxy = connection.execute(query)
+                        print("Successfully deleted the old entry from the database.")
                 
 ###########################
 #          START          #
@@ -235,8 +248,7 @@ while True:
         print("Network Error")
         time.sleep(3)
         
-        print("Attempting to connect to RabbitMQ Broker...")
-
+        print("Attempting to re-connect to RabbitMQ Broker...")
         while True:
 
             try:
@@ -247,7 +259,7 @@ while True:
                                                                                virtual_host = VIRTUAL_HOST,
                                                                                credentials  = credentials))
                 channel = connection.channel()
-                print("Connection Successful")
+                print("Re-connection Successful")
                 break
 
             except:
