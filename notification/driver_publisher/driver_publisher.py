@@ -27,7 +27,7 @@ API_KEY = os.environ['API_KEY']
 #    DATABASE CONNECTION    #
 #############################   
 
-time.sleep(15)
+time.sleep(25)
 
 count = 0
 
@@ -65,7 +65,7 @@ bot = telegram_chatbot(API_KEY)
 s   = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,driver_publish, ())
+    s.enter(10,1,driver_publish, ())
     s.run()
 
 #############################
@@ -102,7 +102,7 @@ def driver_publish():
         order_id, messaging_timestamp = order[0], order[-1]
 
         # REPUBLISH AFTER 10 SECONDS
-        if messaging_timestamp == None or time.time() - messaging_timestamp >= 10:
+        if messaging_timestamp == None or time.time() - messaging_timestamp >= 12:
 
             response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
             
@@ -127,5 +127,9 @@ def driver_publish():
 ###########################
 
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("An unexpected error occured, retrying in 3 seconds")
+        time.sleep(3)
 

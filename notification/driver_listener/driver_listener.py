@@ -42,7 +42,7 @@ API_KEY = os.environ['API_KEY']
 #    RABBITMQ CONNECTION    #
 #############################
 
-time.sleep(15)
+time.sleep(30)
 
 count = 0
 
@@ -108,7 +108,8 @@ def produce(msg):
     channel.basic_publish(exchange    = PRODUCER_EXCHANGE,
                           routing_key = PRODUCER_BINDING_KEY,
                           body        = msg,
-                          properties  = pika.BasicProperties(delivery_mode=2))
+                          properties  = pika.BasicProperties(delivery_mode = 2, 
+                                                             content_type  = "application/json"))
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -123,7 +124,7 @@ bot = telegram_chatbot(API_KEY)
 s = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,vendor_listen, ())
+    s.enter(10,1,vendor_listen, ())
     s.run()
 
 ###########################
@@ -165,54 +166,64 @@ def vendor_listen():
     if updates:
         update_id = updates[-1]["update_id"] + 1 
     
-    for item in updates:
-        
-        message    = item["message"]["text"]       # MESSAGE TEXT
-        message_id = item["message"]["message_id"] # MESSAGE ID
-        sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
-        
-        # CHECK IF MESSAGE IS ACCEPT ORDER
-        if message == "Accept":
+        for item in updates:
             
-            query = db.select([DriverOrder]).limit(1)
-            ResultProxy = connection.execute(query)
+            try:
+                message    = item["message"]["text"]       # MESSAGE TEXT
+                message_id = item["message"]["message_id"] # MESSAGE ID
+                sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
+            except:
+                message, message_id, sender = None, None, None
             
-            output = ResultProxy.fetchall()
-            
-            # IF THERE IS A PENDING ORDER TO DELIVER IN THE DATABASE
-            if output:
-                
-                output = output[0]
-                
-                # SEND MESSAGE TO THE DRIVER WHO ACCEPTED
-                bot.send_message("You have accepted the Delivery Order.", sender)
-                
-                # DELETE THE DATABASE ENTRY
-                query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
-                ResultProxy = connection.execute(query)
-                
-                # QUERY CRM FOR ALL THE DRIVERS
-                response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
-                
-                # NOTIFY EACH DRIVER IT HAS BEEN TAKEN BY OTHERS
-                for driver in response:
-                    driver_chat_id = driver.get("chat_id")  
-                    if driver_chat_id != sender:
-                        bot.send_message("The order has been accepted by another driver", driver_chat_id)             
-                
-                # QUERY CRM TO OBTAIN DRIVER USERNAME
-                response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
-                
-                # RABBITMQ TOWARDS ORDER PROCESSING
-                produce(json.dumps({"orderID"      : output[0],
-                                    "driverID"     : response.get("username"),
-                                    "order_status" : "completed"}))
+            if all([message, message_id, sender]):
+            # CHECK IF MESSAGE IS ACCEPT ORDER
+                if message == "Accept":
+                    
+                    query = db.select([DriverOrder]).limit(1)
+                    ResultProxy = connection.execute(query)
+                    
+                    output = ResultProxy.fetchall()
+                    
+                    # IF THERE IS A PENDING ORDER TO DELIVER IN THE DATABASE
+                    if output:
+                        
+                        output = output[0]
+                        
+                        # SEND MESSAGE TO THE DRIVER WHO ACCEPTED
+                        bot.send_message("You have accepted the Delivery Order.", sender)
+                        time.sleep(1)
+                        
+                        # QUERY CRM FOR ALL THE DRIVERS
+                        response = json.loads(requests.post(CRM_USR_FROM_USRTYPE, json={"user_type": "driver"}).text)
+                        
+                        # NOTIFY EACH DRIVER IT HAS BEEN TAKEN BY OTHERS
+                        for driver in response:
+                            driver_chat_id = driver.get("chat_id")  
+                            if driver_chat_id != sender:
+                                bot.send_message("The order has been accepted by another driver", driver_chat_id)    
+                                time.sleep(1)         
+                        
+                        # QUERY CRM TO OBTAIN DRIVER USERNAME
+                        response = json.loads(requests.post(CRM_USR_FROM_CHATID, json={"tid": sender}).text)
+                        
+                        # RABBITMQ TOWARDS ORDER PROCESSING
+                        produce(json.dumps({"orderID"      : output[0],
+                                            "delivererID"  : response.get("username"),
+                                            "order_status" : "completed"}))
+
+                        # DELETE THE DATABASE ENTRY
+                        query = db.delete(DriverOrder).where(DriverOrder.columns.order_id==output[0])
+                        ResultProxy = connection.execute(query)
                 
 ###########################
 #          START          #
 ###########################
       
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("An unexpected error occured, retrying in 3 seconds")
+        time.sleep(3)
 
 connection.close()

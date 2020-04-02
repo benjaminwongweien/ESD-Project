@@ -41,7 +41,7 @@ API_KEY = os.environ['API_KEY']
 #    RABBITMQ CONNECTION    #
 #############################
 
-time.sleep(15)
+time.sleep(27)
 
 count = 0
 
@@ -113,7 +113,8 @@ def produce(msg):
     channel.basic_publish(exchange    = PRODUCER_EXCHANGE,
                           routing_key = PRODUCER_BINDING_KEY,
                           body        = msg,
-                          properties  = pika.BasicProperties(delivery_mode=2))
+                          properties  = pika.BasicProperties(delivery_mode = 2,
+                                                             content_type  = 'application/json'))
 
 #############################
 #     TELEGRAM BOT INIT     #
@@ -128,7 +129,7 @@ bot = telegram_chatbot(API_KEY)
 s   = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,vendor_listen, ())
+    s.enter(10,1,vendor_listen, ())
     s.run()
 
 ###########################
@@ -172,33 +173,46 @@ def vendor_listen():
     if updates:
         update_id = updates[-1]["update_id"] + 1    
     
-    for item in updates:
-        
-        message    = item["message"]["text"]       # MESSAGE TEXT
-        message_id = item["message"]["message_id"] # MESSAGE ID
-        sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
-        
-        # CHECK IF MESSAGE IS ACCEPT ORDER
-        if message == "Accept Order":
+        for item in updates:
             
-            query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
-            ResultProxy = connection.execute(query)
+            try:
+                message    = item["message"]["text"]       # MESSAGE TEXT
+                message_id = item["message"]["message_id"] # MESSAGE ID
+                sender     = item["message"]["from"]["id"] # THE CHAT_ID OF THE SENDER OF THE MESSAGE (CAN BE NORMAL / REPLY MESSAGE)
+            except:
+                message, message_id, sender = None, None, None
             
-            if output := ResultProxy.fetchall():
-                bot.send_message("You have accepted the Order.", sender)
-                
-                query = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
-
-                ResultProxy = connection.execute(query)
-                
-                produce(json.dumps({"orderID"      : output[0][0],
-                                    "order_status" : "order ready"}))
-                
+            if all([message, message_id, sender]):
+                # CHECK IF MESSAGE IS ACCEPT ORDER
+                if message == "Accept Order":
+                    
+                    query = db.select([VendorMessenger]).where(VendorMessenger.columns.message_id==sender)
+                    ResultProxy = connection.execute(query)
+                    
+                    output = ResultProxy.fetchall()
+                    
+                    if output:
+                        bot.send_message("You have accepted the Order.", sender)
+                        time.sleep(1)
+                        
+                        produce(json.dumps({"orderID"      : output[0][0],
+                                            "delivererID"  : "0",
+                                            "order_status" : "order ready"}))
+                        
+                        query       = db.delete(VendorMessenger).where(VendorMessenger.columns.message_id==sender)
+                        ResultProxy = connection.execute(query)
+                        
+                        time.sleep(3)
+                    
 ###########################
 #          START          #
 ###########################
        
 while True:
-    scheduler()
+    try:
+        scheduler()
+    except:
+        print("Unexpected failure, retrying in 3s")
+        time.sleep(3)
 
 connection.close()

@@ -24,7 +24,7 @@ CRM_USR_FROM_USRNAME  = os.environ['CRM_USR_FROM_USRNAME']
 #    DATABASE CONNECTION    #
 #############################
 
-time.sleep(15)
+time.sleep(25)
 
 print("Attempting to connect to the database")
 
@@ -64,7 +64,7 @@ bot = telegram_chatbot(API_KEY)
 s = sched.scheduler(time.time, time.sleep)
 
 def scheduler():
-    s.enter(3,1,vendor_publish, ())
+    s.enter(10,1,vendor_publish, ())
     s.run()
 
 def vendor_publish():
@@ -98,7 +98,7 @@ def vendor_publish():
 
         vendor_id, order_id, messaging_timestamp = vendor[1], vendor[0], vendor[-1]
 
-        if messaging_timestamp == None or time.time() - messaging_timestamp >= 10:
+        if messaging_timestamp == None or time.time() - messaging_timestamp >= 12:
 
             response = requests.post(CRM_USR_FROM_USRNAME, json={"username": vendor_id})
             chat_id  = json.loads(response.text).get("chat_id")
@@ -106,8 +106,10 @@ def vendor_publish():
             if chat_id != None:
                 if messaging_timestamp == None:
                     bot.display_button("You have received a new order! Will you accept?", "Accept Order", chat_id)
+                    time.sleep(1)
                 else:
                     bot.display_button("You have pending orders. Please accept the order to proceed", "Accept Order", chat_id)
+                    time.sleep(1)
                 
                 query       = db.update(VendorMessenger).values(messaging_timestamp=time.time(), message_id=chat_id).where(VendorMessenger.columns.order_id==order_id)
                 ResultProxy = connection.execute(query)

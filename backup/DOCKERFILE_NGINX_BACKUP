@@ -2,7 +2,7 @@
 # Docker-Build - Recommendation Microservice NGINX Server
 #
 
-# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman
+# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman, Low Louis
 # @team   - G3T4
 
 # pull the official NGINX image
