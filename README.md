@@ -11,9 +11,10 @@
 EaSy Delivery is a Microservice Driven Solution for Food Delivery.
 
 # Features!
+
+  - NGINX
   - CRM Microservice 
   - Menu Microservice
-  - NGINX Servers 
   - RabbiMQ AMQP Messaging Broker
   - Payment Microservise using Stripe API   
   - Notfication Microservice using Telegram API
@@ -32,14 +33,14 @@ EaSy Delivery uses a number of open source projects to work properly:
 * [Flask](https://palletsprojects.com/p/flask/) - A lightweight WSGI web application framework.
 * [Docker](https://www.docker.com) - Empowering App Development for Developers.
 * [Stripe](https://stripe.com/en-sg) - Online payment processing for internet businesses.
-* [Tomcat](https://tomcat.apache.org/) - The Apache Tomcat® software is an open source implementation of the Java Servlet, JavaServer Pages, Java Expression Language and Java WebSocket.
+* [RabbitMQ](https://www.rabbitmq.com/) - One of the most popular open source message brokers.
+* [Gunicorn](https://gunicorn.org) - Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for UNIX. 
+* [Bootstrap](https://getbootstrap.com/) - The most popular HTML, CSS, and JS library in the world.
 * [Gradle](https://gradle.org) - Accelerate developer productivity. Gradle helps teams build, automate and deliver better software, faster.
 * [JPA](https://www.javaworld.com/article/3379043/what-is-jpa-introduction-to-the-java-persistence-api.html) - Java Persistence API (JPA) defines the management of relational data in the Java applications. 
-* [RabbitMQ](https://www.rabbitmq.com/) - One of the most popular open source message brokers.
-* [Bootstrap](https://getbootstrap.com/) - The most popular HTML, CSS, and JS library in the world.
 * [NGINX](https://nginx.com) - NGINX accelerates content and application delivery, improves security, facilitates availability and scalability for the busiest web sites on the Internet.
+* [Tomcat](https://tomcat.apache.org/) - The Apache Tomcat® software is an open source implementation of the Java Servlet, JavaServer Pages, Java Expression Language and Java WebSocket.
 * [Spring Boot](https://spring.io/projects/spring-boot) - Open Source Java Framework that can be used to create Microservice. It helps Java Developers to develop a stand-alone and production grade spring application to just run
-* [Gunicorn](https://gunicorn.org) - Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for UNIX. 
 
 ### Installation
 
