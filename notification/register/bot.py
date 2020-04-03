@@ -24,9 +24,9 @@ class telegram_chatbot():
         return json.loads(requests.get(url).text)
 
     # SEND MESSAGE WITH USERS GIVEN THE OPTION TO ACCEPT
-    def display_button(self, msg=None, chat_id=None):
+    def display_button(self, msg=None, buttontext="" ,chat_id=None):
         url = self.base + "sendMessage?chat_id={}&text={}&reply_markup=".format(chat_id, msg)
-        url += '{"keyboard":[["Accept"]],"resize_keyboard":true,"one_time_keyboard":true}'
+        url += '{"keyboard":[["'+ buttontext + '"]],"resize_keyboard":true,"one_time_keyboard":true}'
         return json.loads(requests.get(url).text)
 
     def rate_service(self, question=None, chat_id=None):

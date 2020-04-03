@@ -10,9 +10,7 @@ version: '3.7'
 services:
 
     rabbit_listener:
-        build:
-            context: ./rabbit_listener
-            dockerfile: DOCKERFILE_RABBIT_LISTENER
+        image: benjaminwongweien/easydeliverybot
         container_name: rabbit_listener
         # ports:
         #     - "8000:8000"
@@ -20,16 +18,14 @@ services:
             - network
         # environment: 
         #     - ""
-        # volumes:
-        #     - 
-        command: ["python", "rabbit_listener.py"]
+        volumes:
+            - "./rabbit_listener:/app"
+        command: ["python", "/app/rabbit_listener.py"]
         depends_on: 
             - bot_db
 
     register:
-        build:
-            context: ./register
-            dockerfile: DOCKERFILE_REGISTER
+        image: benjaminwongweien/easydeliverybot
         container_name: register
         # ports:
         #     - "8000:8000"
@@ -37,80 +33,57 @@ services:
             - network
         # environment: 
         #     - ""
-        # volumes:
-        #     - 
-        command: ["python", "register.py"]
+        volumes:
+            - "./register:/app"
+        command: ["python", "/app/register.py"]
         depends_on: 
             - bot_db
 
-    vendor_publisher:
-        build:
-            context: ./vendor_publisher
-            dockerfile: DOCKERFILE_VENDOR_PUBLISHER
-        container_name: vendor_publisher
+    updater:
+        image: benjaminwongweien/easydeliverybot
+        container_name: updater
         # ports:
         #     - "8000:8000"
         networks:
             - network
         # environment: 
         #     - ""
-        # volumes:
-        #     - 
-        command: ["python", "vendor_publisher.py"]
+        volumes:
+            - "./updater:/app"
+        command: ["python", "/app/updater.py"]
         depends_on: 
             - bot_db
 
-    vendor_listener:
-        build:
-            context: ./vendor_listener
-            dockerfile: DOCKERFILE_VENDOR_LISTENER
-        container_name: vendor_listener
+    vendor_broker:
+        image: benjaminwongweien/easydeliverybot
+        container_name: vendor_broker
         # ports:
         #     - "8000:8000"
         networks:
             - network
         # environment: 
         #     - ""
-        # volumes:
-        #     - 
-        command: ["python", "vendor_listener.py"]
+        volumes:
+            - "./vendor_broker:/app"
+        command: ["python", "/app/vendor_broker.py"]
         depends_on: 
             - bot_db
 
-    driver_publisher:
-        build:
-            context: ./driver_publisher
-            dockerfile: DOCKERFILE_DRIVER_PUBLISHER
-        container_name: driver_publisher
+    driver_broker:
+        image: benjaminwongweien/easydeliverybot
+        container_name: driver_broker
         # ports:
         #     - "8000:8000"
         networks:
             - network
         # environment: 
         #     - ""
-        # volumes:
-        #     - 
-        command: ["python", "driver_publisher.py"]
+        volumes:
+            - "./driver_broker:/app"
+        command: ["python", "/app/driver_broker.py"]
         depends_on: 
             - bot_db
-
-    driver_listener:
-        build:
-            context: ./driver_listener
-            dockerfile: DOCKERFILE_DRIVER_LISTENER
-        container_name: driver_listener
-        # ports:
-        #     - "8000:8000"
-        networks:
-            - network
-        # environment: 
-        #     - ""
-        # volumes:
-        #     - 
-        command: ["python", "driver_listener.py"]
-        depends_on: 
-            - bot_db
-
+            
     bot_db:
         image: mysql
         container_name: bot_db
