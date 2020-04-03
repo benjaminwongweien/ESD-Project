@@ -61,6 +61,10 @@ $ cd ${microservice_directory}
 $ docker-compose up -d
 ```
 
+### How to Use
+
+Please turn off WAMP/XAMPP or any other Apache Services running on your host computer, if it is running.
+
 This will compose the required EaSy Delivery images and pull in the necessary dependencies. Be sure to swap out `${microservice_directory}` with the actual location of each microservice on your machine.
 
 ### Ports
