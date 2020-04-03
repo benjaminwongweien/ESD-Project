@@ -21,10 +21,10 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
   - Web UI with Google and Facebook Login Enabled
   - Recommendation Microservice using Google Maps API
   - Order Process Microservice built on Spring Boot Framework, which includes but not limited to:
-    - Actuator module: Monitoring and managing health of Microservice
     - JPA: For Database Interaction with MySQL and Spring using Java
-    - Tomcat: Open-Source Implementation of the Java Servlet, JavaServer Pages, Java Expression Language and WebSocket technologies
+    - Actuator module: Monitoring and managing health of Microservice
     - Gradle: Open-Source build automation system that builds on upon Apache Ant and Apche Maven
+    - Tomcat: Open-Source Implementation of the Java Servlet, JavaServer Pages, Java Expression Language and WebSocket technologies
 
 ### Tech
 
