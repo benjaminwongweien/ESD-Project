@@ -17,11 +17,11 @@ from flask import Flask, jsonify, request
 #####################
 
 globals    = {} # list of addresses for all vendors before first request
-API_KEY    = "AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4"
-VENDOR_URL = "http://host.docker.internal:85/all_vendor"
-FOOD_URL   = "http://host.docker.internal:85/all_food"
-GMAP_URL   = "https://maps.googleapis.com/maps/api/geocode/json?"
-ORDER_URL  = "http://host.docker.internal:8080/order/history/customer"
+API_KEY       = "AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4"
+VENDOR_URL    = "http://host.docker.internal:85/all_vendor"
+FOOD_URL      = "http://host.docker.internal:85/all_food"
+GMAP_URL      = "https://maps.googleapis.com/maps/api/geocode/json?"
+ORDER_URL     = "http://host.docker.internal:8080/order/history/customer"
 ORDER_URL_ALL = "http://host.docker.internal:8080/order/all"
 
 # dummy_address = {'lat': 1.2, 'lng': 103}  # --- check
@@ -100,8 +100,8 @@ def get_all():
 def recommendation():
     # uncomment when order api is working
     # get the username from the UI
-    # username = request.args.get('username')
-    username = "cjj"
+    username = request.args.get('username')
+    
     closest_vendor = {}
     
     if username == None:
@@ -111,23 +111,16 @@ def recommendation():
         info = {
             "customerID" : username
         }
-        r = requests.post(ORDER_URL, json=info, timeout=1)
-        print(r.text)
+        
+        r = requests.post(ORDER_URL, json=info)
+
         address = r.json()
         
         if address:
-            address = address[-1]["delivery_address"]            
-
-            # order_hist_data hardcoded:
-            # order_hist_data = [
-            #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
-            #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'},
-            #     {'orderID': 1, 'vendorID': 2, 'delivererID': 1, 'foodID': 30, 'quantity': 10,
-            #         'checkoutID': '21232323432', 'customerId': 1001, 'status': '1', 'address': '81 Victoria St, Singapore 188065'}
-            # ]
-
-            # address_list = [o['address'] for o in order_hist_data]
-            # top_address = max(set(address_list), key=address_list.count)
+            
+            address = address[-1]["delivery_address"]
+            
+            print(address)      
             
             gmap_params = {
                 'address': address,

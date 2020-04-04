@@ -1,0 +1,27 @@
+#
+# Docker-Build - Vendor Listener - Notification Microservice
+#
+
+# @author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman, Low Louis
+# @team   - G3T4
+
+# pull the official Python image
+FROM python:3.8.1-slim-buster
+
+# set the work directory
+WORKDIR /app
+
+# set environment variables
+# --- Prevents Python from writing pyc files to disc
+ENV PYTHONDONTWRITEBYTECODE 1
+# --- Prevents Python from buffering stdout and stderr
+ENV PYTHONUNBUFFERED 1
+
+# move everything from the development folder to production folder
+COPY . .
+
+# upgrade pip
+RUN pip install --upgrade pip
+
+# install dependencies
+RUN pip install -r requirements.txt
