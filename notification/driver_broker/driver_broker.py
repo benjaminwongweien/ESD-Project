@@ -104,14 +104,14 @@ while True:
                             db.Column("timestamp",           db.Integer(),     nullable=False, default=time.time() ),
                             db.Column("messaging_timestamp", db.Integer(),     nullable=True,  default=None        ))
         metadata.create_all(engine)
-        print("Connection Succesful")
+        print("Connection Successful")
         break
     except:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
 
-print("Driver Listener has successfull started with no errors.")
+print("Driver Listener has successfully started with no errors.")
 
 ############################
 #     RABBITMQ PRODUCE     #

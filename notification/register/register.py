@@ -48,14 +48,14 @@ while True:
                             db.Column("chat_id",    db.Integer(), nullable=False ,primary_key=True),
                             db.Column("message_id", db.Integer(), nullable=False                  ))
         metadata.create_all(engine)
-        print("Connection Succesful")
+        print("Connection Successful")
         break
     except:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
 
-print("Register has started with no Errors.")
+print("Register has started successfully with no Errors.")
 
 #############################
 #     TELEGRAM BOT INIT     #

@@ -111,7 +111,7 @@ while True:
         print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
 
-print("Rabbit Listener has successfull started with no errors.")
+print("Rabbit Listener has successfully started with no errors.")
 
 #############################
 #     RABBITMQ CONSUMER     #

@@ -116,7 +116,7 @@ while True:
         print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
 
-print("Vendor Listener has successfull started with no errors.")
+print("Vendor Listener has successfully started with no errors.")
 
 ############################
 #     RABBITMQ PRODUCE     #

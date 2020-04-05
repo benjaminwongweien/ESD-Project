@@ -44,14 +44,14 @@ while True:
                         db.Column("text",                db.String(1000), nullable=False                   ),
                         db.Column("reply_to_message_id", db.Integer(),    nullable=True,                   ))
         metadata.create_all(engine)
-        print("Connection Succesful")
+        print("Connection Successful")
         break
     except:
         count += 1
         print(f"Connection Failed... Attempting to Reconnect in 3s, tries: {count}")
         time.sleep(3)
 
-print("Updater has successfull started with no errors.")
+print("Updater has successfully started with no errors.")
 
 #############################
 #     TELEGRAM BOT INIT     #

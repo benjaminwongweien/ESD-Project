@@ -31,25 +31,25 @@ INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity
 -- INSERT NEWLY ORDERS THAT ARE PAID
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "yourEmailHere@yourEmailHere.com", "2039473942", 1, "0", 17, 8, 10, "completed", "BLK322 WOODLANDS AVENUE"
+  "faithkoh1997@gmail.com", "2039473942", 1, "0", 17, 8, 10, "completed", "BLK322 WOODLANDS AVENUE"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "yourEmailHere@yourEmailHere.com", "8347238428328", 5, "0", 4, 4, 8, "completed", "BLK459 LORANG CHUAN"
+  "faithkoh1997@gmail.com", "8347238428328", 5, "0", 4, 4, 8, "completed", "BLK459 LORANG CHUAN"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "yourEmailHere@yourEmailHere.com", "9382094823", 3, "0", 12, 7, 10, "completed", "BLK772 HOUGANG AVE 3"
+  "faithkoh1997@gmail.com", "9382094823", 3, "0", 12, 7, 10, "completed", "BLK772 HOUGANG AVE 3"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "yourEmailHere@yourEmailHere.com", "9382094847", 4, "0", 16, 6, 8.85, "completed", "Raffles Institution Boarding"
+  "faithkoh1997@gmail.com", "9382094847", 4, "0", 16, 6, 8.85, "completed", "Raffles Institution Boarding"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "yourEmailHere@yourEmailHere.com", "9382094848", 4, "slypoon@gmail.com", 16, 6, 8.85, "completed", "Raffles Institution Boarding"
+  "faithkoh1997@gmail.com", "9382094848", 4, "slypoon@gmail.com", 16, 6, 8.85, "completed", "Raffles Institution Boarding"
 );
 
 INSERT INTO orders (CustomerID, orderID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address) VALUES (
-  "yourEmailHere@yourEmailHere.com", "9382094849", 4, "slypoon@gmail.com", 16, 6, 8.85, "completed", "Raffles Institution Boarding"
+  "faithkoh1997@gmail.com", "9382094849", 4, "slypoon@gmail.com", 16, 6, 8.85, "completed", "Raffles Institution Boarding"
 );

@@ -49,8 +49,9 @@ COPY public."user" (username, user_type, chat_id) FROM stdin;
 user@user.com	user	\N
 driver@driver.com	driver	\N
 vendor@vendor.com	vendor	\N
+faithkoh1997@gmail.com	user	\N
 slypoon@gmail.com	vendor	\N
-userEmailHere@userEmailHere.com	user	\N
+bentennisonrulez@gmail.com	driver	\N
 \.
 
 
