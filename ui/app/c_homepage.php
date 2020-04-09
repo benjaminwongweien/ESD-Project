@@ -30,7 +30,7 @@
 			<link rel="stylesheet" href="./homepage_util/css/main.css">
 
 			<script>
-				// console.log(document.cookie);
+				console.log(document.cookie);
 
 				// If user does not have cookie, it means they are not logged in
 				// redirect them back to the logout page to clear cookies again, JUST IN CASE
@@ -215,7 +215,6 @@
 			<script src="homepage_util/js/parallax.min.js"></script>	
 			<script src="homepage_util/js/mail-script.js"></script>	
 			<script src="homepage_util/js/main.js"></script>	
-			<script src="homepage_util/js/logout_script.js"></script>	
 
 			<!-- FACEBOOK -->
 			<script>
