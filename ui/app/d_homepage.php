@@ -72,7 +72,7 @@
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
 						  <li class="menu-has-children"><a href=""> Welcome back, <?php echo $_COOKIE['name'] ?></a>
-						  <li><a href="#"><?php echo $_COOKIE['logout_button'] ?></a></li>
+						  <li id="logout"><a href="#"><?php echo $_COOKIE['logout_button'] ?></a></li>
 				        </ul>
 				      </nav><!-- #nav-menu-container -->		    		
 			    	</div>

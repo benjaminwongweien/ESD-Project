@@ -51,7 +51,7 @@
 			      <nav id="nav-menu-container">
 			        <ul class="nav-menu">
 						<li class="menu-has-children"><a href="">Welcome, <?= $_COOKIE['name'] ?> !</a></li>
-						<li><?= $_COOKIE['logout_button'] ?></li>
+						<li id="logout"><?= $_COOKIE['logout_button'] ?></li>
 			        </ul>
 			      </nav><!-- #nav-menu-container -->		    		
 		    	</div>
