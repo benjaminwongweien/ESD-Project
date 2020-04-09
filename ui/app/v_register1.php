@@ -1,11 +1,3 @@
-<?php 
-	// var_dump($_POST);
-	// var_dump($_POST['username']);
-	// $username = $_COOKIE['email'];
-
-	// var_dump($username);
-	?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,7 +113,12 @@
 	
 <!--  -->
 	<script>
-        function accessCookie(cookieName, finder){
+
+		// Function to extract cookie
+		// Pass in: the whole cookie, the name of the cookie you want to find
+		// Return: the whole cookie that you want to find
+		// 		   e.g. "username=xxx@gmail.com"
+		function accessCookie(cookieName, finder){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
 		//   console.log(allCookieArray);
@@ -133,7 +130,9 @@
        	  }
         	return "";
         }
-        
+		
+		// Post Json data
+		// Redirect user to part 2 of registration
 		async function postData(serviceURL, requestBody) {   
 			const response =
                  await fetch(
@@ -149,23 +148,26 @@
                 document.cookie = "vendor_id = " + data['data']['vendor_id'];
                 window.location.replace("./v_register2.php");
             }
-            else {
-                console.log("die");
-            }
+            // else {
+                // console.log("die");
+            // }
         }
 
 		$("#next").click(async() => {
             let isNext = confirm("You cannot return to the previous pages after submitting. Are you sure your details are correct?"); //true if OK is pressed
             event.preventDefault()
 
+			// get the content ifrom the ID
             var vendor_name = document.getElementById("vendor_name").value;  
             var vendor_description = document.getElementById("vendor_description").value;
             var vendor_location = document.getElementById("vendor_location").value;
 
+			// retrieve username from cookie
 		    var email_cookie = accessCookie(document.cookie, "email");
             var email = email_cookie.slice(6);
             
             if (isNext == true) {
+				// post data to menu to register vendor stall front
                 var serviceURL = "http://localhost:85/register_info";
                 var requestBody = {
                     vendor_name : vendor_name, 

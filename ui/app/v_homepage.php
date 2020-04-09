@@ -29,10 +29,12 @@
 			<link rel="stylesheet" href="homepage_util/css/main.css">
 
 			<script>
-				console.log(document.cookie);
+				// console.log(document.cookie);
 
+				// If user does not have cookie, it means they are not logged in
+				// redirect them back to the logout page to clear cookies again, JUST IN CASE
+				// then logout will bring them back to the index page
 				if (document.cookie == "") {
-					// redirect users to login page
 					window.location.replace("./logout.php");
 				}
 
@@ -71,7 +73,13 @@
 						</div>			
 						
 						<?php
+							// get list of food from menu
+							// return: [food_description, food_id, food_image, food_label, food_name, food_price]
+							// 		   status, vendor_description, vendor_email, vendor_id, vendor_image, vendor_location, vendor_name
 							$vendors= json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
+							
+							// get all food from menu
+							// return: [food_description, food_id, food_image, food_label, food_name, food_price]
 							$all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
 
 							
@@ -99,6 +107,8 @@
 						<div class="row justify-content-center d-flex align-items-left">
 
 						<?php
+							// get list of food from menu
+							// return: food_description, food_id, food_image, food_label, food_name, food_price
 							$food_list = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
 							
 							foreach ($food_list['food'] as $food) {?>
@@ -113,7 +123,7 @@
 										<p><?=$vendor['food_price']?></p>
 									</div>
 								</div>
-						<?php
+								<?php
 								}
 							}?>
 							<br/><br/><br/><br/><br/>
@@ -141,9 +151,6 @@
 						<div class="col-lg-4  col-md-6 col-sm-6">
 							<div class="single-footer-widget">
 								<h4 class="text-white">Contact Us</h4>
-								<!-- <p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
-								</p> -->
 								<p class="number">
 									63-74-350
 								</p>
@@ -181,15 +188,15 @@
 			<!-- FACEBOOK -->
 			<script>
 				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-				console.log('statusChangeCallback');
-				console.log(response);                   // The current login status of the person.	
+				// console.log('statusChangeCallback');
+				// console.log(response);                   // The current login status of the person.	
 				
-				if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-						console.log("Logged in as facebook");
-						console.log(document.cookie);
-					} else {                                 // Not logged into your webpage or we are unable to tell.
-						console.log("Not logged in as facebook")
-					}
+				// if (response.status === 'connected') {   // Logged into the webpage using Facebook.
+				// 		console.log("Logged in as facebook");
+				// 		console.log(document.cookie);
+				// 	} else {                                 // Logged in using Google
+				// 		console.log("Not logged in as facebook")
+				// 	}
 				}
 
 				function checkLoginState() {               // Called when a person is finished with the Login Button.
@@ -219,12 +226,13 @@
 				}(document, 'script', 'facebook-jssdk'));
 
 				
-				function logOut(){
-					// FB.logout(function(response) {
-					// 	statusChangeCallback(response);
-					// 	document.getElementById('logout').style.display = "none";
+				function logOut(){		// Facebook logout works differently, as such, you need to use the function
+					FB.logout(function(response) {
+						statusChangeCallback(response);
+						document.getElementById('logout').style.display = "none";
+						// redirect users to logout to remove the cookies stored in the console
 						window.location.replace("./logout.php");
-					// });s
+					});s
 				}
 			</script>
 		

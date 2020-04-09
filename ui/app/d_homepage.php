@@ -30,15 +30,21 @@
 			<link rel="stylesheet" href="./homepage_util/css/main.css">
 
 			<script>
-				console.log(document.cookie);
+				// console.log(document.cookie);
 
+				// If user does not have cookie, it means they are not logged in
+				// redirect them back to the logout page to clear cookies again, JUST IN CASE
+				// then logout will bring them back to the index page
 				if (document.cookie == "") {
-					// redirect users to login page
 					window.location.replace("./logout.php");
 				}
 
 			</script>
 			<?php
+
+				// Using Post, get driver order list from order_processing 
+				// Pass in: delivererID
+				// Return: [orderID, customerID, vendorID, delivererID, foodID, quantity, price, order_status, delivery_address]
 				$postdata = json_encode(array(
 						'delivererID' => $_COOKIE["email"]
 					)
@@ -65,7 +71,6 @@
 				      </div>
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
-				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> Welcome back, <?php echo $_COOKIE['name'] ?></a>
 						  <li><a href="#"><?php echo $_COOKIE['logout_button'] ?></a></li>
 				        </ul>
@@ -101,7 +106,6 @@
 						</div>
 					</div>			
 					<?php
-						// var_dump($driver_list[0]);
 						foreach ($driver_list as $delivery){ 
 							$vendorID = $delivery['vendorID'];
 							$orderID = $delivery['orderID'];
@@ -112,7 +116,9 @@
 							$customerID = $delivery['customerID'];
 							$deliveryAddress = $delivery['delivery_address'];
 
-							// Post, get vendor and food information
+							// Using Post, get vendor and food information from menu
+							// Pass in: vendor_id , food_id
+							// Return: food_description, food_id, food_image, food_label, food_name, food_price
 							$postdata = json_encode(array(
 								'vendor_id' => $vendorID,
 								'food_id' => $foodID
@@ -130,7 +136,10 @@
 							$context  = stream_context_create($opts);
 							$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food", false, $context), TRUE);
 							
-							// Post, get vendor information
+							// Using Post, get vendor information from menu
+							// Pass in: vendor_id
+							// Return: food_list [food_description, food_id, food_image, food_label, food_name, food_price],
+							// 		   status, vendor_description, vendor_email, vendor_id, vendor_image, vendor_location, vendor_name
 							$postdata = json_encode(array(
 								'vendor_id' => $vendorID
 								)
@@ -148,12 +157,12 @@
 							$vendor_info = json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);
 							
 							$vendorAddress = $vendor_info['vendor_location'];
+							$food_name = $food_info['food']['food_name'];
 							?>
 							
 							<div class="row">
 								<div class="single-dish col-lg-4">
 									<div class="thumb">
-										<!-- <img class="img-fluid"  src="homepage_util/img/vendor-domino.png" alt=""> -->
 									</div>
 										<table border="1">
 											<tr >
@@ -166,7 +175,7 @@
 												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Pick-up Address: <?=$vendorAddress?></h4></td>
 											</tr>
 											<tr>
-												<td><h4 class='meta-text mt-30 text-center'>Food Name: <?=$food_info['food']['food_name']?></h4></td>
+												<td><h4 class='meta-text mt-30 text-center'>Food Name: <?=$food_name?></h4></td>
 												<td><h4 class='meta-text mt-30 text-center'>Quantity: <?=$orderQty?></h4></td>
 											</tr>
 											<tr>
@@ -242,15 +251,15 @@
 			<!-- FACEBOOK -->
 			<script>
 				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-				console.log('statusChangeCallback');
-				console.log(response);                   // The current login status of the person.	
+				// console.log('statusChangeCallback');
+				// console.log(response);                   // The current login status of the person.	
 				
-				if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-						console.log("Logged in as facebook");
-						console.log(document.cookie);
-					} else {                                 // Not logged into your webpage or we are unable to tell.
-						console.log("Not logged in as facebook")
-					}
+				// if (response.status === 'connected') {   // Logged into the webpage using Facebook.
+				// 		console.log("Logged in as facebook");
+				// 		console.log(document.cookie);
+				// 	} else {                                 // Logged in using Google
+				// 		console.log("Not logged in as facebook")
+				// 	}
 				}
 
 				function checkLoginState() {               // Called when a person is finished with the Login Button.
@@ -280,12 +289,13 @@
 				}(document, 'script', 'facebook-jssdk'));
 
 				
-				function logOut(){
-					// FB.logout(function(response) {
-						// statusChangeCallback(response);
-						// document.getElementById('logout').style.display = "none";
+				function logOut(){ 		// Facebook logout works differently, as such, you need to use the function
+					FB.logout(function(response) {
+						statusChangeCallback(response);
+						document.getElementById('logout').style.display = "none";
+						// redirect users to logout to remove the cookies stored in the console
 						window.location.replace("./logout.php");
-					// });
+					});
 				}
 			</script>
 		</body>

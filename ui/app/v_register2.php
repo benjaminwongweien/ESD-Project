@@ -1,11 +1,3 @@
-<?php 
-	// var_dump($_POST);
-	// var_dump($_POST['username']);
-	// $username = $_COOKIE['email'];
-
-	// var_dump($username);
-	?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,12 +51,6 @@
                     
                     
                     <div class="p-t-31 p-b-9">
-						<!-- <span class="txt1">
-							Address
-						</span>
-					</div>
-					<div class="wrap-input100 validate-input">
-						<input rows="10" class="input100" name="vendor_location" id="vendor_location" placeholder="Where is your shop?"> -->
 						<span class="focus-input100"></span>
 					</div>
                     
@@ -110,6 +96,10 @@
 <!--  -->
 	<script>
 
+		// Image upload function listens to any change to the upload button
+		// If there is a change,
+		// 		user has uploaded an image
+		// 		grab that image using querySelector
 		window.addEventListener('load', function() {
 			document.querySelector('input[type="file"]').addEventListener('change', function() {
 				if (this.files && this.files[0]) {
@@ -119,11 +109,13 @@
 			});
 		});
 
-		
+		// Function to extract cookie
+		// Pass in: the whole cookie, the name of the cookie you want to find
+		// Return: the whole cookie that you want to find
+		// 		   e.g. "username=xxx@gmail.com"
         function accessCookie(cookieName, finder){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
-		//   console.log(allCookieArray);
           for(var i=0; i<allCookieArray.length; i++)
           {
 			var temp = allCookieArray[i].trim();
@@ -132,11 +124,11 @@
        	  }
         	return "";
         }
-        
+		
+		// Post Json data
+		// Redirect user to part 3 of registration
 		async function postData(serviceURL, file) { 
-			
-			console.log(file);
-
+			// console.log(file);
 			const response =
                  await fetch(
                    serviceURL, {   
@@ -145,14 +137,13 @@
                        body: file,
                     });
             data = await response.json();
-			console.log(data);
+			// console.log(data);
             if (response.ok){
-				// console.log(data);
                 window.location.replace("./v_register3.php");
             }
-            else {
-                console.log("die");
-            }
+            // else {
+            //     console.log("die");
+            // }
         }
 
 		$("#next").click(async() => {
@@ -160,9 +151,6 @@
             event.preventDefault()
 
 			var fd = new FormData(); 
-			// fd.append('image', img.src, "vendor_logo.png"); 
-			// console.log(document.getElementById("fileToUpload"));
-			// console.log(document.getElementById("myImg"));
 
 			myFile = document.getElementById("fileToUpload").files[0];
 			fd.append('image', myFile);
@@ -170,6 +158,7 @@
 			var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
 			var vendor_id = vendor_id_cookie.slice(10);
 
+			// post data to menu to store the vendor's image
 			var serviceURL = "http://localhost:85/upload/" + vendor_id;
 			postData(serviceURL, fd);
         });

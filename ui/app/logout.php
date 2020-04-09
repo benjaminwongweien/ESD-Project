@@ -3,10 +3,11 @@
     <script>
         sessionStorage.clear();
 
-        console.log(document.cookie);
+        // console.log(document.cookie);
         
             var cookies = document.cookie.split(";");
 
+            // loop through all the cookie, delete the cookie one by one
             for (var i = 0; i < cookies.length; i++) {
                     var cookie = cookies[i];
                     var eqPos = cookie.indexOf("=");

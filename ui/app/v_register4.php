@@ -1,11 +1,3 @@
-<?php 
-	// var_dump($_POST);
-	// var_dump($_POST['username']);
-	// $username = $_COOKIE['email'];
-
-	// var_dump($username);
-	?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,6 +96,10 @@
 <!--  -->
 	<script>
 
+		// Image upload function listens to any change to the upload button
+		// If there is a change,
+		// 		user has uploaded an image
+		// 		grab that image using querySelector
 		window.addEventListener('load', function() {
 			document.querySelector('input[type="file"]').addEventListener('change', function() {
 				if (this.files && this.files[0]) {
@@ -113,7 +109,10 @@
 			});
 		});
 
-		
+		// Function to extract cookie
+		// Pass in: the whole cookie, the name of the cookie you want to find
+		// Return: the whole cookie that you want to find
+		// 		   e.g. "username=xxx@gmail.com"
         function accessCookie(cookieName, finder){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
@@ -126,10 +125,12 @@
        	  }
         	return "";
         }
-        
+		
+		// Post Json data
+		// Redirect user back to to part vendor homepage
 		async function postData(serviceURL, file) { 
 			
-			console.log(file);
+			// console.log(file);
 
 			const response =
                  await fetch(
@@ -139,24 +140,20 @@
                        body: file,
                     });
             data = await response.json();
-			console.log(data);
+			// console.log(data);
             if (response.ok){
-				// console.log(data);
                 window.location.replace("./v_homepage.php");
             }
-            else {
-                console.log("die");
-            }
+            // else {
+            //     console.log("die");
+            // }
         }
 
 		$("#next").click(async() => {
             let isNext = confirm("You cannot return to the previous pages after submitting. Are you sure your details are correct?"); //true if OK is pressed
             event.preventDefault()
 
-			var fd = new FormData(); 
-			// fd.append('image', img.src, "vendor_logo.png"); 
-			// console.log(document.getElementById("fileToUpload"));
-			// console.log(document.getElementById("myImg"));
+			var fd = new FormData();
 
 			myFile = document.getElementById("fileToUpload").files[0];
 			fd.append('image', myFile);
@@ -164,6 +161,7 @@
 			var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
 			var vendor_id = vendor_id_cookie.slice(10);
 
+			// post data to menu to store the food image
 			var serviceURL = "http://localhost:85/upload/" + vendor_id;
 			postData(serviceURL, fd);
         });

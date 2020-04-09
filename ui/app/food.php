@@ -38,7 +38,6 @@
 			      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
 				          <li><a href="vendors.php">View All Vendors</a></li>
-				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
 							  <li><a href="./orders.php">Orders</a></li>
@@ -55,6 +54,10 @@
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
 						<?php
+
+							// Using Post, get all food information from menu
+							// Pass in: vendor_id
+							// Return: [food_description, food_id, food_image, food_label, food_name, food_price]
 							$postdata = json_encode(array(
 									'vendor_id' => $_GET["vendor_id"]
 								)
@@ -69,15 +72,11 @@
 							);
 							
 							$context  = stream_context_create($opts);
-							$all_food= json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);
-							// $vendors = json_decode(file_get_contents("http://host.docker.internal:85/all_vendor"), TRUE);
-							// $all_food = json_decode(file_get_contents("http://host.docker.internal:85/all_food"), TRUE);
-
-							// foreach ($all_food['vendors'] as $all_food) {
-								// if( $_GET["vendor_id"] == $vendor['vendor_id']) {?>
-									<h4 class='text-white text-uppercase'>Wide Network of Choice</h4>
-									<h1><?=$all_food['vendor_name']?></h1>
-									<p class='text-white'>Food delivery near you from a curated choice of local restaurants across Singapore.</p>
+							$all_food= json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);?>
+							
+							<h4 class='text-white text-uppercase'>Wide Network of Choice</h4>
+							<h1><?=$all_food['vendor_name']?></h1>
+							<p class='text-white'>Food delivery near you from a curated choice of local restaurants across Singapore.</p>
 						</div>
 					</div>
 				</div>
@@ -106,7 +105,6 @@
 													<textarea name='delivery_address' rows='2' cols='18'></textarea><br><br>
 													<div class='meta-text mt-30 text-center'>
 														<input value='1' min='1' style='width: 50px;' type='number' name='quantity'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<!-- Need to change -->
 														<input type='hidden' value='<?=$_COOKIE['email']?>' name='customer_id'>
 														<input type='hidden' value='<?=$all_food['vendor_id']?>' name='vendor_id'>
 														<input type='hidden' value='<?=$all_food['vendor_email']?>' name='vendor_email'>
@@ -131,34 +129,7 @@
 			<section class="team-area pt-100">
 				<div class="container">
 				</div>
-			</section> -->
-			<!-- Start Generic Area -->
-			<!-- <section class="about-generic-area section-gap">
-				<div class="container border-top-generic">
-					<h3 class="about-title mb-30">Elaboration about Generic Page</h3>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="img-text">
-								<img src="img/a.jpg" alt="" class="img-fluid float-left mr-20 mb-20">
-								<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-							</div>
-						</div>
-						<div class="col-lg-12">
-							<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-						</div>
-						<div class="col-lg-12">
-							<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-						</div>
-						<div class="col-md-12">
-							<div class="img-text">
-								<img src="img/a2.jpg" alt="" class="img-fluid float-left mr-20 mb-20">
-								<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section> -->
-			<!-- End Generic Start -->		
+			</section> 					
 
 			<!-- start footer Area -->		
 			<footer class="footer-area section-gap">
@@ -175,9 +146,6 @@
 						<div class="col-lg-4  col-md-6 col-sm-6">
 							<div class="single-footer-widget">
 								<h4 class="text-white">Contact Us</h4>
-								<!-- <p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
-								</p> -->
 								<p class="number">
 									012-6532-568-9746
 								</p>
@@ -197,9 +165,6 @@
 											<div style="position: absolute; left: -5000px;">
 												<input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="" type="text">
 											</div>
-									      <!--- <div class="input-group-btn">
-									        <button class="genric-btn"><span class="lnr lnr-arrow-right"></span></button>
-									      </div> -->
 									    </div>
 									      <div class="info mt-20"></div>									    
 									  </form>
@@ -210,8 +175,8 @@
 					</div>
 					<div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap">
 						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            		<p class="footer-text m-0">EaSy Delivery &copy; <script>document.write(new Date().getFullYear());</script>. All rights reserved | Powered by <a href="https://colorlib.com" target="_blank">Colorlib</a> <i class="fa fa-heart-o" aria-hidden="true"></i></p>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            			<p class="footer-text m-0">EaSy Delivery &copy; <script>document.write(new Date().getFullYear());</script>. All rights reserved | Powered by <a href="https://colorlib.com" target="_blank">Colorlib</a> <i class="fa fa-heart-o" aria-hidden="true"></i></p>
+            			<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 						<div class="footer-social d-flex align-items-center">
 							<a href="#"><i class="fa fa-facebook"></i></a>
 							<a href="#"><i class="fa fa-twitter"></i></a>
@@ -235,8 +200,6 @@
 			<script src="homepage_util/js/jquery.sticky.js"></script>
 			<script src="homepage_util/js/jquery.nice-select.min.js"></script>			
 			<script src="homepage_util/js/parallax.min.js"></script>	
-			<!-- <script src="homepage_util/js/waypoints.min.js"></script> -->
-			<!-- <script src="homepage_util/js/jquery.counterup.min.js"></script> -->
 			<script src="homepage_util/js/mail-script.js"></script>				
 			<script src="homepage_util/js/main.js"></script>	
 		</body>

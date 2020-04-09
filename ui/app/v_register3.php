@@ -1,11 +1,3 @@
-<?php 
-	// var_dump($_POST);
-	// var_dump($_POST['username']);
-	// $username = $_COOKIE['email'];
-
-	// var_dump($username);
-	?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,10 +113,13 @@
 	
 <!--  -->
 	<script>
+		// Function to extract cookie
+		// Pass in: the whole cookie, the name of the cookie you want to find
+		// Return: the whole cookie that you want to find
+		// 		   e.g. "username=xxx@gmail.com"
         function accessCookie(cookieName, finder){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
-		//   console.log(allCookieArray);
           for(var i=0; i<allCookieArray.length; i++)
           {
 			var temp = allCookieArray[i].trim();
@@ -132,8 +127,10 @@
             	return temp;
        	  }
         	return "";
-        }
-        
+		}
+		
+        // Post Json data
+		// Redirect user to part 4 of registration
 		async function postData(serviceURL, requestBody) {   
 			const response =
                  await fetch(
@@ -146,29 +143,30 @@
                     });
             data = await response.json();
             if (response.ok){
-				// console.log(data);
                 document.cookie = "food_id = " + data['data']['food_id'];
                 window.location.replace("./v_register4.php");
             }
-            else {
-                console.log("die");
-            }
+            // else {
+            //     console.log("die");
+            // }
         }
 
 		$("#next").click(async() => {
             let isNext = confirm("You cannot return to the previous pages after submitting. Are you sure your details are correct?"); //true if OK is pressed
             event.preventDefault()
 
+			// get the content ifrom the ID
             var food_name = document.getElementById("food_name").value;  
             var food_description = document.getElementById("food_description").value;
             var food_price = document.getElementById("food_price").value;
 
-			// console.log(document.cookie);
+			// retrieve username from cookie
 		    var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
 			var vendor_id = vendor_id_cookie.slice(10);
-			console.log(vendor_id);
+			// console.log(vendor_id);
             
             if (isNext == true) {
+				// post data to menu to add a food item
                 var serviceURL = "http://localhost:85/vendor/add";
                 var requestBody = {
                     vendor_id : vendor_id, 

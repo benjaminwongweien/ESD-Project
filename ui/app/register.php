@@ -1,11 +1,3 @@
-<?php 
-	// var_dump($_POST);
-	// var_dump($_POST['username']);
-	// $username = $_COOKIE['email'];
-
-	// var_dump($username);
-	?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,7 +104,7 @@
 	
 <!--  -->
 	<script>
-		console.log(document.cookie);
+		// console.log(document.cookie);
 		function accessCookie(cookieName){
           var name = cookieName + "=";
 		  var allCookieArray = document.cookie.split(';');
@@ -126,6 +118,7 @@
         	return "";
 		}
 
+		// Post user data to the database
 		async function postData(serviceURL, requestBody, user_type) {   
 			const response =
                  await fetch(
@@ -135,8 +128,8 @@
                            'Content-Type': 'application/json',
                        },
                        body: JSON.stringify(requestBody),
-                    });
-			// console.log("in Post Data");
+					});
+			// after adding, redirect user to the various homepage according to their inputted user type
 			if(user_type == "user"){
 				window.location.replace("./c_homepage.php");
 			}
@@ -153,7 +146,6 @@
 			event.preventDefault()
 		    var email_cookie = accessCookie(document.cookie);
 			var email = email_cookie.slice(6);
-			// console.log(email);
 			var id = null;
 
             var user_type = $("input:radio[name=user_type]:checked").val();
@@ -163,9 +155,7 @@
                 type: user_type, 
                 tid: id
             };
-			// console.log(requestBody);
-            // console.log("in button");
-            
+
         	postData(serviceURL, requestBody, user_type);
         });
 	</script>

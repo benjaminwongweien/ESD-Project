@@ -28,6 +28,10 @@
 			<link rel="stylesheet" href="homepage_util/css/bootstrap.css">
 			<link rel="stylesheet" href="homepage_util/css/main.css">
 			<?php
+
+				// Using Post, get vendor information from order_processing
+				// Pass in: customerID
+				// Return: username, user_type, chat_id
 				$postdata = json_encode(array(
 						'customerID' => $_COOKIE["email"]
 					)
@@ -55,7 +59,6 @@
 			      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
 				          <li><a href="vendors.php">View All Vendors</a></li>
-				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
 							  <li><a href="./orders.php">Order History</a></li>
@@ -102,7 +105,9 @@
 								$price = $customer['price'];
 								$deliveryAddress = $customer['delivery_address'];
 
-								// Post, get deliverer information
+								// Using Post, get vendor and food information from user
+								// Pass in: username
+								// Return: username, user_type, chat_id
 								$postdata = json_encode(array(
 									'username' => $delivererID
 									)
@@ -119,7 +124,9 @@
 								$context  = stream_context_create($opts);
 								$deliverer_info = json_decode(file_get_contents("http://host.docker.internal:88/username", false, $context), TRUE);
 								
-								// Post, get vendor and food information
+								// Using Post, get vendor and food information from menu
+								// Pass in: vendor_id , food_id
+								// Return: food_description, food_id, food_image, food_label, food_name, food_price
 								$postdata = json_encode(array(
 									'vendor_id' => $vendorID,
 									'food_id' => $foodID
@@ -199,9 +206,6 @@
 						<div class="col-lg-4  col-md-6 col-sm-6">
 							<div class="single-footer-widget">
 								<h4 class="text-white">Contact Us</h4>
-								<!-- <p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
-								</p> -->
 								<p class="number">
 									012-6532-568-9746
 								</p>
@@ -221,9 +225,6 @@
 											<div style="position: absolute; left: -5000px;">
 												<input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="" type="text">
 											</div>
-									      <!--- <div class="input-group-btn">
-									        <button class="genric-btn"><span class="lnr lnr-arrow-right"></span></button>
-									      </div> -->
 									    </div>
 									      <div class="info mt-20"></div>									    
 									  </form>
@@ -258,9 +259,7 @@
 			<script src="homepage_util/js/owl.carousel.min.js"></script>			
 			<script src="homepage_util/js/jquery.sticky.js"></script>
 			<script src="homepage_util/js/jquery.nice-select.min.js"></script>			
-			<script src="homepage_util/js/parallax.min.js"></script>	
-			<!-- <script src="homepage_util/js/waypoints.min.js"></script> -->
-			<!-- <script src="homepage_util/js/jquery.counterup.min.js"></script> -->
+			<script src="homepage_util/js/parallax.min.js"></script>
 			<script src="homepage_util/js/mail-script.js"></script>				
 			<script src="homepage_util/js/main.js"></script>	
 		</body>

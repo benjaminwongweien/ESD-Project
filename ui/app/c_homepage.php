@@ -30,10 +30,12 @@
 			<link rel="stylesheet" href="./homepage_util/css/main.css">
 
 			<script>
-				console.log(document.cookie);
+				// console.log(document.cookie);
 
+				// If user does not have cookie, it means they are not logged in
+				// redirect them back to the logout page to clear cookies again, JUST IN CASE
+				// then logout will bring them back to the index page
 				if (document.cookie == "") {
-					// redirect users to login page
 					window.location.replace("./logout.php");
 				}
 
@@ -52,7 +54,6 @@
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
 				          <li><a href="vendors.php">View All Vendors</a></li>
-				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
 							  <li><a href="./orders.php">Orders</a></li>
@@ -99,20 +100,23 @@
 					<div class="row justify-content-center">
 						<div class="active-realated-carusel">
 							<?php
+								// get list of food from recommendation
+								// return: [vendor_id, food_id, food_name, food_description, food_image, food_price, food_label, availability, listed]
 								$rec_food = json_decode(file_get_contents("http://host.docker.internal:89/recommendation?username={$_COOKIE['username']}"), TRUE);
-								foreach ($rec_food['food_list'] as $food) {
-									echo "
+								
+								foreach ($rec_food['food_list'] as $food) { ?>
 										<div class='row align-items-center'>
 											<div class='col-lg-6 rel-left'>
-												<h3>{$food['food_name']}</h3>
-												<p class='pt-30 pb-30'>{$food['food_description']}</p>
-												<p>Price: \${$food['food_price']}</p>
-												<a href='https://localhost/food.php?vendor_id={$food['vendor_id']}' class='genric-btn info-border circle'>Buy Now</a>
+												<h3><?=$food['food_name']?></h3>
+												<p class='pt-30 pb-30'><?=$food['food_description']?></p>
+												<p>Price: <?=$food['food_price']?></p>
+												<a href='https://localhost/food.php?vendor_id=<?$food['vendor_id']?>' class='genric-btn info-border circle'>Buy Now</a>
 											</div>
 											<div class='thumb' style='padding-left: 200px'>
-												<img class='img-fluid' style='border-radius: 15px; width:200px; height:200px' src='http://host.docker.internal:85/static/{$food['food_image']}' alt=''>
+												<img class='img-fluid' style='border-radius: 15px; width:200px; height:200px' src='http://host.docker.internal:85/static/<?=$food['food_image']?>' alt=''>
 											</div>
-										</div>";
+										</div>
+								<?php
 								}
 							?>					
 												
@@ -180,9 +184,6 @@
 						<div class="col-lg-4  col-md-6 col-sm-6">
 							<div class="single-footer-widget">
 								<h4 class="text-white">Contact Us</h4>
-								<!-- <p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
-								</p> -->
 								<p class="number">
 									63-74-350
 								</p>
@@ -191,9 +192,9 @@
 										
 					</div>
 					<div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap">
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            <p class="footer-text m-0">EaSy Delivery &copy; <script>document.write(new Date().getFullYear());</script>. All rights reserved | Powered by <a href="https://colorlib.com" target="_blank">Colorlib</a> <i class="fa fa-heart-o" aria-hidden="true"></i></p>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+						<p class="footer-text m-0">EaSy Delivery &copy; <script>document.write(new Date().getFullYear());</script>. All rights reserved | Powered by <a href="https://colorlib.com" target="_blank">Colorlib</a> <i class="fa fa-heart-o" aria-hidden="true"></i></p>
+						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 					</div>
 				</div>
 			</footer>	
@@ -219,15 +220,15 @@
 			<!-- FACEBOOK -->
 			<script>
 				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-				console.log('statusChangeCallback');
-				console.log(response);                   // The current login status of the person.	
+				// console.log('statusChangeCallback');
+				// console.log(response);                   // The current login status of the person.	
 				
-				if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-						console.log("Logged in as facebook");
-						console.log(document.cookie);
-					} else {                                 // Not logged into your webpage or we are unable to tell.
-						console.log("Not logged in as facebook")
-					}
+				// if (response.status === 'connected') {   // Logged into the webpage using Facebook.
+				// 		console.log("Logged in as facebook");
+				// 		console.log(document.cookie);
+				// 	} else {                                 // Logged in using Google
+				// 		console.log("Not logged in as facebook")
+				// 	}
 				}
 
 				function checkLoginState() {               // Called when a person is finished with the Login Button.
@@ -257,12 +258,13 @@
 				}(document, 'script', 'facebook-jssdk'));
 
 				
-				function logOut(){
-					// FB.logout(function(response) {
-						// statusChangeCallback(response);
-						// document.getElementById('logout').style.display = "none";
+				function logOut(){   // Facebook logout works differently, as such, you need to use the function
+					FB.logout(function(response) {
+						statusChangeCallback(response);
+						document.getElementById('logout').style.display = "none";
+						// redirect users to logout to remove the cookies stored in the console
 						window.location.replace("./logout.php");
-					// });
+					});
 				}
 			</script>
 		</body>

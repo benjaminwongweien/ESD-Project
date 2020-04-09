@@ -95,14 +95,14 @@
 	
 <!-- Check cookies -->
 	<script>
-		console.log(document.cookie);
+		// console.log(document.cookie);
 	</script>
 
 <!-- Facebook JS -->
 		<script>
 		function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-		console.log('statusChangeCallback');
-		console.log(response);                   // The current login status of the person.
+		// console.log('statusChangeCallback');
+		// console.log(response);                   // The current login status of the person.
 		if (response.status === 'connected') {   // Logged into your webpage and Facebook.
 			var url = '/me?fields=name,email';
       		FB.api(url, function(response) {
@@ -111,12 +111,12 @@
 				document.cookie = "email = " + response.email;
 				document.cookie = "login_type = " + "facebook";
 				document.cookie = "logout_button = <li><a href='#' onclick='logOut()'>Logout</a></li>";
-				console.log(document.cookie);
+				// console.log(document.cookie);
 
 				authentication(response.email);
 			});
 		} else {                                 // Not logged into your webpage or we are unable to tell.
-			console.log( 'Please log into this webpage.');
+			// console.log( 'Please log into this webpage.');
 		}
 		}
 
@@ -152,7 +152,7 @@
 		}(document, 'script', 'facebook-jssdk'));
 
 
-// /// ///  Google JS /// /// //
+		// /// ///  Google JS /// /// //
 		function onSignIn(googleUser) {
 			var profile = googleUser.getBasicProfile();
 			$(".g-signin2").css("display", "none");
@@ -167,18 +167,23 @@
 			
 		}
 		
+		// function to check if user exist in the database
+		// if does no exist, 
+		// 		redirect to register page to sign up
+		// else,
+		// 		redirect the user according to their user type
 		function authentication(email){
 			var email = email;
-			console.log(email); 
+			// console.log(email); 
 
 			$.getJSON("http://localhost:88/dump", function(data, status){
 				var items = [];
 				var user_type = "";
 				var exist = 0;
-				console.log(data["user"]);
+				// console.log(data["user"]);
 
 				for( var k in data["user"]){
-					console.log(data["user"][k]);
+					// console.log(data["user"][k]);
 					if ( email == data["user"][k]["username"]){
 						user_type = data["user"][k]["user_type"];
 						exist = 1;
@@ -189,7 +194,7 @@
 					window.location.replace("./register.php");
 				}
 				else{
-					// alert(user_type);
+					// redirect user according to their user type
 					if(user_type == "user"){
 						window.location.replace("./c_homepage.php");
 					}
