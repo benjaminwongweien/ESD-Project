@@ -135,37 +135,26 @@ def recommendation():
         
         if address:
             
-            address = address[-1]["delivery_address"]
-            
-            print(address)      
+            address = address[-1]["delivery_address"]      
             
             gmap_params = {
                 'address': address,
                 'key': API_KEY
             }
-
-            """ 
-            request to google Geocoding API 
-            
-            """ 
+ 
+            # request to google Geocoding API  
             gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
             gmap_data = gmap_request.json()
             user_position = gmap_data['results'][0]['geometry']['location']
 
             closest_dist = 999
 
-            """  
-            Calculate the Euclidean ditance from the longititude and latitude 
-            
-            """ 
+            # Calculate the Euclidean ditance from the longititude and latitude 
             for vendor in globals['vendors']:
                 dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
                         (user_position['lng'] - vendor['position']['lng']) ** 2) ** 0.5
             
-            """ 
-            Find the closet vendor by smallest Euclidean distance 
-            
-            """ 
+                # Find the closet vendor by smallest Euclidean distance 
                 if dist < closest_dist:
                     closest_dist = dist
                     closest_vendor = vendor
