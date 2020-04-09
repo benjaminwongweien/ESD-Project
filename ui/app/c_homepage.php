@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-	<html lang="zxx" class="no-js">
+	<html lang="en">
 	<head>
 		<!-- Mobile Specific Meta -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -30,7 +30,7 @@
 			<link rel="stylesheet" href="./homepage_util/css/main.css">
 
 			<script>
-				console.log(document.cookie);
+				// console.log(document.cookie);
 
 				// If user does not have cookie, it means they are not logged in
 				// redirect them back to the logout page to clear cookies again, JUST IN CASE
@@ -215,9 +215,27 @@
 			<script src="homepage_util/js/parallax.min.js"></script>	
 			<script src="homepage_util/js/mail-script.js"></script>	
 			<script src="homepage_util/js/main.js"></script>	
-
-			<!-- FACEBOOK -->
+			
 			<script>
+			// Function to extract cookie
+			// Pass in: the whole cookie, the name of the cookie you want to find
+			// Return: the whole cookie that you want to find
+			// 		   e.g. "username=xxx@gmail.com"
+			function accessCookie(cookieName, finder){
+			var name = cookieName + "=";
+			var allCookieArray = document.cookie.split(';');
+			//   console.log(allCookieArray);
+			for(var i=0; i<allCookieArray.length; i++)
+			{
+				var temp = allCookieArray[i].trim();
+				if (temp.includes(finder))
+					return temp;
+			}
+				return "";
+			}
+
+			// // FACEBOOK // //  
+			
 				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
 				// console.log('statusChangeCallback');
 				// console.log(response);                   // The current login status of the person.	
@@ -254,15 +272,32 @@
 				js.src = "https://connect.facebook.net/en_US/sdk.js";
 				fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
-				
-				function logOut(){   // Facebook logout works differently, as such, you need to use the function
-					FB.logout(function(response) {
-						statusChangeCallback(response);
-						document.getElementById('logout').style.display = "none";
-						// redirect users to logout to remove the cookies stored in the console
-						window.location.replace("./logout.php");
+
+				function gp_signOut() {
+					var auth2 = gapi.auth2.getAuthInstance();
+					auth2.signOut().then(function () {
+						// window.location.replace("./logout.php");
 					});
 				}
+				
+				function logOut(){   // Facebook logout works differently, as such, you need to use the function
+					login_type_cookie = accessCookie(document.cookie, "login_type"); 
+					login_type = login_type_cookie.slice(11);
+					console.log(login_type);
+
+					if (login_type == "facebook"){
+						FB.logout(function(response) {
+							statusChangeCallback(response);
+							document.getElementById('logout').style.display = "none";
+							window.location.replace("https://localhost/logout.php");
+						});
+					}
+					if (login_type == "google"){
+						gp_signOut();
+					}
+				}
+
+				
 			</script>
 		</body>
 	</html>

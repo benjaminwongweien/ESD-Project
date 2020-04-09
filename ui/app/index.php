@@ -30,7 +30,6 @@
 	<link rel="stylesheet" type="text/css" href="login_util/css/util.css">
 	<link rel="stylesheet" type="text/css" href="login_util/css/main.css">
 <!--===============================================================================================-->
-
 </head>
 <body>
 	
@@ -43,7 +42,7 @@
 					</span>
 						
 						<!-- default FB button -->
-						<a href="c_homepage.php" class="btn-face m-b-20" id="facebook_button">
+						<a href="#" class="btn-face m-b-20" id="facebook_button">
 							<div>
 								<i class="fa fa-facebook-official" style="position:relative;"></i>
 							</div>	
@@ -60,7 +59,8 @@
 						</div>	
 							Google
 						<div style="opacity:0;position:absolute;">
-							<div href="#" class="g-signin2" data-onsuccess="onSignIn" data-width="205" data-height="75"></div>  
+							<!-- <div href="#" class="g-signin2" data-onsuccess="onSignIn" data-width="205" data-height="75"></div>   -->
+							<div href="#" class="g-signin2" onclick="ClickLogin()" data-onsuccess="onSignIn" data-width="205" data-height="75"></div>  
 						</div>
 					</a>
 					<br>
@@ -153,18 +153,37 @@
 
 
 		// /// ///  Google JS /// /// //
-		function onSignIn(googleUser) {
-			var profile = googleUser.getBasicProfile();
-			$(".g-signin2").css("display", "none");
-			$(".data").css("display", "block");
-			document.cookie = "fb_status = " + "null";
-			document.cookie = "name = " + profile.getName();
-			document.cookie = "email = " + profile.getEmail();
-			document.cookie = "login_type = " + "google";
-			document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
+		// function onSignIn(googleUser) {
+		// 	var profile = googleUser.getBasicProfile();
+		// 	$(".g-signin2").css("display", "none");
+		// 	$(".data").css("display", "block");
+		// 	document.cookie = "fb_status = " + "null";
+		// 	document.cookie = "name = " + profile.getName();
+		// 	document.cookie = "email = " + profile.getEmail();
+		// 	document.cookie = "login_type = " + "google";
+		// 	document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
 
-			authentication(profile.getEmail());
-			
+			// authentication(profile.getEmail());
+		// }
+		var clicked = false;
+		function ClickLogin()
+		{
+			clicked=true;
+		}
+
+		function onSignIn(googleUser) {
+			if (clicked) {
+				profile = googleUser.getBasicProfile();    
+				$(".g-signin2").css("display", "none");
+				$(".data").css("display", "block");
+				document.cookie = "fb_status = " + "null";
+				document.cookie = "name = " + profile.getName();
+				document.cookie = "email = " + profile.getEmail();
+				document.cookie = "login_type = " + "google";
+				document.cookie = "logout_button = <li><a href='https://localhost/logout.php'>Logout</a></li>";
+
+				authentication(profile.getEmail());
+			}
 		}
 		
 		// function to check if user exist in the database
@@ -210,6 +229,16 @@
 				
 			});
 
+		}
+
+		sessionStorage.clear();
+		// loop through all the cookie, delete the cookie one by one
+		var cookies = document.cookie.split(";");
+		for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i];
+                    var eqPos = cookie.indexOf("=");
+                    var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
 		}
 	</script>
 
