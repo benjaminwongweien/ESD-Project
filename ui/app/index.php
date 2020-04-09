@@ -176,7 +176,7 @@
 			var email = email;
 			// console.log(email); 
 
-			$.getJSON("http://localhost:88/dump", function(data, status){
+			$.getJSON("http://localhost:88/all", function(data, status){
 				var items = [];
 				var user_type = "";
 				var exist = 0;
