@@ -119,7 +119,7 @@ def error(e):
 
 #####################################      GET ENDPOINT     ###########################################
 
-@app.route("/dump", methods=["GET"])
+#@app.route("/dump", methods=["GET"])
 def dump():
       
   """ 

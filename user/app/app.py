@@ -87,7 +87,7 @@ def error(e):
 #       ROUTES       #
 ######################
 
-@app.route("/dump", methods=["GET"])
+#@app.route("/dump", methods=["GET"])
 def dump():
     
     """ 
@@ -152,7 +152,7 @@ def user_type():
     
     """ 
     
-    POST Endpoint:
+    POST Endpoint :
         Get all the user's information based on usertype 
     
     """
