@@ -287,6 +287,51 @@ def purchase():
     
   else:
     return jsonify(FORMAT_ERROR), 400
+
+
+@app.route("/get_food", methods=["POST"])
+def food_name():
+  """ 
+  
+  Search for a food's information
+  
+  """
+  if request.is_json:
+    food_id = request.json.get("food_id")
+    if food_id:
+      food = Food.query.filter_by(food_id=food_id).first()
+      if food:
+        output = {"status": "success"}
+        output.update({"food": food.json(2)})
+        return jsonify(output), 200 
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
+    else:
+      return jsonify(INCOMPLETE_ERROR), 400
+  else:
+    return jsonify(FORMAT_ERROR), 400
+  
+@app.route("/location", methods=["POST"])
+def vendor_location():
+  """ 
+  
+  Search for a food's Location 
+  
+  """
+  if request.is_json:
+    vendor_email = request.json.get("vendor_email")
+    if vendor_email:
+      vendor = Vendor.query.filter_by(vendor_email=vendor_email).first()
+      if vendor:
+        output = {"status": "success"}
+        output.update({"vendor_location": vendor.json(4)})
+        return jsonify(output), 200 
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
+    else:
+      return jsonify(INCOMPLETE_ERROR), 400
+  else:
+    return jsonify(FORMAT_ERROR), 400
     
 #######################
 #    VENDOR UI API    #
@@ -598,41 +643,5 @@ def delete():
     else:
       return jsonify(INCOMPLETE_ERROR), 400
     
-  else:
-    return jsonify(FORMAT_ERROR), 400
-
-@app.route("/get_food", methods=["POST"])
-def food_name():
-  """ search for a food's information """
-  if request.is_json:
-    food_id = request.json.get("food_id")
-    if food_id:
-      food = Food.query.filter_by(food_id=food_id).first()
-      if food:
-        output = {"status": "success"}
-        output.update({"food": food.json(2)})
-        return jsonify(output), 200 
-      else:
-        return jsonify(NON_EXIST_ERROR), 400
-    else:
-      return jsonify(INCOMPLETE_ERROR), 400
-  else:
-    return jsonify(FORMAT_ERROR), 400
-  
-@app.route("/location", methods=["POST"])
-def vendor_location():
-  """ search for a food's information """
-  if request.is_json:
-    vendor_email = request.json.get("vendor_email")
-    if vendor_email:
-      vendor = Vendor.query.filter_by(vendor_email=vendor_email).first()
-      if vendor:
-        output = {"status": "success"}
-        output.update({"vendor_location": vendor.json(4)})
-        return jsonify(output), 200 
-      else:
-        return jsonify(NON_EXIST_ERROR), 400
-    else:
-      return jsonify(INCOMPLETE_ERROR), 400
   else:
     return jsonify(FORMAT_ERROR), 400

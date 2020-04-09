@@ -12,21 +12,21 @@ services:
     crm:
         build:
             context: ./app
-            dockerfile: DOCKERFILE_CRM
-        container_name: crm_microservice
+            dockerfile: DOCKERFILE_USER
+        container_name: user_microservice
         # ports:
         #     - "8000:8000"
         networks:
             - network
         environment: 
-            - "URI=postgresql://crmdb:crmdbpassword@crm_db:5432/crm"
+            - "URI=postgresql://userdb:userdbpassword@user_db:5432/crm"
         # volumes:
         #     -
         command: gunicorn -b 0.0.0.0:8000 app:app
         depends_on: 
-            - crm_db
+            - user_db
     
-    crm_db:
+    user_db:
         image: postgres:12.2-alpine
         container_name: crm_postgres_database
         # ports:
@@ -34,15 +34,15 @@ services:
         networks:
             - network
         environment:
-            POSTGRES_DB: crm
-            POSTGRES_USER: crmdb
-            POSTGRES_PASSWORD: crmdbpassword
+            POSTGRES_DB: user
+            POSTGRES_USER: userdb
+            POSTGRES_PASSWORD: userdbpassword
         volumes:
             - ./postgres:/docker-entrypoint-initdb.d/
         # command:
         # depends_on: 
     
-    crm_nginx:
+    user_nginx:
         image: nginx:1.17-alpine
         container_name: crm_nginx
         ports:
@@ -55,7 +55,7 @@ services:
             - "./nginx:/etc/nginx/conf.d"  
         # command:  
         depends_on: 
-            - crm
+            - user
     
 networks:
     network: 
