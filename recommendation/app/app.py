@@ -43,6 +43,11 @@ CORS(app)
 
 @app.before_first_request
 def before_first_request_func():
+    """
+    
+    executes before the first request and populates globals
+    
+    """
     # prepare vendor
     menu_request = requests.get(url=VENDOR_URL)
     vendors = menu_request.json()['vendors']
@@ -92,11 +97,15 @@ def vendor_pos():
 #   RECOMMENDATION API   #
 ##########################
 
-@app.route("/all", methods=["GET"])
+#@app.route("/all", methods=["GET"])
 def get_all():
+    """
+    
+    debugging purposes
+    
+    """
     order_hist_request = requests.get(  
         url=ORDER_URL_ALL
-        # json={"customerID": username}
     )
     
     order_hist_data = order_hist_request.json()
