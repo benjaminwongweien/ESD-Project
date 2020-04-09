@@ -110,7 +110,7 @@
 												<h3><?=$food['food_name']?></h3>
 												<p class='pt-30 pb-30'><?=$food['food_description']?></p>
 												<p>Price: <?=$food['food_price']?></p>
-												<a href='https://localhost/food.php?vendor_id=<?$food['vendor_id']?>' class='genric-btn info-border circle'>Buy Now</a>
+												<a href='https://localhost/food.php?vendor_id=<?=$food['vendor_id']?>' class='genric-btn info-border circle'>Buy Now</a>
 											</div>
 											<div class='thumb' style='padding-left: 200px'>
 												<img class='img-fluid' style='border-radius: 15px; width:200px; height:200px' src='http://host.docker.internal:85/static/<?=$food['food_image']?>' alt=''>

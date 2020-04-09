@@ -306,6 +306,34 @@ def purchase():
   else:
     return jsonify(FORMAT_ERROR), 400
 
+@app.route("/search/food/email", methods=["POST"])
+def orderhistory():
+  """ 
+  
+  POST Endpoint :
+  Search for a vendor's food information using Vendor Email
+  
+  """
+  if request.is_json:
+    vendor_email, food_id = request.json.get('vendor_email'), request.json.get('food_id')
+    
+    if vendor_email and food_id:
+      vendor = Vendor.query.filter_by(vendor_email=vendor_email).first()
+      food = Food.query.filter_by(vendor_id=vendor.vendor_id,food_id=food_id,availability=True,listed=True).first()
+      
+      if food:
+        output = {"status": "success"}
+        output.update({"food": food.json(0,1,2,3,4,5,6)})
+        return jsonify(output), 200 
+      
+      else:
+        return jsonify(NON_EXIST_ERROR), 400
+      
+    else:
+      return jsonify(INCOMPLETE_ERROR), 400
+    
+  else:
+    return jsonify(FORMAT_ERROR), 400
 
 @app.route("/get_food", methods=["POST"])
 def food_name():
@@ -335,7 +363,7 @@ def vendor_location():
   """ 
   
   POST Endpoint :
-  Search for a food's Location 
+  Search for a Vendor's Location 
   
   """
   if request.is_json:
