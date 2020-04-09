@@ -48,7 +48,7 @@
 						</span>
 					</div>
 					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="food_name" id="food_name" placeholder="Name of Shop">
+						<input class="input100" type="text" name="food_name" id="food_name" placeholder="Name of Food">
 						<span class="focus-input100"></span>
                     </div>
                     
