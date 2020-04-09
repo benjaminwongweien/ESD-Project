@@ -74,7 +74,7 @@
 				<div class="container">
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
-							<h4 class="meta-text mt-30 text-center">View History</h4>
+							<h4 class="text-white text-uppercase">View History</h4>
 							<h1>
 								Orders
 							</h1>

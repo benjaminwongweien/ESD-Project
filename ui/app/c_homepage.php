@@ -243,7 +243,6 @@
 					version    : 'v6.0'           // Use this Graph API version for this call.
 				});
 
-
 				FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
 					statusChangeCallback(response);        // Returns the login status.
 				});
@@ -255,7 +254,6 @@
 				js.src = "https://connect.facebook.net/en_US/sdk.js";
 				fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
-
 				
 				function logOut(){   // Facebook logout works differently, as such, you need to use the function
 					FB.logout(function(response) {

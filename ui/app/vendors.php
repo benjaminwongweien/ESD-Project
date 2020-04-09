@@ -43,12 +43,11 @@
 		    <div class="container">
 		    	<div class="row align-items-center justify-content-between d-flex">
 			      <div id="logo">
-			        <a href="index.php"><img src="homepage_util/img/logo.png" alt="" title="" /></a>
+			        <a href="c_homepage.php"><img src="homepage_util/img/logo.png" alt="" title="" /></a>
 			      </div>
 			      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
 				          <li><a href="vendors.php">View All Vendors</a></li>
-				          <!-- <li><a href="orders.php">Orders</a></li> -->
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
 							  <li><a href="./orders.php">Orders</a></li>
@@ -64,13 +63,13 @@
 				<div class="container">
 					<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
-						<h4 class="text-white text-uppercase">Wide Network of Choices</h4>
-						<h1>
-							Vendors
-						</h1>
-						<p class="text-white">
-							Food delivery near you from a curated choice of local restaurants across Singapore.
-						</p>
+							<h4 class="text-white text-uppercase">Wide Network of Choices</h4>
+							<h1>
+								Vendors
+							</h1>
+							<p class="text-white">
+								Food delivery near you from a curated choice of local restaurants across Singapore.
+							</p>
 						</div>
 					</div>
 				</div>

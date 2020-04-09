@@ -69,7 +69,7 @@
 							<p class="text-white">
 								We bring you closer to your customers
 							</p>
-							<a href="v_register.php" class="primary-btn header-btn text-uppercase">Let's get started</a>
+							<a href="v_register1.php" class="primary-btn header-btn text-uppercase">Let's get started</a>
 						</div>			
 						
 						<?php

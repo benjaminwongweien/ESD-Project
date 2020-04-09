@@ -3,7 +3,7 @@
     <script>
         sessionStorage.clear();
 
-        // console.log(document.cookie);
+        console.log(document.cookie);
         
             var cookies = document.cookie.split(";");
 
