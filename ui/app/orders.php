@@ -74,7 +74,7 @@
 				<div class="container">
 				<div class="row fullscreen d-flex align-items-center justify-content-start">
 						<div class="banner-content col-lg-8 col-md-12">
-							<h4 class="meta-text mt-30 text-center">View History</h4>
+							<h2 class="meta-text mt-30 text-center">View History</h2>
 							<h1>
 								Orders
 							</h1>
@@ -147,9 +147,6 @@
 								if ($customer['customerID'] == $_COOKIE['email']){
 									?>
 									<table border="1">
-										<tr >
-											<th colspan="2"><h4 class='meta-text mt-30 text-center'>Order ID: <?=$customer['orderID']?></h4></th>
-										</tr>
 										<tr>
 											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
 										</tr>

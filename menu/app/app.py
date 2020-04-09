@@ -318,7 +318,8 @@ def orderhistory():
     vendor_email, food_id = request.json.get('vendor_email'), request.json.get('food_id')
     
     if vendor_email and food_id:
-      food = Food.query.filter_by(vendor_email=vendor_email,food_id=food_id,availability=True,listed=True).first()
+      vendor = Vendor.query.filter_by(vendor_email=vendor_email).first()
+      food = Food.query.filter_by(vendor_id=vendor.vendor_id,food_id=food_id,availability=True,listed=True).first()
       
       if food:
         output = {"status": "success"}
@@ -362,7 +363,7 @@ def vendor_location():
   """ 
   
   POST Endpoint :
-  Search for a food's Location 
+  Search for a Vendor's Location 
   
   """
   if request.is_json:

@@ -120,7 +120,7 @@
 							// Pass in: vendor_id , food_id
 							// Return: food_description, food_id, food_image, food_label, food_name, food_price
 							$postdata = json_encode(array(
-								'vendor_id' => $vendorID,
+								'vendor_email' => $vendorID,
 								'food_id' => $foodID
 								)
 							);
@@ -134,14 +134,14 @@
 							);
 							
 							$context  = stream_context_create($opts);
-							$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food", false, $context), TRUE);
+							$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food/email", false, $context), TRUE);
 							
 							// Using Post, get vendor information from menu
 							// Pass in: vendor_id
 							// Return: food_list [food_description, food_id, food_image, food_label, food_name, food_price],
 							// 		   status, vendor_description, vendor_email, vendor_id, vendor_image, vendor_location, vendor_name
 							$postdata = json_encode(array(
-								'vendor_id' => $vendorID
+								'vendor_email' => $vendorID
 								)
 							);
 			
@@ -154,9 +154,9 @@
 							);
 							
 							$context  = stream_context_create($opts);
-							$vendor_info = json_decode(file_get_contents("http://host.docker.internal:85/search/vendor", false, $context), TRUE);
+							$vendor_info = json_decode(file_get_contents("http://host.docker.internal:85/location", false, $context), TRUE);
 							
-							$vendorAddress = $vendor_info['vendor_location'];
+							$vendorAddress = $vendor_info['vendor_location']['vendor_location'];
 							$food_name = $food_info['food']['food_name'];
 							?>
 							
@@ -165,9 +165,6 @@
 									<div class="thumb">
 									</div>
 										<table border="1">
-											<tr >
-												<th colspan="2"><h4 class='meta-text mt-30 text-center'>Order ID: <?=$orderID?></h4></th>
-											</tr>
 											<tr>
 												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
 											</tr>
