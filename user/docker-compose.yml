@@ -19,7 +19,7 @@ services:
         networks:
             - network
         environment: 
-            - "URI=postgresql://userdb:userdbpassword@user_db:5432/user"
+            - "URI=postgresql://userms:usermspassword@user_db:5432/userdb"
         # volumes:
         #     -
         command: gunicorn -b 0.0.0.0:8000 app:app
@@ -34,9 +34,9 @@ services:
         networks:
             - network
         environment:
-            POSTGRES_DB: user
-            POSTGRES_USER: userdb
-            POSTGRES_PASSWORD: userdbpassword
+            POSTGRES_DB: userdb
+            POSTGRES_USER: userms
+            POSTGRES_PASSWORD: usermspassword
         volumes:
             - ./postgres:/docker-entrypoint-initdb.d/
         # command:
