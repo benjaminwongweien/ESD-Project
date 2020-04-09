@@ -46,7 +46,7 @@ ALTER TABLE ONLY public."user"
 --
 
 COPY public."user" (username, user_type, chat_id) FROM stdin;
-0	driver \N
+0	driver	\N
 user@user.com	user	\N
 driver@driver.com	driver	\N
 vendor@vendor.com	vendor	\N

@@ -509,7 +509,7 @@ def upload_vendor(vendor_id):
     return jsonify(INCOMPLETE_ERROR), 400
   
   file = request.files["image"]
-  vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({f"vendor_image": "vendor/{vendor_id}"})
+  vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({"vendor_image": f"vendor/{vendor_id}"})
   
   if not vendor:
     return jsonify(NON_EXIST_ERROR), 400

@@ -1,0 +1,8 @@
+start cmd /k "cd %__CD__%ui && docker-compose down"
+start cmd /k "cd %__CD__%order_processing && docker-compose down"
+start cmd /k "cd %__CD__%user && docker-compose down"
+start cmd /k "cd %__CD__%menu && docker-compose down"
+start cmd /k "cd %__CD__%recommendation && docker-compose down"
+start cmd /k "cd %__CD__%rabbitmq && docker-compose down"
+start cmd /k "cd %__CD__%notification && docker-compose down"
+start cmd /k "cd %__CD__%payment_facilitation && docker-compose down"
