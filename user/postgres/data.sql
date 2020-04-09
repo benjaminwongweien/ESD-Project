@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: crmdb
+-- Name: user; Type: TABLE; Schema: public; Owner: userms
 --
 
 CREATE TABLE public."user" (
@@ -31,10 +31,10 @@ CREATE TABLE public."user" (
 );
 
 
-ALTER TABLE public."user" OWNER TO crmdb;
+ALTER TABLE public."user" OWNER TO userms;
 
 --
--- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: crmdb
+-- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: userms
 --
 
 ALTER TABLE ONLY public."user"
@@ -42,7 +42,7 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: crmdb
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: userms
 --
 
 COPY public."user" (username, user_type, chat_id) FROM stdin;
