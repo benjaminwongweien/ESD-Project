@@ -245,8 +245,27 @@
 			<script src="homepage_util/js/main.js"></script>	
 			<script src="homepage_util/js/logout_script.js"></script>	
 
-			<!-- FACEBOOK -->
+			
 			<script>
+				// Function to extract cookie
+				// Pass in: the whole cookie, the name of the cookie you want to find
+				// Return: the whole cookie that you want to find
+				// 		   e.g. "username=xxx@gmail.com"
+				function accessCookie(cookieName, finder){
+				var name = cookieName + "=";
+				var allCookieArray = document.cookie.split(';');
+				//   console.log(allCookieArray);
+				for(var i=0; i<allCookieArray.length; i++)
+				{
+					var temp = allCookieArray[i].trim();
+					if (temp.includes(finder))
+						return temp;
+				}
+					return "";
+				}
+
+
+				// // Facebook // // 
 				function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
 				// console.log('statusChangeCallback');
 				// console.log(response);                   // The current login status of the person.	
