@@ -43,11 +43,13 @@ CORS(app)
 
 @app.before_first_request
 def before_first_request_func():
-    """
-    
-    executes before the first request and populates globals
     
     """
+    
+    Executes before the first request and populates globals
+    
+    """
+    
     # prepare vendor
     menu_request = requests.get(url=VENDOR_URL)
     vendors = menu_request.json()['vendors']
@@ -67,6 +69,7 @@ def before_first_request_func():
     globals['vendors'] = vendors
 
     """ 
+    
     prepare food menu 
     
     """ 
@@ -91,6 +94,12 @@ def error(e):
     
 @app.route("/vendor_pos", methods=["GET"])
 def vendor_pos():
+    """
+    
+    GET Endpoint :
+    Jsonify vendor list in Recommendation Microservice
+    
+    """
     return jsonify(globals['vendors']), 200
 
 ##########################
@@ -99,11 +108,14 @@ def vendor_pos():
 
 #@app.route("/all", methods=["GET"])
 def get_all():
+    
     """
     
+    GET Endpoint :
     debugging purposes
     
     """
+    
     order_hist_request = requests.get(  
         url=ORDER_URL_ALL
     )
@@ -113,10 +125,14 @@ def get_all():
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
+    
     """ 
+    
+    GET Endpoint :
     get the username from the UI request 
     
     """ 
+    
     username = request.args.get('username')
     
     closest_vendor = {}

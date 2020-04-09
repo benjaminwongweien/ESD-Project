@@ -81,7 +81,13 @@ def is_float(s):
 #####################
 
 def create_app(uri):
-  """ Creates and starts the App with all the required settings """
+  
+  """ 
+  
+  Creates and starts the App with all the required settings 
+  
+  """
+  
   app = Flask(__name__)
   CORS(app)
   app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -110,6 +116,11 @@ app.app_context().push() # https://flask-sqlalchemy.palletsprojects.com/en/2.x/c
 @app.errorhandler(503)
 @app.errorhandler(504)
 def error(e):
+      
+  """
+  Error Handling Functions
+  """
+  
   return jsonify({"status": "error",
                   "error" : e.description}), e.code
 
@@ -123,7 +134,7 @@ def error(e):
 def dump():
       
   """ 
-  
+  GET Endpoint :
   Dumps all the Table Information -> Debug Purposes 
   
   """
@@ -138,6 +149,7 @@ def all_vendors():
       
   """ 
   
+  GET Endpoint :
   Returns JSON of all Vendors 
   
   """
@@ -152,6 +164,7 @@ def all_food():
       
   """
   
+  GET Endpoint :
   Returns JSON of all Available Food 
   
   """
@@ -169,6 +182,8 @@ def all_food():
 def menu():
       
   """ 
+
+    GET Endpoint :
     Obtains the FULL Menu
   
     Structure:
@@ -217,6 +232,7 @@ def staticfiles(file_name):
       
   """ 
   
+  GET Endpoint :
   Returns an image in static folder 
   
   """
@@ -233,6 +249,7 @@ def shopfront():
       
   """ 
   
+  POST Endpoint :
   Search for a vendor's shopfront
   
   """
@@ -265,6 +282,7 @@ def shopfront():
 def purchase():
   """ 
   
+  POST Endpoint :
   Search for a vendor's food information 
   
   """
@@ -293,6 +311,7 @@ def purchase():
 def food_name():
   """ 
   
+  POST Endpoint :
   Search for a food's information
   
   """
@@ -315,6 +334,7 @@ def food_name():
 def vendor_location():
   """ 
   
+  POST Endpoint :
   Search for a food's Location 
   
   """
@@ -341,6 +361,7 @@ def register_info():
       
   """ 
   
+  POST Endpoint :
   Registeres a new vendor with a menu 
   
   """
@@ -373,53 +394,13 @@ def register_info():
   else:
     return jsonify(FORMAT_ERROR), 400  
 
-@app.route("/update_info/<string:vendor_id>", methods=["PUT"])
-def register(vendor_id):
-      
-  """ 
-  
-  Updates new vendor information 
-  
-  """
-  
-  if request.is_json:
-        
-    vendor_name        = request.json.get('vendor_name')
-    vendor_description = request.json.get('vendor_description')
-    vendor_location    = request.json.get('vendor_location')
-    
-    if all([vendor_name,vendor_description,vendor_location]):    
-       
-      if all([len(var) <= 80 for var in [vendor_name,vendor_location]]): 
-        
-        try:
-          vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({"vendor_name": vendor_name,
-                                                                      "vendor_description": vendor_description,
-                                                                      "vendor_location": vendor_location})
-          if vendor:
-            
-            db.session.commit()
-            return jsonify(UPLOAD_SUCCESS), 200
-          
-          else:
-            return jsonify(NON_EXIST_ERROR), 400
-        
-        except:
-          return jsonify(DATABASE_ERROR), 503
-      
-      else:
-        return jsonify(BAD_REQUEST), 400
-    
-    else:
-      return jsonify(INCOMPLETE_ERROR), 400
-  
-  else:
-    return jsonify(FORMAT_ERROR), 400 
+
 
 @app.route("/vendor/add", methods=["POST"])
 def add():
   """ 
   
+  POST Endpoint :
   Allows a vendor to add an item to the menu 
   
   """
@@ -461,6 +442,7 @@ def upload_menu(vendor_id,food_id):
       
   """ 
   
+  POST Endpoint :
   Upload a food image in static folder 
   
   """
@@ -488,6 +470,7 @@ def upload_vendor(vendor_id):
   
   """ 
   
+  POST Endpoint :
   Upload a vendor_image in static folder 
   
   """
@@ -515,6 +498,7 @@ def update():
       
   """ 
   
+  PUT Endpoint :
   Allows a vendor to update an item on the menu 
   
   """
@@ -550,12 +534,58 @@ def update():
       return jsonify(INCOMPLETE_ERROR), 400
   else:
     return jsonify(FORMAT_ERROR), 400
+  
+
+@app.route("/update_info/<string:vendor_id>", methods=["PUT"])
+def register(vendor_id):
+      
+  """ 
+  
+  PUT Endpoint :
+  Updates new vendor information 
+  
+  """
+  
+  if request.is_json:
+        
+    vendor_name        = request.json.get('vendor_name')
+    vendor_description = request.json.get('vendor_description')
+    vendor_location    = request.json.get('vendor_location')
+    
+    if all([vendor_name,vendor_description,vendor_location]):    
+       
+      if all([len(var) <= 80 for var in [vendor_name,vendor_location]]): 
+        
+        try:
+          vendor = Vendor.query.filter_by(vendor_id=vendor_id).update({"vendor_name": vendor_name,
+                                                                      "vendor_description": vendor_description,
+                                                                      "vendor_location": vendor_location})
+          if vendor:
+            
+            db.session.commit()
+            return jsonify(UPLOAD_SUCCESS), 200
+          
+          else:
+            return jsonify(NON_EXIST_ERROR), 400
+        
+        except:
+          return jsonify(DATABASE_ERROR), 503
+      
+      else:
+        return jsonify(BAD_REQUEST), 400
+    
+    else:
+      return jsonify(INCOMPLETE_ERROR), 400
+  
+  else:
+    return jsonify(FORMAT_ERROR), 400   
 
 @app.route("/vendor/take_off", methods=["PUT"])
 def take_off():
       
   """ 
   
+  PUT Endpoint :
   Allows a vendor to take an item off the menu 
   
   """
@@ -587,6 +617,7 @@ def put_up():
   
   """ 
   
+  PUT Endpoint :
   Allows a Vendor to take an item off the menu 
   
   """
@@ -620,6 +651,7 @@ def delete():
       
   """ 
   
+  DELETE Endpoint :
   Allows a Vendor to delete an item from the menu 
   
   """
