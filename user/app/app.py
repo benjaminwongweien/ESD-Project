@@ -87,13 +87,13 @@ def error(e):
 #       ROUTES       #
 ######################
 
-#@app.route("/dump", methods=["GET"])
+@app.route("/all", methods=["GET"])
 def dump():
     
     """ 
   
     GET Endpoint :
-        Dumps all the Table Information -> Debug Purposes 
+        Gets User Data 
   
     """
   
