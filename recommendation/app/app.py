@@ -98,8 +98,7 @@ def get_all():
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
-    # uncomment when order api is working
-    # get the username from the UI
+    # get the username from the UI request
     username = request.args.get('username')
     
     closest_vendor = {}
@@ -127,17 +126,19 @@ def recommendation():
                 'key': API_KEY
             }
 
-            # request from google API
+            # request to google Geocoding API
             gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
             gmap_data = gmap_request.json()
             user_position = gmap_data['results'][0]['geometry']['location']
 
             closest_dist = 999
-            
+
+            # Calculate the Euclidean ditance from the longititude and latitude 
             for vendor in globals['vendors']:
                 dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
                         (user_position['lng'] - vendor['position']['lng']) ** 2) ** 0.5
-                
+            
+            # find the closet vendor by smallest Euclidean distance 
                 if dist < closest_dist:
                     closest_dist = dist
                     closest_vendor = vendor
