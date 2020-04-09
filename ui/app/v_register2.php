@@ -139,7 +139,7 @@
             data = await response.json();
 			// console.log(data);
             if (response.ok){
-                window.location.replace("./v_register3.php");
+                window.location.replace("https://localhost/v_register3.php");
             }
             // else {
             //     console.log("die");

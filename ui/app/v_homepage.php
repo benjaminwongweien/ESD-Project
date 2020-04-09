@@ -35,7 +35,7 @@
 				// redirect them back to the logout page to clear cookies again, JUST IN CASE
 				// then logout will bring them back to the index page
 				if (document.cookie == "") {
-					window.location.replace("./logout.php");
+					window.location.replace("https://localhost/logout.php");
 				}
 
 			</script>
@@ -225,11 +225,10 @@
 				fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 
-				
 				function gp_signOut() {
 					var auth2 = gapi.auth2.getAuthInstance();
 					auth2.signOut().then(function () {
-						// window.location.replace("./logout.php");
+						window.location.replace("https://localhost/logout.php");
 					});
 				}
 				

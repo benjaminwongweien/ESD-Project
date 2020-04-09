@@ -33,7 +33,7 @@
 
 				if (document.cookie == "") {
 					// redirect users to login page
-					window.location.replace("./logout.php");
+					window.location.replace("https://localhost/logout.php");
 				}
 			</script>
 
@@ -50,7 +50,7 @@
 				          <li><a href="vendors.php">View All Vendors</a></li>
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
-							  <li><a href="./orders.php">Orders</a></li>
+							  <li><a href="https://localhost/orders.php">Orders</a></li>
 							  <?php echo $_COOKIE['logout_button'] ?>
 				            </ul>
 				          </li>

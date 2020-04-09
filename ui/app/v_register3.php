@@ -144,7 +144,7 @@
             data = await response.json();
             if (response.ok){
                 document.cookie = "food_id = " + data['data']['food_id'];
-                window.location.replace("./v_register4.php");
+                window.location.replace("https://localhost/v_register4.php");
             }
             // else {
             //     console.log("die");

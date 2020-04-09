@@ -142,7 +142,7 @@
             data = await response.json();
 			// console.log(data);
             if (response.ok){
-                window.location.replace("./v_homepage.php");
+                window.location.replace("https://localhost/v_homepage.php");
             }
             // else {
             //     console.log("die");

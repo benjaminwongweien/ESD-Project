@@ -48,7 +48,9 @@
 							</div>	
 							Facebook
 							<div style="opacity:0;position:absolute;">
-								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today</fb:login-button>
+								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today!!</fb:login-button>
+								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today!!</fb:login-button>
+								<fb:login-button size='large' scope="public_profile,email" onlogin="checkLoginState();">Login with Facebook Today!!</fb:login-button>
 							</div>
 						</a>
 					
@@ -153,18 +155,6 @@
 
 
 		// /// ///  Google JS /// /// //
-		// function onSignIn(googleUser) {
-		// 	var profile = googleUser.getBasicProfile();
-		// 	$(".g-signin2").css("display", "none");
-		// 	$(".data").css("display", "block");
-		// 	document.cookie = "fb_status = " + "null";
-		// 	document.cookie = "name = " + profile.getName();
-		// 	document.cookie = "email = " + profile.getEmail();
-		// 	document.cookie = "login_type = " + "google";
-		// 	document.cookie = "logout_button = <li><a href='./logout.php'>Logout</a></li>";
-
-			// authentication(profile.getEmail());
-		// }
 		var clicked = false;
 		function ClickLogin()
 		{
@@ -210,19 +200,19 @@
 				}
 
 				if (exist == 0){
-					window.location.replace("./register.php");
+					window.location.replace("https://localhost/register.php");
 				}
 				else{
 					// redirect user according to their user type
 					if(user_type == "user"){
-						window.location.replace("./c_homepage.php");
+						window.location.replace("https://localhost/c_homepage.php");
 					}
 					else if(user_type == "vendor"){
-						window.location.replace("./v_homepage.php");
+						window.location.replace("https://localhost/v_homepage.php");
 					}
 					
 					else if(user_type == "driver"){
-						window.location.replace("./d_homepage.php");
+						window.location.replace("https://localhost/d_homepage.php");
 					}
 					
 				}

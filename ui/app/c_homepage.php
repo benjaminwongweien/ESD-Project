@@ -36,7 +36,7 @@
 				// redirect them back to the logout page to clear cookies again, JUST IN CASE
 				// then logout will bring them back to the index page
 				if (document.cookie == "") {
-					window.location.replace("./logout.php");
+					window.location.replace("https://localhost/logout.php");
 				}
 
 			</script>
@@ -49,14 +49,14 @@
 			    <div class="container">
 			    	<div class="row align-items-center justify-content-between d-flex">
 				      <div id="logo">
-				        <a href="c_homepage.php"><img src="./homepage_util/img/logo.png" alt="" title="" /></a>
+				        <a href="c_homepage.php"><img src="https://localhost/homepage_util/img/logo.png" alt="" title="" /></a>
 				      </div>
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
 				          <li><a href="vendors.php">View All Vendors</a></li>
 						  <li class="menu-has-children"><a href=""> <?php echo $_COOKIE['name'] ?></a>
 				            <ul id="logout">
-							  <li><a href="./orders.php">Orders</a></li>
+							  <li><a href="https://localhost/orders.php">Orders</a></li>
 							  <?php echo $_COOKIE['logout_button'] ?>
 				            </ul>
 				          </li>
@@ -276,7 +276,7 @@
 				function gp_signOut() {
 					var auth2 = gapi.auth2.getAuthInstance();
 					auth2.signOut().then(function () {
-						// window.location.replace("./logout.php");
+						window.location.replace("https://localhost/logout.php");
 					});
 				}
 				
