@@ -74,7 +74,11 @@ offset = None
 
 while True:
     
-    response = bot.get_updates(offset=offset)
+    try:
+        response = bot.get_updates(offset=offset)
+    except:
+        continue
+    
     success = response.get("ok")
     
     if success == True:

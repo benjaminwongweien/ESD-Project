@@ -105,24 +105,6 @@
 								$price = $customer['price'];
 								$deliveryAddress = $customer['delivery_address'];
 
-								// Using Post, get vendor and food information from user
-								// Pass in: username
-								// Return: username, user_type, chat_id
-								$postdata = json_encode(array(
-									'username' => $delivererID
-									)
-								);
-							// var_dump($customer);
-								$opts = array('http' =>
-									array(
-										'method'  => 'POST',
-										'header'  => 'Content-Type: application/json',
-										'content' => $postdata
-									)
-								);
-								
-								$context  = stream_context_create($opts);
-								$deliverer_info = json_decode(file_get_contents("http://host.docker.internal:88/username", false, $context), TRUE);
 								
 								// Using Post, get vendor and food information from menu
 								// Pass in: vendor_email , food_id
@@ -161,7 +143,7 @@
 											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Total: <?=number_format(($price * $quantity), 2)?></h4></td>
 										</tr>
 										<tr>
-											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Deliverer: <?=$deliverer_info['username']?></h4></td>
+											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Deliverer: <?=($delivererID == "0")?"None":$delivererID?></h4></td>
 										</tr>
 										<tr>
 											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Delivery Address: <?=$deliveryAddress?></h4></td>
