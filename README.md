@@ -13,7 +13,7 @@ EaSy Delivery is a Microservice Driven Solution for Food Delivery.
 # Features!
 
   - NGINX
-  - CRM Microservice 
+  - User Microservice 
   - Menu Microservice
   - RabbiMQ AMQP Messaging Broker
   - Payment Microservise using Stripe API   
@@ -79,9 +79,9 @@ This will compose the required EaSy Delivery images and pull in the necessary de
 | Payment Facilitation - NGINX    | 86      |  :  | 80       | http://localhost:86/   |
 | Payment Facilitation - PHP-FPM  | -       |  :  | 9000     | -                      |
 | Payment Facilitation - Composer | -       |  :  | -        | -                      |
-| CRM - NGINX                     | 88      |  :  | 80       | http://localhost:88/   |
-| CRM - Flask                     | -       |  :  | 8000     | -                      |
-| CRM - PostgresDB                | -       |  :  | 5432     | -                      |
+| User - NGINX                    | 88      |  :  | 80       | http://localhost:88/   |
+| User - Flask                    | -       |  :  | 8000     | -                      |
+| User - PostgresDB               | -       |  :  | 5432     | -                      |
 | Recommendation - NGINX          | 89      |  :  | 80       | http://localhost:89/   |
 | Recommendation - Flask          | -       |  :  | 8000     | -                      |
 | RabbitMQ Broker                 | 5673    |  :  | 5672     | http://localhost:5673/ |
