@@ -87,13 +87,16 @@
 			</section>		
 			<!-- End banner Area -->
 		
-			<!-- About Generic Start -->
-			<div class="main-wrapper">
-				<!-- Start team Area -->
-				<section class="team-area pt-100">
-					<div class="container">					
-						<div class="row justify-content-left d-flex align-items-left">
-							<h4 class="text-white text-uppercase">Your orders</h4>
+			<!-- Start top-dish Area -->
+			<section class="top-dish-area section-gap" id="dish">
+				<div class="container">
+					<div class="row d-flex justify-content-center">
+						<div class="menu-content pb-60 col-lg-8">
+							<div class="title text-center">
+								<h1 class="mb-10">YOUR ORDERS</h1>
+							</div>
+						</div>
+					</div>	
 							<?php
 							foreach($customer_list as $customer){
 								$vendorID = $customer['vendorID'];
@@ -128,28 +131,36 @@
 								
 								if ($customer['customerID'] == $_COOKIE['email']){
 									?>
-									<table border="1">
-										<tr>
-											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
-										</tr>
-										<tr>
-											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Food Name: <?=$food_info['food']['food_name']?></h4></td>
-										</tr>
-										<tr>
-											<td><h4 class='meta-text mt-30 text-center'>Quantity: <?=$quantity?></h4></td>
-											<td><h4 class='meta-text mt-30 text-center'>Price: <?=$price?></h4></td>
-										</tr>
-										<tr>
-											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Total: <?=number_format(($price * $quantity), 2)?></h4></td>
-										</tr>
-										<tr>
-											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Deliverer: <?=($delivererID == "0")?"None":$delivererID?></h4></td>
-										</tr>
-										<tr>
-											<td colspan="2"><h4 class='meta-text mt-30 text-center'>Delivery Address: <?=$deliveryAddress?></h4></td>
-										</tr>
-										
-									</table>
+									<div class="row">
+									<div class="single-dish col-md-12">
+									<div class="thumb">
+									</div>
+										<table border="1" align="center">
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Food Name: <?=$food_info['food']['food_name']?></h4></td>
+											</tr>
+											<tr>
+												<td><h4 class='meta-text mt-30 text-center'>Quantity: <?=$quantity?></h4></td>
+												<td><h4 class='meta-text mt-30 text-center'>Price: <?=$price?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Total: <?=number_format(($price * $quantity), 2)?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Deliverer: <?=($delivererID == "0")?"None":$delivererID?></h4></td>
+											</tr>
+											<tr>
+												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Delivery Address: <?=$deliveryAddress?></h4></td>
+											</tr>
+											
+											</table>
+										</div>
+									</div>
+								<br>
+
 
 									<?php
 									}								

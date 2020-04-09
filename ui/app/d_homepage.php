@@ -164,7 +164,7 @@
 								<div class="single-dish col-lg-4">
 									<div class="thumb">
 									</div>
-										<table border="1">
+										<table border="1" align="center">
 											<tr>
 												<td colspan="2"><h4 class='meta-text mt-30 text-center'>Status of Delivery: <?=$status?></h4></td>
 											</tr>
