@@ -112,7 +112,7 @@
 									'username' => $delivererID
 									)
 								);
-				
+							// var_dump($customer);
 								$opts = array('http' =>
 									array(
 										'method'  => 'POST',
@@ -125,10 +125,10 @@
 								$deliverer_info = json_decode(file_get_contents("http://host.docker.internal:88/username", false, $context), TRUE);
 								
 								// Using Post, get vendor and food information from menu
-								// Pass in: vendor_id , food_id
+								// Pass in: vendor_email , food_id
 								// Return: food_description, food_id, food_image, food_label, food_name, food_price
 								$postdata = json_encode(array(
-									'vendor_id' => $vendorID,
+									'vendor_email' => $vendorID,
 									'food_id' => $foodID
 									)
 								);
@@ -142,7 +142,7 @@
 								);
 								
 								$context  = stream_context_create($opts);
-								$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food", false, $context), TRUE);
+								$food_info = json_decode(file_get_contents("http://host.docker.internal:85/search/food/email", false, $context), TRUE);
 								
 								if ($customer['customerID'] == $_COOKIE['email']){
 									?>
