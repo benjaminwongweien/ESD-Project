@@ -286,13 +286,28 @@
 				}(document, 'script', 'facebook-jssdk'));
 
 				
-				function logOut(){ 		// Facebook logout works differently, as such, you need to use the function
-					FB.logout(function(response) {
-						statusChangeCallback(response);
-						document.getElementById('logout').style.display = "none";
-						// redirect users to logout to remove the cookies stored in the console
-						window.location.replace("./logout.php");
+				function gp_signOut() {
+					var auth2 = gapi.auth2.getAuthInstance();
+					auth2.signOut().then(function () {
+						// window.location.replace("./logout.php");
 					});
+				}
+				
+				function logOut(){   // Facebook logout works differently, as such, you need to use the function
+					login_type_cookie = accessCookie(document.cookie, "login_type"); 
+					login_type = login_type_cookie.slice(11);
+					console.log(login_type);
+
+					if (login_type == "facebook"){
+						FB.logout(function(response) {
+							statusChangeCallback(response);
+							document.getElementById('logout').style.display = "none";
+							window.location.replace("https://localhost/logout.php");
+						});
+					}
+					if (login_type == "google"){
+						gp_signOut();
+					}
 				}
 			</script>
 		</body>
