@@ -479,7 +479,7 @@ def upload_menu(vendor_id,food_id):
     return jsonify(INCOMPLETE_ERROR), 400
   
   file = request.files["image"]
-  food = Food.query.filter_by(food_id=food_id).update({f"food_image": "food/{vendor_id}/{food_id}"})
+  food = Food.query.filter_by(food_id=food_id).update({"food_image": f"food/{vendor_id}/{food_id}"})
   
   if not food:
     return jsonify(NON_EXIST_ERROR), 400
