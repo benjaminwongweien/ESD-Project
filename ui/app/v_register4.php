@@ -160,9 +160,12 @@
 
 			var vendor_id_cookie = accessCookie(document.cookie, "vendor_id");
 			var vendor_id = vendor_id_cookie.slice(10);
+			
+			var food_id_cookie = accessCookie(document.cookie, "food_id");
+			var food_id = food_id_cookie.slice(8);
 
 			// post data to menu to store the food image
-			var serviceURL = "http://localhost:85/upload/" + vendor_id;
+			var serviceURL = "http://localhost:85/upload/" + vendor_id +"/" + food_id;
 			postData(serviceURL, fd);
         });
 	</script>
