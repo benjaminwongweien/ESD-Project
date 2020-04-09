@@ -16,7 +16,11 @@ from flask import Flask, jsonify, request
 #     CONSTANTS     #
 #####################
 
-globals    = {} # list of addresses for all vendors before first request
+""" 
+list of addresses for all vendors before first request 
+
+""" 
+globals    = {} 
 API_KEY       = "AIzaSyBVt4jAsStVZQSezuy8v-ydY-08HfTiBz4"
 VENDOR_URL    = "http://host.docker.internal:85/all_vendor"
 FOOD_URL      = "http://host.docker.internal:85/all_food"
@@ -24,8 +28,7 @@ GMAP_URL      = "https://maps.googleapis.com/maps/api/geocode/json?"
 ORDER_URL     = "http://host.docker.internal:8080/order/history/customer"
 ORDER_URL_ALL = "http://host.docker.internal:8080/order/all"
 
-# dummy_address = {'lat': 1.2, 'lng': 103}  # --- check
-# dummy_history = []                        # --- check
+
 
 #####################
 #     FLASK APP     #
@@ -40,6 +43,11 @@ CORS(app)
 
 @app.before_first_request
 def before_first_request_func():
+    """
+    
+    executes before the first request and populates globals
+    
+    """
     # prepare vendor
     menu_request = requests.get(url=VENDOR_URL)
     vendors = menu_request.json()['vendors']
@@ -58,7 +66,10 @@ def before_first_request_func():
         
     globals['vendors'] = vendors
 
-    # prepare food
+    """ 
+    prepare food menu 
+    
+    """ 
     menu_request = requests.get(url=FOOD_URL)
     food = menu_request.json()['food']
     globals['food'] = food
@@ -86,11 +97,15 @@ def vendor_pos():
 #   RECOMMENDATION API   #
 ##########################
 
-@app.route("/all", methods=["GET"])
+#@app.route("/all", methods=["GET"])
 def get_all():
+    """
+    
+    debugging purposes
+    
+    """
     order_hist_request = requests.get(  
         url=ORDER_URL_ALL
-        # json={"customerID": username}
     )
     
     order_hist_data = order_hist_request.json()
@@ -98,8 +113,10 @@ def get_all():
 
 @app.route("/recommendation", methods=["GET"])
 def recommendation():
-    # uncomment when order api is working
-    # get the username from the UI
+    """ 
+    get the username from the UI request 
+    
+    """ 
     username = request.args.get('username')
     
     closest_vendor = {}
@@ -118,26 +135,26 @@ def recommendation():
         
         if address:
             
-            address = address[-1]["delivery_address"]
-            
-            print(address)      
+            address = address[-1]["delivery_address"]      
             
             gmap_params = {
                 'address': address,
                 'key': API_KEY
             }
-
-            # request from google API
+ 
+            # request to google Geocoding API  
             gmap_request = requests.get(url=GMAP_URL, params=gmap_params)
             gmap_data = gmap_request.json()
             user_position = gmap_data['results'][0]['geometry']['location']
 
             closest_dist = 999
-            
+
+            # Calculate the Euclidean ditance from the longititude and latitude 
             for vendor in globals['vendors']:
                 dist = ((user_position['lat'] - vendor['position']['lat']) ** 2 +
                         (user_position['lng'] - vendor['position']['lng']) ** 2) ** 0.5
-                
+            
+                # Find the closet vendor by smallest Euclidean distance 
                 if dist < closest_dist:
                     closest_dist = dist
                     closest_vendor = vendor
