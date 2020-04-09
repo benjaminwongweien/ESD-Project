@@ -1,5 +1,5 @@
 #
-# Docker-Compose - CRM Microservice
+# Docker-Compose - User Microservice
 #
 
 # @Author - Benjamin Wong Wei En, Hao Jun Poon, Belle Lee, Chen Ziyi, Masturah Binte Sulaiman, Low Louis
@@ -9,7 +9,7 @@ version: '3.7'
 
 services:
 
-    crm:
+    user:
         build:
             context: ./app
             dockerfile: DOCKERFILE_USER
@@ -19,7 +19,7 @@ services:
         networks:
             - network
         environment: 
-            - "URI=postgresql://userdb:userdbpassword@user_db:5432/crm"
+            - "URI=postgresql://userdb:userdbpassword@user_db:5432/user"
         # volumes:
         #     -
         command: gunicorn -b 0.0.0.0:8000 app:app
@@ -28,7 +28,7 @@ services:
     
     user_db:
         image: postgres:12.2-alpine
-        container_name: crm_postgres_database
+        container_name: user_postgres_database
         # ports:
         #     - "5432"
         networks:
@@ -44,7 +44,7 @@ services:
     
     user_nginx:
         image: nginx:1.17-alpine
-        container_name: crm_nginx
+        container_name: user_nginx
         ports:
             - "88:80"
         networks:
